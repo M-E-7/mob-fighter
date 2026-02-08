@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://bcwbd667tgkwx"]
+
+[ext_resource type="Script" uid="uid://bcs4c88ig4l84" path="res://node_3d.gd" id="1_fji1c"]
+
+[sub_resource type="Environment" id="Environment_fji1c"]
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 1.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fji1c"]
+albedo_color = Color(0.13725491, 0.27058825, 0.28235295, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fji1c"]
+material = SubResource("StandardMaterial3D_fji1c")
+size = Vector3(50, 1, 50)
+
+[node name="BasicLevel" type="Node3D" unique_id=287112525]
+script = ExtResource("1_fji1c")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=734688078]
+environment = SubResource("Environment_fji1c")
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1043786028]
+mesh = SubResource("BoxMesh_fji1c")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1793405721]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=719044447]
+transform = Transform3D(1, 0, 0, 0, 0.5889285, 0.80818534, 0, -0.80818534, 0.5889285, 0, 14.939307, 23)
