@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="MobFighter"
-run/main_scene="uid://bcwbd667tgkwx"
+run/main_scene="uid://cib5unlpojl15"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 

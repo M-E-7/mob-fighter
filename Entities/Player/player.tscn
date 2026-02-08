@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cib5unlpojl15"]
+
+[ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="1_mv1ah"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
+size = Vector2(18, 18)
+
+[node name="Player" type="CharacterBody2D" unique_id=1517977448]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
+shape = SubResource("RectangleShape2D_mv1ah")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=386316919]
+position = Vector2(0, 4.2351647e-22)
+scale = Vector2(0.08333333, 0.07011069)
+texture = ExtResource("1_mv1ah")
