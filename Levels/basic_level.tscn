@@ -6,4 +6,4 @@
 
 [node name="Player" parent="." unique_id=1517977448 instance=ExtResource("1_fji1c")]
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1348273924]
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1348273924]

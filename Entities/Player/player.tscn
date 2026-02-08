@@ -1,11 +1,15 @@
-[gd_scene format=3 uid="uid://cib5unlpojl15"]
+[gd_scene load_steps=4 format=3 uid="uid://cib5unlpojl15"]
 
-[ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="1_mv1ah"]
+[ext_resource type="Script" path="res://Entities/Player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://Entities/Player/Components/movement_component.gd" id="2_movement"]
+[ext_resource type="Script" path="res://Entities/Player/Components/facing_component.gd" id="3_facing"]
+[ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="4_mv1ah"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
 size = Vector2(18, 18)
 
 [node name="Player" type="CharacterBody2D" unique_id=1517977448]
+script = ExtResource("1_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_mv1ah")
@@ -13,4 +17,13 @@ shape = SubResource("RectangleShape2D_mv1ah")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=386316919]
 position = Vector2(0, 4.2351647e-22)
 scale = Vector2(0.08333333, 0.07011069)
-texture = ExtResource("1_mv1ah")
+texture = ExtResource("4_mv1ah")
+
+[node name="MovementComponent" type="Node" parent="." unique_id=2341567890]
+script = ExtResource("2_movement")
+max_speed = 200.0
+acceleration = 1000.0
+friction = 800.0
+
+[node name="FacingComponent" type="Node" parent="." unique_id=2341567891]
+script = ExtResource("3_facing")
