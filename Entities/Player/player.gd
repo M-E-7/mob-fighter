@@ -13,6 +13,10 @@ class_name Player
 @export var max_health: float = 100.0
 @export var starting_health: float = 100.0
 
+@export_group("Shooting Settings")
+@export var fire_rate: float = 5.0
+@export var bullet_damage: float = 10.0
+
 # @onready var movement: MovementComponent = $MovementComponent
 # @onready var facing: FacingComponent = $FacingComponent
 
