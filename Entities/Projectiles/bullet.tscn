@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bw4k36ug8v1ji"]
+
+[ext_resource type="Script" path="res://Entities/Projectiles/bullet.gd" id="1_bullet"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 2.0
+
+[node name="Bullet" type="Area2D" unique_id=1719329206]
+script = ExtResource("1_bullet")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1646644829]
+shape = SubResource("CircleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=62478633]
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+color = Color(0.8, 0.1, 0.1, 1)
