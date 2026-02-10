@@ -1,29 +1,40 @@
-[gd_scene load_steps=4 format=3 uid="uid://cib5unlpojl15"]
+[gd_scene format=3 uid="uid://cib5unlpojl15"]
 
-[ext_resource type="Script" path="res://Entities/Player/player.gd" id="1_player"]
-[ext_resource type="Script" path="res://Entities/Player/Components/movement_component.gd" id="2_movement"]
-[ext_resource type="Script" path="res://Entities/Player/Components/facing_component.gd" id="3_facing"]
+[ext_resource type="Script" uid="uid://b7jws2ckucrfd" path="res://Entities/Player/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://bxmsptut47wot" path="res://Entities/Player/Components/movement_component.gd" id="2_movement"]
+[ext_resource type="Script" uid="uid://cjfm2vvjbrq6g" path="res://Entities/Player/Components/facing_component.gd" id="3_facing"]
 [ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="4_mv1ah"]
+[ext_resource type="Script" uid="uid://c1qjt0tm70hgk" path="res://Entities/Player/health_component.gd" id="5_5c2io"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
 size = Vector2(18, 18)
 
-[node name="Player" type="CharacterBody2D" unique_id=1517977448]
+[node name="Player" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("movement")]
 script = ExtResource("1_player")
+movement = NodePath("Group_MovementComponents/MovementComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_mv1ah")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=386316919]
+[node name="Group_MovementComponents" type="Node2D" parent="." unique_id=178335340]
+
+[node name="MovementComponent" type="Node" parent="Group_MovementComponents" unique_id=-1953399406 node_paths=PackedStringArray("entity")]
+script = ExtResource("2_movement")
+entity = NodePath("../..")
+
+[node name="FacingComponent" type="Node" parent="Group_MovementComponents" unique_id=-1953399405]
+script = ExtResource("3_facing")
+
+[node name="Group_DisplayComponents" type="Node2D" parent="." unique_id=1137442348]
+
+[node name="Sprite2D" type="Sprite2D" parent="Group_DisplayComponents" unique_id=386316919]
 position = Vector2(0, 4.2351647e-22)
 scale = Vector2(0.08333333, 0.07011069)
 texture = ExtResource("4_mv1ah")
 
-[node name="MovementComponent" type="Node" parent="." unique_id=2341567890]
-script = ExtResource("2_movement")
-max_speed = 200.0
-acceleration = 1000.0
-friction = 800.0
+[node name="HealthDisplayComponent" type="Node" parent="Group_DisplayComponents" unique_id=614645421]
 
-[node name="FacingComponent" type="Node" parent="." unique_id=2341567891]
-script = ExtResource("3_facing")
+[node name="Group_HealthComponents" type="Node2D" parent="." unique_id=494937957]
+
+[node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=1768236817]
+script = ExtResource("5_5c2io")
