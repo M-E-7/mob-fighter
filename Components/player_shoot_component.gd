@@ -2,7 +2,7 @@ extends Node
 class_name ShootComponent
 ## Component that handles shooting projectiles toward the mouse cursor
 
-@export var entity: Player
+@export var entity: Entity
 @export var bullet_scene: PackedScene
 
 var shoot_timer: float = 0.0

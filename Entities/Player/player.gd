@@ -1,6 +1,6 @@
 extends CharacterBody2D
-class_name Player
-## Player coordinator that manages components
+class_name Entity
+## Entity coordinator that manages components
 ## Provides clean API for external systems to access player components
 
 @export_group("Movement Settings")
@@ -22,7 +22,7 @@ class_name Player
 
 
 func _ready() -> void:
-	print("Player _ready() called")
+	print("Entity _ready() called")
 	print("Movement component exists: ", movement != null)
 	# print("Facing component exists: ", facing != null)
 

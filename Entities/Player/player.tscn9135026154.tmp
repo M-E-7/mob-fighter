@@ -42,10 +42,9 @@ metadata/_custom_type_script = "uid://obmawqbp2dbr"
 
 [node name="Group_HealthComponents" type="Node2D" parent="." unique_id=494937957]
 
-[node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=1768236817 node_paths=PackedStringArray("entity", "healthDisplay")]
+[node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=1768236817 node_paths=PackedStringArray("entity")]
 script = ExtResource("5_5c2io")
 entity = NodePath("../..")
-healthDisplay = NodePath("../../Group_DisplayComponents/HealthDisplayComponent")
 
 [node name="Group_CombatComponents" type="Node2D" parent="." unique_id=1757825401]
 
