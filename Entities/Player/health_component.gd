@@ -7,12 +7,13 @@ signal died
 
 @export var entity: Player
 
-var current_health: float = entity.starting_health
-var max_health: float = entity.max_health
+var current_health: float
+var max_health: float
 
 
 func _ready() -> void:
-	pass
+	max_health = entity.max_health
+	current_health = entity.starting_health
 
 
 func take_damage(amount: float) -> void:

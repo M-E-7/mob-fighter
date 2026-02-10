@@ -17,13 +17,14 @@ func _ready() -> void:
 	bg_bar.size = Vector2(bar_width, bar_height)
 	bg_bar.position = bar_offset
 	bg_bar.color = Color(0.2, 0.2, 0.2)
-	get_parent().add_child(bg_bar)
+	get_parent().add_child.call_deferred(bg_bar)
 
 	hp_bar = ColorRect.new()
 	hp_bar.size = Vector2(bar_width, bar_height)
 	hp_bar.position = bar_offset
 	hp_bar.color = Color(0.8, 0.1, 0.1)
-	get_parent().add_child(hp_bar)
+	get_parent().add_child.call_deferred(hp_bar)
+	
 
 	if health_component:
 		health_component.health_changed.connect(_on_health_changed)
