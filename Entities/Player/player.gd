@@ -9,6 +9,10 @@ class_name Player
 @export var acceleration: float = 1000.0
 @export var friction: float = 800.0
 
+@export_group("Health Settings")
+@export var max_health: float = 100.0
+@export var starting_health: float = 100.0
+
 # @onready var movement: MovementComponent = $MovementComponent
 # @onready var facing: FacingComponent = $FacingComponent
 
