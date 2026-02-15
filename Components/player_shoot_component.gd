@@ -1,5 +1,5 @@
 extends Node
-class_name ShootComponent
+class_name PlayerShootComponent
 ## Component that handles shooting projectiles toward the mouse cursor
 
 @export var entity: Entity

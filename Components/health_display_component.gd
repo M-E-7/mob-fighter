@@ -26,12 +26,12 @@ func _ready() -> void:
 	get_parent().add_child.call_deferred(hp_bar)
 	
 
-	if health_component:
-		health_component.health_changed.connect(_on_health_changed)
-	else:
-		push_warning("HealthDisplayComponent: No HealthComponent assigned")
+	# if health_component:
+	# 	health_component.health_changed.connect(_on_health_changed)
+	# else:
+	# 	push_warning("HealthDisplayComponent: No HealthComponent assigned")
 
 
-func _on_health_changed(current_health: float, max_health: float) -> void:
+func healthUpdate(current_health: float, max_health: float) -> void:
 	if max_health > 0.0:
 		hp_bar.size.x = bar_width * (current_health / max_health)

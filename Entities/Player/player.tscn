@@ -12,9 +12,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
 size = Vector2(18, 18)
 
-[node name="Player" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("movement")]
+[node name="Player" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent", "movementComponent")]
 script = ExtResource("1_player")
-movement = NodePath("Group_MovementComponents/MovementComponent")
+healthComponent = NodePath("Group_HealthComponents/HealthComponent")
+healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
+movementComponent = NodePath("Group_MovementComponents/MovementComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_mv1ah")
