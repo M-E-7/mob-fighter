@@ -22,6 +22,9 @@ func setup(dir: Vector2, dmg: float, src: Node2D, spd: float = 500.0) -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is HurtboxComponent:
+		if not is_instance_valid(source):
+			queue_free()
+			return
 		var target := area.owner
 		if target == source:
 			return
