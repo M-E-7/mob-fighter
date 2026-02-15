@@ -31,7 +31,7 @@ func shoot() -> void:
 	var bullet: Bullet = bullet_scene.instantiate()
 	var direction := (player.global_position - entity.global_position).normalized()
 
-	bullet.setup(direction, entity.bullet_damage)
+	bullet.setup(direction, entity.bullet_damage, entity)
 
 	entity.get_tree().current_scene.add_child(bullet)
 	bullet.global_position = entity.global_position

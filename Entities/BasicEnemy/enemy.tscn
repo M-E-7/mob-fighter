@@ -8,14 +8,19 @@
 [ext_resource type="Script" uid="uid://c1qjt0tm70hgk" path="res://Components/health_component.gd" id="5_phteo"]
 [ext_resource type="Script" uid="uid://dj35xi6x81jor" path="res://Components/enemy_shoot_component.gd" id="6_jn3v6"]
 [ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_s5wyf"]
+[ext_resource type="Script" uid="uid://dhrtbx7comp1a" path="res://Components/hurtbox_component.gd" id="8_hurtbox"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nj7y0"]
 size = Vector2(18, 18)
 
-[node name="Enemy" type="CharacterBody2D" unique_id=179062938 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurtbox"]
+size = Vector2(18, 18)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=179062938 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent", "hurtboxComponent")]
 script = ExtResource("1_kra7d")
 healthComponent = NodePath("Group_HealthComponents/HealthComponent")
 healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
+hurtboxComponent = NodePath("Group_HealthComponents/HurtboxComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1889304441]
 shape = SubResource("RectangleShape2D_nj7y0")
@@ -42,6 +47,14 @@ health_component = NodePath("../../Group_HealthComponents/HealthComponent")
 metadata/_custom_type_script = "uid://obmawqbp2dbr"
 
 [node name="Group_HealthComponents" type="Node2D" parent="." unique_id=2118772165]
+
+[node name="HurtboxComponent" type="Area2D" parent="Group_HealthComponents" unique_id=570960177]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("8_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Group_HealthComponents/HurtboxComponent" unique_id=272186007]
+shape = SubResource("RectangleShape2D_hurtbox")
 
 [node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=375520311 node_paths=PackedStringArray("entity", "healthDisplay")]
 script = ExtResource("5_phteo")

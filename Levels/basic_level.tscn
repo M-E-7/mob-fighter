@@ -11,3 +11,9 @@
 
 [node name="Enemy" parent="." unique_id=179062938 instance=ExtResource("2_b41s8")]
 position = Vector2(154, 131)
+
+[node name="Enemy2" parent="." unique_id=783160613 instance=ExtResource("2_b41s8")]
+position = Vector2(271, 211)
+
+[node name="Enemy3" parent="." unique_id=1384368408 instance=ExtResource("2_b41s8")]
+position = Vector2(192, 204)

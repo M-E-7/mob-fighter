@@ -12,6 +12,7 @@ class_name Entity
 
 @export_group("Health Settings")
 @export var movementComponent: PlayerMovementComponent
+@export var hurtboxComponent: HurtboxComponent
 @export var max_health: float = 100.0
 @export var starting_health: float = 100.0
 
@@ -26,16 +27,12 @@ class_name Entity
 
 func _ready() -> void:
 	add_to_group("player")
-	print("Entity _ready() called")
-	print("Movement component exists: ", movementComponent != null)
-	# print("Facing component exists: ", facing != null)
+	if healthComponent:
+		healthComponent.died.connect(queue_free)
+	if hurtboxComponent:
+		hurtboxComponent.damaged.connect(take_damage)
 
 
-## Get the movement component
-# func get_movement_component() -> MovementComponent:
-# 	return movement
-
-
-## Get the facing component
-# func get_facing_component() -> FacingComponent:
-# 	return facing
+func take_damage(amount: float) -> void:
+	if healthComponent:
+		healthComponent.take_damage(amount)

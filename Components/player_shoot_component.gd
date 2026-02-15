@@ -24,7 +24,7 @@ func shoot() -> void:
 	var mouse_pos := entity.get_global_mouse_position()
 	var direction := (mouse_pos - entity.global_position).normalized()
 
-	bullet.setup(direction, entity.bullet_damage)
+	bullet.setup(direction, entity.bullet_damage, entity)
 
 	entity.get_tree().current_scene.add_child(bullet)
 	bullet.global_position = entity.global_position
