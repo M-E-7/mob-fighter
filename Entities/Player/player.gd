@@ -21,18 +21,18 @@ class_name Entity
 @export var fire_rate: float = 5.0
 @export var bullet_damage: float = 10.0
 
-# @onready var movement: MovementComponent = $MovementComponent
-# @onready var facing: FacingComponent = $FacingComponent
-
 
 func _ready() -> void:
 	add_to_group("player")
-	if healthComponent:
-		healthComponent.died.connect(queue_free)
-	if hurtboxComponent:
-		hurtboxComponent.damaged.connect(take_damage)
+	EventBus.entity_died.connect(_on_entity_died)
+	EventBus.entity_damaged.connect(_on_entity_damaged)
 
 
-func take_damage(amount: float) -> void:
-	if healthComponent:
+func _on_entity_died(entity: Node) -> void:
+	if entity == self:
+		queue_free()
+
+
+func _on_entity_damaged(entity: Node, amount: float) -> void:
+	if entity == self and healthComponent:
 		healthComponent.take_damage(amount)

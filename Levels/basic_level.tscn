@@ -11,9 +11,27 @@
 
 [node name="Enemy" parent="." unique_id=179062938 instance=ExtResource("2_b41s8")]
 position = Vector2(154, 131)
+max_speed = 100.0
+acceleration = 500.0
+max_health = 30.0
+starting_health = 30.0
+fire_rate = 2.0
+bullet_damage = 5.0
 
-[node name="Enemy2" parent="." unique_id=783160613 instance=ExtResource("2_b41s8")]
-position = Vector2(271, 211)
+[node name="Enemy2" parent="." unique_id=2133372326 instance=ExtResource("2_b41s8")]
+position = Vector2(188, 69)
+max_speed = 100.0
+acceleration = 500.0
+max_health = 30.0
+starting_health = 30.0
+fire_rate = 2.0
+bullet_damage = 5.0
 
-[node name="Enemy3" parent="." unique_id=1384368408 instance=ExtResource("2_b41s8")]
-position = Vector2(192, 204)
+[node name="Enemy3" parent="." unique_id=51479879 instance=ExtResource("2_b41s8")]
+position = Vector2(84, 186)
+max_speed = 100.0
+acceleration = 500.0
+max_health = 30.0
+starting_health = 30.0
+fire_rate = 2.0
+bullet_damage = 5.0

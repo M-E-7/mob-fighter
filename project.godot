@@ -15,6 +15,10 @@ run/main_scene="uid://dool6hlp52g0r"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+EventBus="*res://Autoloads/event_bus.gd"
+
 [input]
 
 shoot={

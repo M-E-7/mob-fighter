@@ -4,7 +4,5 @@ extends Entity
 
 func _ready() -> void:
 	add_to_group("enemy")
-	if healthComponent:
-		healthComponent.died.connect(queue_free)
-	if hurtboxComponent:
-		hurtboxComponent.damaged.connect(take_damage)
+	EventBus.entity_died.connect(_on_entity_died)
+	EventBus.entity_damaged.connect(_on_entity_damaged)

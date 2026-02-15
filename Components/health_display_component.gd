@@ -2,8 +2,6 @@ extends Node
 class_name HealthDisplayComponent
 ## Component that displays a red health bar below the entity
 
-@export var health_component: HealthComponent
-
 var bar_width: float = 30.0
 var bar_height: float = 4.0
 var bar_offset: Vector2 = Vector2(-15, 12)
@@ -24,14 +22,10 @@ func _ready() -> void:
 	hp_bar.position = bar_offset
 	hp_bar.color = Color(0.8, 0.1, 0.1)
 	get_parent().add_child.call_deferred(hp_bar)
-	
 
-	# if health_component:
-	# 	health_component.health_changed.connect(_on_health_changed)
-	# else:
-	# 	push_warning("HealthDisplayComponent: No HealthComponent assigned")
+	EventBus.health_changed.connect(_on_health_changed)
 
 
-func healthUpdate(current_health: float, max_health: float) -> void:
-	if max_health > 0.0:
+func _on_health_changed(entity: Node, current_health: float, max_health: float) -> void:
+	if entity == owner and max_health > 0.0:
 		hp_bar.size.x = bar_width * (current_health / max_health)
