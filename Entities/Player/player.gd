@@ -25,6 +25,7 @@ class_name Entity
 
 
 func _ready() -> void:
+	add_to_group("player")
 	print("Entity _ready() called")
 	print("Movement component exists: ", movementComponent != null)
 	# print("Facing component exists: ", facing != null)
