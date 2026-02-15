@@ -11,7 +11,7 @@ class_name Entity
 @export var friction: float = 800.0
 
 @export_group("Health Settings")
-@export var movementComponent: MovementComponent
+@export var movementComponent: PlayerMovementComponent
 @export var max_health: float = 100.0
 @export var starting_health: float = 100.0
 

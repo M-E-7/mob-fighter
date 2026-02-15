@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cib5unlpojl15"]
 
 [ext_resource type="Script" uid="uid://b7jws2ckucrfd" path="res://Entities/Player/player.gd" id="1_player"]
-[ext_resource type="Script" uid="uid://bxmsptut47wot" path="res://Components/movement_component.gd" id="2_movement"]
+[ext_resource type="Script" uid="uid://bxmsptut47wot" path="res://Components/player_movement_component.gd" id="2_movement"]
 [ext_resource type="Script" uid="uid://cjfm2vvjbrq6g" path="res://Components/facing_component.gd" id="3_facing"]
 [ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="4_mv1ah"]
 [ext_resource type="Script" uid="uid://obmawqbp2dbr" path="res://Components/health_display_component.gd" id="5_4wf4l"]
@@ -12,18 +12,19 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
 size = Vector2(18, 18)
 
-[node name="Player" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent", "movementComponent")]
+[node name="Player" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent", "movementComponent", "playerShootComponent")]
 script = ExtResource("1_player")
 healthComponent = NodePath("Group_HealthComponents/HealthComponent")
 healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
-movementComponent = NodePath("Group_MovementComponents/MovementComponent")
+movementComponent = NodePath("Group_MovementComponents/PlayerMovementComponent")
+playerShootComponent = NodePath("Group_CombatComponents/PlayerShootComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_mv1ah")
 
 [node name="Group_MovementComponents" type="Node2D" parent="." unique_id=178335340]
 
-[node name="MovementComponent" type="Node" parent="Group_MovementComponents" unique_id=-1953399406 node_paths=PackedStringArray("entity")]
+[node name="PlayerMovementComponent" type="Node" parent="Group_MovementComponents" unique_id=-1953399406 node_paths=PackedStringArray("entity")]
 script = ExtResource("2_movement")
 entity = NodePath("../..")
 

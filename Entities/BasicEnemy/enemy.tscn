@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://cfq18x28fbfcm"]
+
+[ext_resource type="Script" uid="uid://bh3dnt6cd7tkx" path="res://Entities/BasicEnemy/enemy.gd" id="1_kra7d"]
+[ext_resource type="Script" uid="uid://bxmsptut47wot" path="res://Components/player_movement_component.gd" id="1_wcjvb"]
+[ext_resource type="Script" uid="uid://cjfm2vvjbrq6g" path="res://Components/facing_component.gd" id="2_kra7d"]
+[ext_resource type="Script" uid="uid://obmawqbp2dbr" path="res://Components/health_display_component.gd" id="4_c5ymo"]
+[ext_resource type="Texture2D" uid="uid://wt3c1btrca8j" path="res://Entities/BasicEnemy/blueTexture.png" id="4_kra7d"]
+[ext_resource type="Script" uid="uid://c1qjt0tm70hgk" path="res://Components/health_component.gd" id="5_phteo"]
+[ext_resource type="Script" uid="uid://qwxp5u85wrrx" path="res://Components/player_shoot_component.gd" id="6_jn3v6"]
+[ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_s5wyf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nj7y0"]
+size = Vector2(18, 18)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=179062938]
+script = ExtResource("1_kra7d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1889304441]
+shape = SubResource("RectangleShape2D_nj7y0")
+
+[node name="Group_MovementComponents" type="Node2D" parent="." unique_id=1200723336]
+
+[node name="EnemyMovementComponent" type="Node" parent="Group_MovementComponents" unique_id=679859054 node_paths=PackedStringArray("entity")]
+script = ExtResource("1_wcjvb")
+entity = NodePath("")
+
+[node name="FacingComponent" type="Node" parent="Group_MovementComponents" unique_id=1078038251]
+script = ExtResource("2_kra7d")
+
+[node name="Group_DisplayComponents" type="Node2D" parent="." unique_id=1356333592]
+
+[node name="Sprite2D" type="Sprite2D" parent="Group_DisplayComponents" unique_id=1223371485]
+position = Vector2(-4.7683716e-07, 9.536743e-07)
+scale = Vector2(0.14516129, 0.16981132)
+texture = ExtResource("4_kra7d")
+
+[node name="HealthDisplayComponent" type="Node" parent="Group_DisplayComponents" unique_id=2002189764]
+script = ExtResource("4_c5ymo")
+metadata/_custom_type_script = "uid://obmawqbp2dbr"
+
+[node name="Group_HealthComponents" type="Node2D" parent="." unique_id=2118772165]
+
+[node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=375520311 node_paths=PackedStringArray("entity")]
+script = ExtResource("5_phteo")
+entity = NodePath("")
+
+[node name="Group_CombatComponents" type="Node2D" parent="." unique_id=2069830341]
+
+[node name="PlayerShootComponent" type="Node" parent="Group_CombatComponents" unique_id=24534795 node_paths=PackedStringArray("entity")]
+script = ExtResource("6_jn3v6")
+entity = NodePath("")
+bullet_scene = ExtResource("7_s5wyf")

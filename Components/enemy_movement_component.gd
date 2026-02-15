@@ -1,5 +1,5 @@
 extends Node
-class_name MovementComponent
+class_name EnemyMovementComponent
 ## Component that handles player movement input and physics
 ## Processes WASD/Arrow key input and applies smooth acceleration/deceleration
 
