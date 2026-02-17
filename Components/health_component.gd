@@ -2,7 +2,7 @@ extends Node
 class_name HealthComponent
 ## Component that manages health state and emits signals on change
 
-@export var entity: Entity
+@export var entity: LivingEntity
 
 var current_health: float
 var max_health: float

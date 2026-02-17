@@ -9,7 +9,7 @@ class_name PlayerMovementComponent
 # @export var friction: float = 800.0
 
 # var player: CharacterBody2D
-@export var entity: Entity
+@export var entity: LivingEntity
 
 
 func _ready() -> void:

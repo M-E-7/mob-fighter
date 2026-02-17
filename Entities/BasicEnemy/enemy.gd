@@ -1,4 +1,4 @@
-extends Entity
+extends LivingEntity
 ## Enemy entity that chases and shoots at the player
 
 

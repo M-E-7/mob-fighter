@@ -2,7 +2,7 @@ extends Node
 class_name EnemyMovementComponent
 ## Component that moves the enemy towards the player
 
-@export var entity: Entity
+@export var entity: LivingEntity
 
 var player: Node2D
 

@@ -9,21 +9,21 @@
 
 [node name="Player" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent", "shootComponent") instance=ExtResource("1_tekja")]
 script = ExtResource("2_4wf4l")
-hurtboxComponent = NodePath("Group_HealthComponents/HurtboxComponent")
-healthComponent = NodePath("Group_HealthComponents/HealthComponent")
-healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
-shootComponent = NodePath("Group_CombatComponents/PlayerShootComponent")
+hurtboxComponent = NodePath("HurtboxComponent")
+healthComponent = NodePath("HealthComponent")
+healthDisplayComponent = NodePath("HealthDisplayComponent")
+shootComponent = NodePath("PlayerShootComponent")
 
-[node name="PlayerMovementComponent" type="Node" parent="Group_MovementComponents" parent_id_path=PackedInt32Array(178335340) index="0" unique_id=43143339 node_paths=PackedStringArray("entity")]
+[node name="PlayerShootComponent" type="Node" parent="." index="0" unique_id=1987147555 node_paths=PackedStringArray("entity")]
+script = ExtResource("6_shoot")
+entity = NodePath("..")
+bullet_scene = ExtResource("7_bullet")
+
+[node name="PlayerMovementComponent" type="Node" parent="." index="1" unique_id=43143339 node_paths=PackedStringArray("entity")]
 script = ExtResource("2_movement")
-entity = NodePath("../..")
+entity = NodePath("..")
 
-[node name="Sprite2D" parent="Group_DisplayComponents" parent_id_path=PackedInt32Array(1137442348) index="0" unique_id=386316919]
+[node name="SpriteDisplay" parent="." index="6" unique_id=386316919]
 position = Vector2(-2.3841858e-07, -9.536743e-07)
 scale = Vector2(0.08333333, 0.06642065)
 texture = ExtResource("4_mv1ah")
-
-[node name="PlayerShootComponent" type="Node" parent="Group_CombatComponents" parent_id_path=PackedInt32Array(1757825401) index="0" unique_id=1987147555 node_paths=PackedStringArray("entity")]
-script = ExtResource("6_shoot")
-entity = NodePath("../..")
-bullet_scene = ExtResource("7_bullet")

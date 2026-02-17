@@ -1,5 +1,5 @@
 extends CharacterBody2D
-class_name Entity
+class_name LivingEntity
 ## Entity coordinator that manages components
 ## Provides clean API for external systems to access player components
 
@@ -24,8 +24,8 @@ class_name Entity
 
 func _ready() -> void:
 	pass
-	# EventBus.entity_died.connect(_on_entity_died)
-	# EventBus.entity_damaged.connect(_on_entity_damaged)
+	EventBus.entity_died.connect(_on_entity_died)
+	EventBus.entity_damaged.connect(_on_entity_damaged)
 
 
 func _on_entity_died(entity: Node) -> void:

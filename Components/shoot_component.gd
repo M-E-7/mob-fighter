@@ -2,7 +2,7 @@ extends Node
 class_name ShootComponent
 ## Base shooting component - override get_direction() and should_shoot() in subclasses
 
-@export var entity: Entity
+@export var entity: LivingEntity
 @export var bullet_scene: PackedScene
 
 var shoot_timer: float = 0.0

@@ -7,20 +7,23 @@
 [ext_resource type="Script" uid="uid://dj35xi6x81jor" path="res://Components/enemy_shoot_component.gd" id="6_jn3v6"]
 [ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_bullet"]
 
-[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("shootComponent") instance=ExtResource("1_atj7c")]
+[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent", "shootComponent") instance=ExtResource("1_atj7c")]
 script = ExtResource("2_ginvw")
-shootComponent = NodePath("Group_CombatComponents/EnemyShootComponent")
+hurtboxComponent = NodePath("HurtboxComponent")
+healthComponent = NodePath("HealthComponent")
+healthDisplayComponent = NodePath("HealthDisplayComponent")
+shootComponent = NodePath("EnemyShootComponent")
 
-[node name="EnemyMoveComponent" type="Node" parent="Group_MovementComponents" parent_id_path=PackedInt32Array(178335340) index="0" unique_id=1879233807 node_paths=PackedStringArray("entity")]
+[node name="EnemyShootComponent" type="Node" parent="." index="0" unique_id=1694847574 node_paths=PackedStringArray("entity")]
+script = ExtResource("6_jn3v6")
+entity = NodePath("..")
+bullet_scene = ExtResource("7_bullet")
+
+[node name="EnemyMoveComponent" type="Node" parent="." index="1" unique_id=1879233807 node_paths=PackedStringArray("entity")]
 script = ExtResource("1_wcjvb")
-entity = NodePath("../..")
+entity = NodePath("..")
 
-[node name="Sprite2D" parent="Group_DisplayComponents" parent_id_path=PackedInt32Array(1137442348) index="0" unique_id=386316919]
+[node name="SpriteDisplay" parent="." index="6" unique_id=386316919]
 position = Vector2(-9.536743e-07, -0.08333515)
 scale = Vector2(0.14285715, 0.16823897)
 texture = ExtResource("4_kra7d")
-
-[node name="EnemyShootComponent" type="Node" parent="Group_CombatComponents" parent_id_path=PackedInt32Array(1757825401) index="0" unique_id=1694847574 node_paths=PackedStringArray("entity")]
-script = ExtResource("6_jn3v6")
-entity = NodePath("../..")
-bullet_scene = ExtResource("7_bullet")
