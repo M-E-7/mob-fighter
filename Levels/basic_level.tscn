@@ -2,12 +2,16 @@
 
 [ext_resource type="PackedScene" uid="uid://cib5unlpojl15" path="res://Entities/Player/player.tscn" id="1_fji1c"]
 [ext_resource type="PackedScene" uid="uid://cfq18x28fbfcm" path="res://Entities/BasicEnemy/enemy.tscn" id="2_b41s8"]
+[ext_resource type="Script" uid="uid://b7jws2ckucrfd" path="res://Entities/Player/player.gd" id="3_a3f5f"]
 
 [node name="BasicLevel" type="Node2D" unique_id=1745901464]
 
 [node name="Player" parent="." unique_id=1517977448 instance=ExtResource("1_fji1c")]
+motion_mode = 0
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1348273924]
 
 [node name="Enemy" parent="." unique_id=1691853550 instance=ExtResource("2_b41s8")]
 position = Vector2(196, 65)
+motion_mode = 0
+script = ExtResource("3_a3f5f")

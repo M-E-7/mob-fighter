@@ -17,14 +17,15 @@ class_name Entity
 @export var starting_health: float = 100.0
 
 @export_group("Shooting Settings")
-@export var playerShootComponent: PlayerShootComponent
+@export var shootComponent: ShootComponent
 @export var fire_rate: float = 5.0
 @export var bullet_damage: float = 10.0
 
 
 func _ready() -> void:
-	EventBus.entity_died.connect(_on_entity_died)
-	EventBus.entity_damaged.connect(_on_entity_damaged)
+	pass
+	# EventBus.entity_died.connect(_on_entity_died)
+	# EventBus.entity_damaged.connect(_on_entity_damaged)
 
 
 func _on_entity_died(entity: Node) -> void:

@@ -7,11 +7,12 @@
 [ext_resource type="Script" uid="uid://qwxp5u85wrrx" path="res://Components/player_shoot_component.gd" id="6_shoot"]
 [ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_bullet"]
 
-[node name="Player" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent") instance=ExtResource("1_tekja")]
+[node name="Player" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent", "shootComponent") instance=ExtResource("1_tekja")]
 script = ExtResource("2_4wf4l")
 hurtboxComponent = NodePath("Group_HealthComponents/HurtboxComponent")
 healthComponent = NodePath("Group_HealthComponents/HealthComponent")
 healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
+shootComponent = NodePath("Group_CombatComponents/PlayerShootComponent")
 
 [node name="PlayerMovementComponent" type="Node" parent="Group_MovementComponents" parent_id_path=PackedInt32Array(178335340) index="0" unique_id=43143339 node_paths=PackedStringArray("entity")]
 script = ExtResource("2_movement")
