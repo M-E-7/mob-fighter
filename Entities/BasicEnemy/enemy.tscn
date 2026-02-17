@@ -1,69 +1,24 @@
 [gd_scene format=3 uid="uid://cfq18x28fbfcm"]
 
-[ext_resource type="Script" uid="uid://bh3dnt6cd7tkx" path="res://Entities/BasicEnemy/enemy.gd" id="1_kra7d"]
+[ext_resource type="PackedScene" uid="uid://c8p4xt0fmdmve" path="res://Entities/LivingEntity/living_entity.tscn" id="1_atj7c"]
 [ext_resource type="Script" uid="uid://crceaxci77wba" path="res://Components/enemy_movement_component.gd" id="1_wcjvb"]
-[ext_resource type="Script" uid="uid://cjfm2vvjbrq6g" path="res://Components/facing_component.gd" id="2_kra7d"]
-[ext_resource type="Script" uid="uid://obmawqbp2dbr" path="res://Components/health_display_component.gd" id="4_c5ymo"]
+[ext_resource type="Script" uid="uid://bh3dnt6cd7tkx" path="res://Entities/BasicEnemy/enemy.gd" id="2_ginvw"]
 [ext_resource type="Texture2D" uid="uid://wt3c1btrca8j" path="res://Entities/BasicEnemy/blueTexture.png" id="4_kra7d"]
-[ext_resource type="Script" uid="uid://c1qjt0tm70hgk" path="res://Components/health_component.gd" id="5_phteo"]
 [ext_resource type="Script" uid="uid://dj35xi6x81jor" path="res://Components/enemy_shoot_component.gd" id="6_jn3v6"]
-[ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_s5wyf"]
-[ext_resource type="Script" uid="uid://dhrtbx7comp1a" path="res://Components/hurtbox_component.gd" id="8_hurtbox"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_nj7y0"]
-size = Vector2(18, 18)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurtbox"]
-size = Vector2(18, 18)
-
-[node name="Enemy" type="CharacterBody2D" unique_id=179062938 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent", "hurtboxComponent")]
-script = ExtResource("1_kra7d")
+[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("healthComponent", "healthDisplayComponent") instance=ExtResource("1_atj7c")]
+script = ExtResource("2_ginvw")
 healthComponent = NodePath("Group_HealthComponents/HealthComponent")
 healthDisplayComponent = NodePath("Group_DisplayComponents/HealthDisplayComponent")
-hurtboxComponent = NodePath("Group_HealthComponents/HurtboxComponent")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1889304441]
-shape = SubResource("RectangleShape2D_nj7y0")
-
-[node name="Group_MovementComponents" type="Node2D" parent="." unique_id=1200723336]
-
-[node name="EnemyMovementComponent" type="Node" parent="Group_MovementComponents" unique_id=679859054 node_paths=PackedStringArray("entity")]
+[node name="EnemyMoveComponent" type="Node" parent="Group_MovementComponents" parent_id_path=PackedInt32Array(178335340) index="0" unique_id=1879233807 node_paths=PackedStringArray("entity")]
 script = ExtResource("1_wcjvb")
 entity = NodePath("../..")
 
-[node name="FacingComponent" type="Node" parent="Group_MovementComponents" unique_id=1078038251]
-script = ExtResource("2_kra7d")
-
-[node name="Group_DisplayComponents" type="Node2D" parent="." unique_id=1356333592]
-
-[node name="Sprite2D" type="Sprite2D" parent="Group_DisplayComponents" unique_id=1223371485]
-position = Vector2(-4.7683716e-07, 9.536743e-07)
-scale = Vector2(0.14516129, 0.16981132)
+[node name="Sprite2D" parent="Group_DisplayComponents" parent_id_path=PackedInt32Array(1137442348) index="0" unique_id=386316919]
+position = Vector2(-9.536743e-07, -0.08333515)
+scale = Vector2(0.14285715, 0.16823897)
 texture = ExtResource("4_kra7d")
 
-[node name="HealthDisplayComponent" type="Node" parent="Group_DisplayComponents" unique_id=2002189764 node_paths=PackedStringArray("health_component")]
-script = ExtResource("4_c5ymo")
-health_component = NodePath("../../Group_HealthComponents/HealthComponent")
-metadata/_custom_type_script = "uid://obmawqbp2dbr"
-
-[node name="Group_HealthComponents" type="Node2D" parent="." unique_id=2118772165]
-
-[node name="HurtboxComponent" type="Area2D" parent="Group_HealthComponents" unique_id=570960177]
-collision_layer = 2
-collision_mask = 0
-script = ExtResource("8_hurtbox")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Group_HealthComponents/HurtboxComponent" unique_id=272186007]
-shape = SubResource("RectangleShape2D_hurtbox")
-
-[node name="HealthComponent" type="Node" parent="Group_HealthComponents" unique_id=375520311 node_paths=PackedStringArray("entity", "healthDisplay")]
-script = ExtResource("5_phteo")
-entity = NodePath("../..")
-healthDisplay = NodePath("../../Group_DisplayComponents/HealthDisplayComponent")
-
-[node name="Group_CombatComponents" type="Node2D" parent="." unique_id=2069830341]
-
-[node name="EnemyShootComponent" type="Node" parent="Group_CombatComponents" unique_id=24534795 node_paths=PackedStringArray("entity")]
+[node name="EnemyShootComponent" type="Node" parent="Group_CombatComponents" parent_id_path=PackedInt32Array(1757825401) index="0" unique_id=1694847574]
 script = ExtResource("6_jn3v6")
-entity = NodePath("../..")
-bullet_scene = ExtResource("7_s5wyf")

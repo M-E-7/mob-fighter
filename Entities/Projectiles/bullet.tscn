@@ -1,13 +1,12 @@
 [gd_scene format=3 uid="uid://bw4k36ug8v1ji"]
 
-[ext_resource type="Script" path="res://Entities/Projectiles/bullet.gd" id="1_bullet"]
+[ext_resource type="Script" uid="uid://cub4tw3u2o8n" path="res://Entities/Projectiles/bullet.gd" id="1_bullet"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 2.0
 
 [node name="Bullet" type="Area2D" unique_id=1719329206]
 collision_mask = 2
-monitoring = true
 script = ExtResource("1_bullet")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1646644829]
