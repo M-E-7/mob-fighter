@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://drljk71b3fnce"]
-
-[ext_resource type="Script" uid="uid://bxmsptut47wot" path="res://Components/Scripts/player_movement_component.gd" id="1_8nc1y"]
-
-[node name="PlayerMovementComponent" type="Node" unique_id=980605230 node_paths=PackedStringArray("entity")]
-script = ExtResource("1_8nc1y")
-entity = NodePath("")

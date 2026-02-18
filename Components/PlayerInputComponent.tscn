@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/player_input_component.gd" id="1_pic"]
+
+[node name="PlayerInputComponent" type="Node" node_paths=PackedStringArray("entity")]
+script = ExtResource("1_pic")
+entity = NodePath("")

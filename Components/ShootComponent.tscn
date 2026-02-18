@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cl25ctwftxc60" path="res://Components/Scripts/shoot_component.gd" id="1_sc"]
+[ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="2_bullet"]
+
+[node name="ShootComponent" type="Node" node_paths=PackedStringArray("entity")]
+script = ExtResource("1_sc")
+entity = NodePath("")
+bullet_scene = ExtResource("2_bullet")

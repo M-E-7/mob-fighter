@@ -1,4 +1,6 @@
 extends LivingEntity
+class_name Enemy
+
 ## Enemy entity that chases and shoots at the player
 
 

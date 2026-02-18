@@ -1,31 +1,41 @@
 extends CharacterBody2D
 class_name LivingEntity
-## Entity coordinator that manages components
-## Provides clean API for external systems to access player components
+
+@export_group("Components")
+@export var inputComponent: InputComponent
+@export var movementComponent: MovementComponent
+@export var shootComponent: ShootComponent
+@export var hurtboxComponent: HurtboxComponent
+@export var healthComponent: HealthComponent
+@export var healthDisplayComponent: HealthDisplayComponent
 
 @export_group("Movement Settings")
-# @export var movementComponent: PlayerMovementComponent
-@export var hurtboxComponent: HurtboxComponent
 @export var max_speed: float = 200.0
 @export var acceleration: float = 1000.0
 @export var friction: float = 800.0
 
 @export_group("Health Settings")
-@export var healthComponent: HealthComponent
-@export var healthDisplayComponent: HealthDisplayComponent
 @export var max_health: float = 100.0
 @export var starting_health: float = 100.0
 
 @export_group("Shooting Settings")
-@export var shootComponent: ShootComponent
 @export var fire_rate: float = 5.0
 @export var bullet_damage: float = 10.0
 
 
 func _ready() -> void:
 	pass
-	# EventBus.entity_died.connect(_on_entity_died)
-	# EventBus.entity_damaged.connect(_on_entity_damaged)
+
+
+func _physics_process(delta: float) -> void:
+	if not inputComponent:
+		return
+
+	if movementComponent:
+		movementComponent.move(inputComponent.move_vector, delta)
+
+	if shootComponent:
+		shootComponent.try_shoot(inputComponent.shoot_pressed, inputComponent.aim_direction, delta)
 
 
 func _on_entity_died(entity: Node) -> void:

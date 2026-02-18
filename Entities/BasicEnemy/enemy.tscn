@@ -2,21 +2,27 @@
 
 [ext_resource type="PackedScene" uid="uid://c8p4xt0fmdmve" path="res://Entities/LivingEntity/living_entity.tscn" id="1_atj7c"]
 [ext_resource type="Script" uid="uid://bh3dnt6cd7tkx" path="res://Entities/BasicEnemy/enemy.gd" id="2_ginvw"]
-[ext_resource type="PackedScene" uid="uid://dcrchex71mx4s" path="res://Components/EnemyShootComponent.tscn" id="3_ginvw"]
-[ext_resource type="PackedScene" uid="uid://b5runqie88um5" path="res://Components/EnemyMovementComponent.tscn" id="4_5i364"]
+[ext_resource type="PackedScene" path="res://Components/EnemyInputComponent.tscn" id="3_eic"]
+[ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
+[ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
 [ext_resource type="Texture2D" uid="uid://wt3c1btrca8j" path="res://Entities/BasicEnemy/blueTexture.png" id="4_kra7d"]
 
-[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("shootComponent") instance=ExtResource("1_atj7c")]
+[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_atj7c")]
 script = ExtResource("2_ginvw")
-shootComponent = NodePath("EnemyShootComponent")
+inputComponent = NodePath("EnemyInputComponent")
+movementComponent = NodePath("MovementComponent")
+shootComponent = NodePath("ShootComponent")
 
-[node name="EnemyShootComponent" parent="." index="0" unique_id=106082970 node_paths=PackedStringArray("entity") instance=ExtResource("3_ginvw")]
+[node name="EnemyInputComponent" parent="." index="0" node_paths=PackedStringArray("entity") instance=ExtResource("3_eic")]
 entity = NodePath("..")
 
-[node name="EnemyMoveComponent" parent="." index="1" unique_id=1019981700 node_paths=PackedStringArray("entity") instance=ExtResource("4_5i364")]
+[node name="MovementComponent" parent="." index="1" node_paths=PackedStringArray("entity") instance=ExtResource("4_mc")]
 entity = NodePath("..")
 
-[node name="SpriteDisplay" parent="." index="6" unique_id=386316919]
+[node name="ShootComponent" parent="." index="2" node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
+entity = NodePath("..")
+
+[node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
 position = Vector2(-9.536743e-07, -0.08333515)
 scale = Vector2(0.14285715, 0.16823897)
 texture = ExtResource("4_kra7d")
