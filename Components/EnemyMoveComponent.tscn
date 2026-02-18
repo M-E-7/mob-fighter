@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b5runqie88um5"]
+
+[ext_resource type="Script" uid="uid://crceaxci77wba" path="res://Components/Scripts/enemy_movement_component.gd" id="1_yody5"]
+
+[node name="EnemyMoveComponent" type="Node" unique_id=1019981700 node_paths=PackedStringArray("entity")]
+script = ExtResource("1_yody5")
+entity = NodePath("")

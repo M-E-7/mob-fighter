@@ -1,15 +1,12 @@
 [gd_scene format=3 uid="uid://c8p4xt0fmdmve"]
 
 [ext_resource type="Script" uid="uid://17whddyve7vc" path="res://Entities/LivingEntity/livingEntity.gd" id="1_dp8jy"]
+[ext_resource type="PackedScene" uid="uid://b8forhshb4tdk" path="res://Components/HurtboxComponent.tscn" id="2_dp8jy"]
 [ext_resource type="Texture2D" uid="uid://bae8suidvnwa7" path="res://Entities/LivingEntity/whiteTexture.png" id="2_vbkgc"]
-[ext_resource type="Script" uid="uid://obmawqbp2dbr" path="res://Components/health_display_component.gd" id="3_c7hku"]
-[ext_resource type="Script" uid="uid://dhrtbx7comp1a" path="res://Components/hurtbox_component.gd" id="4_okp11"]
-[ext_resource type="Script" uid="uid://c1qjt0tm70hgk" path="res://Components/health_component.gd" id="5_h8fn5"]
+[ext_resource type="PackedScene" uid="uid://crgs4kvx2c3r0" path="res://Components/HealthComponent.tscn" id="3_dp8jy"]
+[ext_resource type="PackedScene" uid="uid://ta06skm670i1" path="res://Components/HealthDisplayComponent.tscn" id="4_dug18"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv1ah"]
-size = Vector2(18, 18)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurtbox"]
 size = Vector2(18, 18)
 
 [node name="LivingEntity" type="CharacterBody2D" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent")]
@@ -22,21 +19,12 @@ healthDisplayComponent = NodePath("HealthDisplayComponent")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_mv1ah")
 
-[node name="HurtboxComponent" type="Area2D" parent="." unique_id=247793805]
-collision_layer = 2
-collision_mask = 0
-script = ExtResource("4_okp11")
+[node name="HurtboxComponent" parent="." unique_id=117197616 instance=ExtResource("2_dp8jy")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent" unique_id=1915092955]
-shape = SubResource("RectangleShape2D_hurtbox")
-
-[node name="HealthComponent" type="Node" parent="." unique_id=1768236817 node_paths=PackedStringArray("entity")]
-script = ExtResource("5_h8fn5")
+[node name="HealthComponent" parent="." unique_id=168642675 node_paths=PackedStringArray("entity") instance=ExtResource("3_dp8jy")]
 entity = NodePath("..")
 
-[node name="HealthDisplayComponent" type="Node" parent="." unique_id=1536352201]
-script = ExtResource("3_c7hku")
-metadata/_custom_type_script = "uid://obmawqbp2dbr"
+[node name="HealthDisplayComponent" parent="." unique_id=444699156 instance=ExtResource("4_dug18")]
 
 [node name="SpriteDisplay" type="Sprite2D" parent="." unique_id=386316919]
 position = Vector2(-9.536743e-07, -1.1920929e-06)

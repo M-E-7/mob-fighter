@@ -20,10 +20,12 @@ func _physics_process(delta: float) -> void:
 
 
 func should_shoot() -> bool:
+	# override this
 	return false
 
 
 func get_direction() -> Vector2:
+	# override this
 	return Vector2.RIGHT
 
 

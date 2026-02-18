@@ -24,8 +24,8 @@ class_name LivingEntity
 
 func _ready() -> void:
 	pass
-	EventBus.entity_died.connect(_on_entity_died)
-	EventBus.entity_damaged.connect(_on_entity_damaged)
+	# EventBus.entity_died.connect(_on_entity_died)
+	# EventBus.entity_damaged.connect(_on_entity_damaged)
 
 
 func _on_entity_died(entity: Node) -> void:

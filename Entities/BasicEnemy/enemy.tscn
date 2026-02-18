@@ -1,26 +1,19 @@
 [gd_scene format=3 uid="uid://cfq18x28fbfcm"]
 
 [ext_resource type="PackedScene" uid="uid://c8p4xt0fmdmve" path="res://Entities/LivingEntity/living_entity.tscn" id="1_atj7c"]
-[ext_resource type="Script" uid="uid://crceaxci77wba" path="res://Components/enemy_movement_component.gd" id="1_wcjvb"]
 [ext_resource type="Script" uid="uid://bh3dnt6cd7tkx" path="res://Entities/BasicEnemy/enemy.gd" id="2_ginvw"]
+[ext_resource type="PackedScene" uid="uid://dcrchex71mx4s" path="res://Components/EnemyShootComponent.tscn" id="3_ginvw"]
+[ext_resource type="PackedScene" uid="uid://b5runqie88um5" path="res://Components/EnemyMoveComponent.tscn" id="4_5i364"]
 [ext_resource type="Texture2D" uid="uid://wt3c1btrca8j" path="res://Entities/BasicEnemy/blueTexture.png" id="4_kra7d"]
-[ext_resource type="Script" uid="uid://dj35xi6x81jor" path="res://Components/enemy_shoot_component.gd" id="6_jn3v6"]
-[ext_resource type="PackedScene" uid="uid://bw4k36ug8v1ji" path="res://Entities/Projectiles/bullet.tscn" id="7_bullet"]
 
-[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("hurtboxComponent", "healthComponent", "healthDisplayComponent", "shootComponent") instance=ExtResource("1_atj7c")]
+[node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("shootComponent") instance=ExtResource("1_atj7c")]
 script = ExtResource("2_ginvw")
-hurtboxComponent = NodePath("HurtboxComponent")
-healthComponent = NodePath("HealthComponent")
-healthDisplayComponent = NodePath("HealthDisplayComponent")
 shootComponent = NodePath("EnemyShootComponent")
 
-[node name="EnemyShootComponent" type="Node" parent="." index="0" unique_id=1694847574 node_paths=PackedStringArray("entity")]
-script = ExtResource("6_jn3v6")
+[node name="EnemyShootComponent" parent="." index="0" unique_id=106082970 node_paths=PackedStringArray("entity") instance=ExtResource("3_ginvw")]
 entity = NodePath("..")
-bullet_scene = ExtResource("7_bullet")
 
-[node name="EnemyMoveComponent" type="Node" parent="." index="1" unique_id=1879233807 node_paths=PackedStringArray("entity")]
-script = ExtResource("1_wcjvb")
+[node name="EnemyMoveComponent" parent="." index="1" unique_id=1019981700 node_paths=PackedStringArray("entity") instance=ExtResource("4_5i364")]
 entity = NodePath("..")
 
 [node name="SpriteDisplay" parent="." index="6" unique_id=386316919]
