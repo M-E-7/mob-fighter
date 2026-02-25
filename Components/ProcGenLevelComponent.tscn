@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cc48q27hmbdds"]
+
+[ext_resource type="Script" uid="uid://ytp02kn18wa0" path="res://Components/Scripts/proc_gen_level_component.gd" id="1_pg"]
+
+[node name="ProcGenLevelComponent" type="Node" unique_id=1797113652]
+script = ExtResource("1_pg")

@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://b7jws2ckucrfd" path="res://Entities/Player/player.gd" id="2_4wf4l"]
 [ext_resource type="PackedScene" path="res://Components/PlayerInputComponent.tscn" id="3_pic"]
 [ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
-[ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
 [ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="4_mv1ah"]
+[ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
 
 [node name="Player" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_tekja")]
 script = ExtResource("2_4wf4l")
@@ -13,13 +13,13 @@ inputComponent = NodePath("PlayerInputComponent")
 movementComponent = NodePath("MovementComponent")
 shootComponent = NodePath("ShootComponent")
 
-[node name="PlayerInputComponent" parent="." index="0" node_paths=PackedStringArray("entity") instance=ExtResource("3_pic")]
+[node name="PlayerInputComponent" parent="." index="0" unique_id=1327699038 node_paths=PackedStringArray("entity") instance=ExtResource("3_pic")]
 entity = NodePath("..")
 
-[node name="MovementComponent" parent="." index="1" node_paths=PackedStringArray("entity") instance=ExtResource("4_mc")]
+[node name="MovementComponent" parent="." index="1" unique_id=908348739 node_paths=PackedStringArray("entity") instance=ExtResource("4_mc")]
 entity = NodePath("..")
 
-[node name="ShootComponent" parent="." index="2" node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
+[node name="ShootComponent" parent="." index="2" unique_id=549600327 node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
 entity = NodePath("..")
 
 [node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
