@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/enemy_spawner_component.gd" id="1_esp"]
+
+[node name="EnemySpawnerComponent" type="Node"]
+script = ExtResource("1_esp")

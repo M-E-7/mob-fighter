@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var _proc_gen: ProcGenLevelComponent = $ProcGenLevelComponent
 @onready var _player: Node2D = $Player
+@onready var _spawner: EnemySpawnerComponent = $EnemySpawnerComponent
 
 
 func _ready() -> void:
@@ -10,3 +11,4 @@ func _ready() -> void:
 
 func _on_level_generated(spawn_pos: Vector2) -> void:
 	_player.global_position = spawn_pos
+	_spawner.start(_proc_gen)

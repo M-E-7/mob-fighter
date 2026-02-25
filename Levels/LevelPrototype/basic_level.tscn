@@ -4,23 +4,23 @@
 [ext_resource type="PackedScene" uid="uid://cib5unlpojl15" path="res://Entities/Player/player.tscn" id="1_tcqy8"]
 [ext_resource type="PackedScene" uid="uid://cfq18x28fbfcm" path="res://Entities/BasicEnemy/enemy.tscn" id="2_i5jxq"]
 [ext_resource type="PackedScene" uid="uid://cc48q27hmbdds" path="res://Components/ProcGenLevelComponent.tscn" id="3_i5jxq"]
+[ext_resource type="PackedScene" path="res://Components/EnemySpawnerComponent.tscn" id="4_esp"]
 
 [node name="BasicLevel" type="Node2D" unique_id=1745901464]
 script = ExtResource("0_level")
 
 [node name="Player" parent="." unique_id=1517977448 instance=ExtResource("1_tcqy8")]
 position = Vector2(445, 392)
-max_speed = 2000.0
-acceleration = 10000.0
+max_speed = 400.0
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1348273924]
 position = Vector2(12, -24)
 
-[node name="Enemy" parent="." unique_id=1691853550 instance=ExtResource("2_i5jxq")]
-position = Vector2(79, 80)
-
 [node name="ProcGenLevelComponent" parent="." unique_id=1797113652 instance=ExtResource("3_i5jxq")]
 arena_width = 1000
 arena_height = 1000
+
+[node name="EnemySpawnerComponent" parent="." unique_id=1767096871 instance=ExtResource("4_esp")]
+enemy_scene = ExtResource("2_i5jxq")
 
 [editable path="ProcGenLevelComponent"]
