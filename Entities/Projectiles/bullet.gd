@@ -20,6 +20,11 @@ func setup(dir: Vector2, dmg: float, src: Node2D, spd: float = 500.0) -> void:
 	rotation = direction.angle()
 
 
+func _on_body_entered(body: Node2D) -> void:
+	if body is StaticBody2D:
+		queue_free()
+
+
 func _on_area_entered(area: Area2D) -> void:
 	if area is HurtboxComponent:
 		if not is_instance_valid(source):
