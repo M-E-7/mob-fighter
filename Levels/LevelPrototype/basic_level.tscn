@@ -12,6 +12,8 @@ script = ExtResource("0_level")
 [node name="Player" parent="." unique_id=1517977448 instance=ExtResource("1_tcqy8")]
 position = Vector2(445, 392)
 max_speed = 400.0
+max_health = 10000.0
+starting_health = 10000.0
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1348273924]
 position = Vector2(12, -24)

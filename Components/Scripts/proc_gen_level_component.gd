@@ -19,6 +19,8 @@ signal level_generated(spawn_position: Vector2)
 
 ## The center of the arena — place the player here after generation
 var spawn_position: Vector2
+## Grid-based pathfinding map, available after level_generated fires
+var astar_grid: AStarGrid2D
 
 var _container: Node2D
 var _noise: FastNoiseLite
@@ -35,6 +37,7 @@ class WallRenderer extends Node2D:
 
 
 func _ready() -> void:
+	add_to_group("proc_gen")
 	generate.call_deferred()
 
 
@@ -124,6 +127,20 @@ func _build_level() -> void:
 
 	_container.add_child(body)
 	_container.add_child(renderer)
+	_build_astar(grid)
+
+
+func _build_astar(grid: Array) -> void:
+	astar_grid = AStarGrid2D.new()
+	astar_grid.region = Rect2i(0, 0, arena_width, arena_height)
+	astar_grid.cell_size = Vector2(cell_size, cell_size)
+	astar_grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	astar_grid.update()
+
+	for y in range(arena_height):
+		for x in range(arena_width):
+			if grid[y][x]:
+				astar_grid.set_point_solid(Vector2i(x, y))
 
 
 func _build_grid() -> Array:
