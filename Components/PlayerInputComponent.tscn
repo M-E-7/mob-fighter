@@ -1,7 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://ccemi0og3li1u"]
 
-[ext_resource type="Script" path="res://Components/Scripts/player_input_component.gd" id="1_pic"]
+[ext_resource type="Script" uid="uid://dwt8mv1523iui" path="res://Components/Scripts/player_input_component.gd" id="1_pic"]
 
-[node name="PlayerInputComponent" type="Node" node_paths=PackedStringArray("entity")]
+[node name="PlayerInputComponent" type="Node" unique_id=1956226169]
 script = ExtResource("1_pic")
-entity = NodePath("")

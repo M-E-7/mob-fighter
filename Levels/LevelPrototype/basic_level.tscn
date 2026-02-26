@@ -19,8 +19,9 @@ starting_health = 10000.0
 position = Vector2(12, -24)
 
 [node name="ProcGenLevelComponent" parent="." unique_id=1797113652 instance=ExtResource("3_i5jxq")]
-arena_width = 1000
-arena_height = 1000
+arena_width = 400
+arena_height = 400
+noise_frequency = 1.0
 
 [node name="EnemySpawnerComponent" parent="." unique_id=1767096871 instance=ExtResource("4_esp")]
 enemy_scene = ExtResource("2_i5jxq")

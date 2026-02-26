@@ -42,7 +42,6 @@ func _process(delta: float) -> void:
 
 
 func _recalculate_path() -> void:
-	_path_index = 0
 	var cs := _proc_gen.cell_size
 
 	var from := Vector2i(
@@ -58,6 +57,10 @@ func _recalculate_path() -> void:
 	_path = PackedVector2Array()
 	for cell in cell_path:
 		_path.append(Vector2((cell.x + 0.5) * cs, (cell.y + 0.5) * cs))
+
+	# Skip the first waypoint (center of the current cell) — the enemy is already
+	# inside that cell, so targeting its center causes backward movement on recalc
+	_path_index = 1 if _path.size() > 1 else 0
 
 
 func _follow_path() -> void:
