@@ -2,10 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://c8p4xt0fmdmve" path="res://Entities/LivingEntity/living_entity.tscn" id="1_tekja"]
 [ext_resource type="Script" uid="uid://b7jws2ckucrfd" path="res://Entities/Player/player.gd" id="2_4wf4l"]
-[ext_resource type="PackedScene" path="res://Components/PlayerInputComponent.tscn" id="3_pic"]
+[ext_resource type="PackedScene" uid="uid://ccemi0og3li1u" path="res://Components/PlayerInputComponent.tscn" id="3_pic"]
 [ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
-[ext_resource type="Texture2D" uid="uid://dljtw1vf7hbi3" path="res://Entities/Player/purpleTexture.png" id="4_mv1ah"]
 [ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
+[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="7_01a4e"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_circle"]
+size = Vector2(18, 18)
 
 [node name="Player" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_tekja")]
 script = ExtResource("2_4wf4l")
@@ -23,6 +26,14 @@ entity = NodePath("..")
 entity = NodePath("..")
 
 [node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
-position = Vector2(-2.3841858e-07, -9.536743e-07)
-scale = Vector2(0.08333333, 0.06642065)
-texture = ExtResource("4_mv1ah")
+visible = false
+
+[node name="CircleDisplay" type="MeshInstance2D" parent="." index="8" unique_id=1479216286]
+mesh = SubResource("QuadMesh_circle")
+
+[node name="NeonShaderComponent" parent="." index="9" unique_id=1473147525 node_paths=PackedStringArray("entity") instance=ExtResource("7_01a4e")]
+entity = NodePath("..")
+neon_color = Color(1.732707e-06, 0.6250728, 0.5000574, 1)
+glow_intensity = 2.8
+pulse_speed = 7.5
+pulse_amount = 0.45

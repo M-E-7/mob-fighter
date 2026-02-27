@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/neon_shader_component.gd" id="1_nsc"]
+
+[node name="NeonShaderComponent" type="Node" node_paths=PackedStringArray("entity")]
+script = ExtResource("1_nsc")
+entity = NodePath("")
