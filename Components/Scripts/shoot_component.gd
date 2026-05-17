@@ -21,7 +21,7 @@ func try_shoot(shoot_pressed: bool, direction: Vector2, delta: float) -> void:
 func shoot(direction: Vector2) -> void:
 	var bullet: Bullet = bullet_scene.instantiate()
 
-	bullet.setup(direction, entity.bullet_damage, entity)
+	bullet.setup(direction, entity.bullet_damage, entity, entity.bullet_speed)
 
 	entity.get_tree().current_scene.add_child(bullet)
 	bullet.global_position = entity.global_position

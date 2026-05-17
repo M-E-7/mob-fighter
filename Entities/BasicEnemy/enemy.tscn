@@ -6,12 +6,16 @@
 [ext_resource type="Texture2D" uid="uid://wt3c1btrca8j" path="res://Entities/BasicEnemy/blueTexture.png" id="4_kra7d"]
 [ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
 [ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
+[ext_resource type="PackedScene" path="res://Components/XPDropComponent.tscn" id="6_xpd"]
+[ext_resource type="PackedScene" path="res://Entities/ExperienceOrb/experience_orb.tscn" id="7_orb"]
 
 [node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_atj7c")]
 script = ExtResource("2_ginvw")
 inputComponent = NodePath("EnemyInputComponent")
 movementComponent = NodePath("MovementComponent")
 shootComponent = NodePath("ShootComponent")
+max_health = 5.0
+starting_health = 5.0
 
 [node name="EnemyInputComponent" parent="." index="0" unique_id=236655531 node_paths=PackedStringArray("entity") instance=ExtResource("3_eic")]
 entity = NodePath("..")
@@ -26,3 +30,7 @@ entity = NodePath("..")
 position = Vector2(-9.536743e-07, -0.08333515)
 scale = Vector2(0.14285715, 0.16823897)
 texture = ExtResource("4_kra7d")
+
+[node name="XPDropComponent" parent="." index="8" unique_id=112233445 node_paths=PackedStringArray("entity") instance=ExtResource("6_xpd")]
+entity = NodePath("..")
+orb_scene = ExtResource("7_orb")

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
 [ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
 [ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="7_01a4e"]
+[ext_resource type="PackedScene" path="res://Components/XPComponent.tscn" id="8_xpc"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_circle"]
 size = Vector2(18, 18)
@@ -37,3 +38,6 @@ neon_color = Color(1.732707e-06, 0.6250728, 0.5000574, 1)
 glow_intensity = 2.8
 pulse_speed = 7.5
 pulse_amount = 0.45
+
+[node name="XPComponent" parent="." index="10" unique_id=998877665 node_paths=PackedStringArray("entity") instance=ExtResource("8_xpc")]
+entity = NodePath("..")

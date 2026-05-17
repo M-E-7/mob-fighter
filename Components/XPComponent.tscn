@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/xp_component.gd" id="1_xpc"]
+
+[node name="XPComponent" type="Node" node_paths=PackedStringArray("entity")]
+script = ExtResource("1_xpc")
+entity = NodePath("")
