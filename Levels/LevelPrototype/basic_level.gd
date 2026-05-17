@@ -30,8 +30,11 @@ func _ready() -> void:
 	_player1.add_child(_camera_p1)
 
 	# Camera2DP2 lives in SubViewportP2 and is position-synced to Player2 in _process().
+	# Explicitly share SubViewportP1's world so P2's camera sees the same scene.
 	_camera_p2 = Camera2D.new()
+	_subviewport_p2.world_2d = _subviewport_p1.world_2d
 	_subviewport_p2.add_child(_camera_p2)
+	_camera_p2.global_position = _player2.global_position
 
 	_level_up_ui.set("xp_component", _player1.get_node("XPComponent") as XPComponent)
 	_level_up_ui.set("xp_component_p2", _player2.get_node("XPComponent") as XPComponent)
@@ -48,6 +51,7 @@ func _process(_delta: float) -> void:
 func _on_level_generated(spawn_pos: Vector2) -> void:
 	_player1.global_position = spawn_pos
 	_player2.global_position = spawn_pos + Vector2(60, 0)
+	_camera_p2.global_position = spawn_pos + Vector2(60, 0)
 	_spawner.start(_proc_gen)
 
 

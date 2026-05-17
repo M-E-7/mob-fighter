@@ -22,6 +22,7 @@ offset_bottom = 1080.0
 stretch = true
 
 [node name="SubViewportP1" type="SubViewport" parent="SplitScreenLayout/SubViewportContainerP1" unique_id=3000000004]
+own_world_2d = true
 size = Vector2i(960, 1080)
 
 [node name="DebugBG" type="ColorRect" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1"]
