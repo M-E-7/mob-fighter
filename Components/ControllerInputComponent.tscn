@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b3kx8p2mdanvq"]
+
+[ext_resource type="Script" path="res://Components/Scripts/controller_input_component.gd" id="1_cic"]
+
+[node name="ControllerInputComponent" type="Node"]
+script = ExtResource("1_cic")

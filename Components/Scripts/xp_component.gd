@@ -6,6 +6,7 @@ class_name XPComponent
 
 @export_group("Settings")
 @export var base_xp_required: float = 10.0
+@export var track_xp: bool = true
 
 var current_xp: float = 0.0
 var current_level: int = 0
@@ -22,7 +23,8 @@ func _ready() -> void:
 		"max_health":   entity.max_health,
 		"bullet_speed": entity.bullet_speed,
 	}
-	EventBus.xp_collected.connect(_on_xp_collected)
+	if track_xp:
+		EventBus.xp_collected.connect(_on_xp_collected)
 
 
 func _on_xp_collected(amount: float) -> void:

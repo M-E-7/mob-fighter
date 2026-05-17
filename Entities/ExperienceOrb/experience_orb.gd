@@ -13,14 +13,19 @@ var _collected: bool = false
 
 
 func _ready() -> void:
-	_player = get_tree().get_first_node_in_group("player")
+	_player = _get_nearest_player()
 	var timer := get_tree().create_timer(lifetime)
 	timer.timeout.connect(_on_lifetime_expired)
 
 
 func _process(delta: float) -> void:
-	if _collected or not is_instance_valid(_player):
+	if _collected:
 		return
+
+	if not is_instance_valid(_player):
+		_player = _get_nearest_player()
+		if not is_instance_valid(_player):
+			return
 
 	var dist := global_position.distance_to(_player.global_position)
 
@@ -47,3 +52,16 @@ func _collect() -> void:
 	_collected = true
 	EventBus.xp_collected.emit(xp_value)
 	queue_free()
+
+
+func _get_nearest_player() -> Node2D:
+	var nearest: Node2D = null
+	var nearest_dist := INF
+	for p in get_tree().get_nodes_in_group("player"):
+		if not p is Node2D:
+			continue
+		var d := global_position.distance_to(p.global_position)
+		if d < nearest_dist:
+			nearest_dist = d
+			nearest = p
+	return nearest

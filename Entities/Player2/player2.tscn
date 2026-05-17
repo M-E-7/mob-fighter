@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://d8n2xp4mc7rvs"]
+
+[ext_resource type="PackedScene" uid="uid://c8p4xt0fmdmve" path="res://Entities/LivingEntity/living_entity.tscn" id="1_tekja"]
+[ext_resource type="Script" path="res://Entities/Player2/player2.gd" id="2_p2"]
+[ext_resource type="PackedScene" path="res://Components/ControllerInputComponent.tscn" id="3_cic"]
+[ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
+[ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
+[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="7_01a4e"]
+[ext_resource type="PackedScene" path="res://Components/XPComponent.tscn" id="8_xpc"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_circle"]
+size = Vector2(18, 18)
+
+[node name="Player2" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_tekja")]
+script = ExtResource("2_p2")
+inputComponent = NodePath("ControllerInputComponent")
+movementComponent = NodePath("MovementComponent")
+shootComponent = NodePath("ShootComponent")
+
+[node name="ControllerInputComponent" parent="." index="0" unique_id=2327699038 node_paths=PackedStringArray("entity") instance=ExtResource("3_cic")]
+entity = NodePath("..")
+
+[node name="MovementComponent" parent="." index="1" unique_id=2908348739 node_paths=PackedStringArray("entity") instance=ExtResource("4_mc")]
+entity = NodePath("..")
+
+[node name="ShootComponent" parent="." index="2" unique_id=2549600327 node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
+entity = NodePath("..")
+
+[node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
+visible = false
+
+[node name="CircleDisplay" type="MeshInstance2D" parent="." index="8" unique_id=2479216286]
+mesh = SubResource("QuadMesh_circle")
+
+[node name="NeonShaderComponent" parent="." index="9" unique_id=2473147525 node_paths=PackedStringArray("entity") instance=ExtResource("7_01a4e")]
+entity = NodePath("..")
+neon_color = Color(1.0, 0.35, 0.05, 1)
+glow_intensity = 2.8
+pulse_speed = 7.5
+pulse_amount = 0.45
+
+[node name="XPComponent" parent="." index="10" unique_id=2998877665 node_paths=PackedStringArray("entity") instance=ExtResource("8_xpc")]
+entity = NodePath("..")
+track_xp = false

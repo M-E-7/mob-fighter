@@ -19,9 +19,33 @@ anchor_bottom = 1.0
 theme_override_constants/separation = 24
 
 [node name="TitleLabel" type="Label" parent="BackgroundDim/CenterContainer/VBoxContainer"]
-text = "Level Up! Choose a power-up:"
+text = "Level Up! Each player, choose your power-up:"
 theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 
-[node name="CardsContainer" type="HBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer"]
+[node name="PlayersHBox" type="HBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer"]
+theme_override_constants/separation = 32
+
+[node name="P1Section" type="VBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox"]
+theme_override_constants/separation = 12
+
+[node name="P1HeaderLabel" type="Label" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P1Section"]
+text = "Player 1  (Mouse to click)"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="CardsContainerP1" type="HBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P1Section"]
+theme_override_constants/separation = 20
+
+[node name="VSeparator" type="VSeparator" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox"]
+
+[node name="P2Section" type="VBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox"]
+theme_override_constants/separation = 12
+
+[node name="P2HeaderLabel" type="Label" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P2Section"]
+text = "Player 2  (D-Pad to navigate, A to confirm)"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="CardsContainerP2" type="HBoxContainer" parent="BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P2Section"]
 theme_override_constants/separation = 20

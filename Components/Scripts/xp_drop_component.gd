@@ -18,5 +18,6 @@ func _on_entity_died(dead_entity: LivingEntity) -> void:
 		return
 	var orb: ExperienceOrb = orb_scene.instantiate()
 	orb.xp_value = xp_amount
-	entity.get_tree().current_scene.add_child(orb)
-	orb.global_position = entity.global_position
+	var spawn_pos := entity.global_position
+	entity.get_parent().add_child.call_deferred(orb)
+	orb.set_deferred("global_position", spawn_pos)

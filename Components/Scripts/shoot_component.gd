@@ -23,5 +23,5 @@ func shoot(direction: Vector2) -> void:
 
 	bullet.setup(direction, entity.bullet_damage, entity, entity.bullet_speed)
 
-	entity.get_tree().current_scene.add_child(bullet)
+	entity.get_parent().add_child(bullet)
 	bullet.global_position = entity.global_position

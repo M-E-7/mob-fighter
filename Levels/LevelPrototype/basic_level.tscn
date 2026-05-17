@@ -6,29 +6,105 @@
 [ext_resource type="PackedScene" uid="uid://cc48q27hmbdds" path="res://Components/ProcGenLevelComponent.tscn" id="3_i5jxq"]
 [ext_resource type="PackedScene" path="res://Components/EnemySpawnerComponent.tscn" id="4_esp"]
 [ext_resource type="PackedScene" path="res://UI/LevelUpUI.tscn" id="5_lui"]
+[ext_resource type="PackedScene" path="res://Entities/Player2/player2.tscn" id="6_p2"]
 
 [node name="BasicLevel" type="Node2D" unique_id=1745901464]
 script = ExtResource("0_level")
 
-[node name="Player" parent="." unique_id=1517977448 instance=ExtResource("1_tcqy8")]
+[node name="SplitScreenLayout" type="Control" parent="." unique_id=3000000001]
+mouse_filter = 2
+
+[node name="SubViewportContainerP1" type="SubViewportContainer" parent="SplitScreenLayout" unique_id=3000000003]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 960.0
+offset_bottom = 1080.0
+stretch = true
+
+[node name="SubViewportP1" type="SubViewport" parent="SplitScreenLayout/SubViewportContainerP1" unique_id=3000000004]
+size = Vector2i(960, 1080)
+
+[node name="DebugBG" type="ColorRect" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(1, 0, 0, 1)
+
+[node name="Player" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" unique_id=1517977448 instance=ExtResource("1_tcqy8")]
 position = Vector2(445, 392)
 max_speed = 400.0
 max_health = 10000.0
 starting_health = 10000.0
 
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1348273924]
-position = Vector2(12, -24)
+[node name="Player2" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" unique_id=3000000013 instance=ExtResource("6_p2")]
+position = Vector2(505, 392)
+max_speed = 400.0
+max_health = 10000.0
+starting_health = 10000.0
 
-[node name="ProcGenLevelComponent" parent="." unique_id=1797113652 instance=ExtResource("3_i5jxq")]
+[node name="ProcGenLevelComponent" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" unique_id=1797113652 instance=ExtResource("3_i5jxq")]
 arena_width = 400
 arena_height = 400
 
-[node name="EnemySpawnerComponent" parent="." unique_id=1767096871 instance=ExtResource("4_esp")]
+[node name="EnemySpawnerComponent" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" unique_id=1767096871 instance=ExtResource("4_esp")]
 enemy_scene = ExtResource("2_i5jxq")
 spawn_interval = 1.0
 max_enemies = 50
 
-[node name="LevelUpUI" parent="." unique_id=334455667 node_paths=PackedStringArray("xp_component") instance=ExtResource("5_lui")]
-xp_component = NodePath("../Player/XPComponent")
+[node name="SubViewportContainerP2" type="SubViewportContainer" parent="SplitScreenLayout" unique_id=3000000006]
+offset_left = 960.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+stretch = true
 
-[editable path="ProcGenLevelComponent"]
+[node name="SubViewportP2" type="SubViewport" parent="SplitScreenLayout/SubViewportContainerP2" unique_id=3000000007]
+size = Vector2i(960, 1080)
+
+[node name="DebugBG" type="ColorRect" parent="SplitScreenLayout/SubViewportContainerP2/SubViewportP2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 1, 1)
+
+[node name="OverlayP1" type="Control" parent="SplitScreenLayout" unique_id=3000000009]
+offset_right = 960.0
+offset_bottom = 1080.0
+visible = false
+mouse_filter = 2
+
+[node name="SpectatingLabelP1" type="Label" parent="SplitScreenLayout/OverlayP1" unique_id=3000000010]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = 20.0
+text = "SPECTATING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OverlayP2" type="Control" parent="SplitScreenLayout" unique_id=3000000011]
+offset_left = 960.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+visible = false
+mouse_filter = 2
+
+[node name="SpectatingLabelP2" type="Label" parent="SplitScreenLayout/OverlayP2" unique_id=3000000012]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = 20.0
+text = "SPECTATING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LevelUpUI" parent="." unique_id=334455667 instance=ExtResource("5_lui")]
+
+[editable path="SplitScreenLayout/SubViewportContainerP1/SubViewportP1/ProcGenLevelComponent"]
