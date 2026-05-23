@@ -2,6 +2,7 @@ extends Control
 class_name MainMenu
 
 const _LEVEL_SCENE := "res://Levels/LevelPrototype/basic_level.tscn"
+const _SETTINGS_SCENE := "res://Levels/Settings/Settings.tscn"
 
 const _COLOR_P1 := Color(0.0, 1.0, 0.9)
 const _COLOR_P2 := Color(1.0, 0.6, 0.0)
@@ -26,6 +27,7 @@ var _state_p2: _SlotState = _SlotState.IDLE
 @onready var _name_p2: Label = $CenterContainer/VBox/SlotsRow/SlotP2/VBox/Name
 @onready var _status_p1: Label = $CenterContainer/VBox/SlotsRow/SlotP1/VBox/Status
 @onready var _status_p2: Label = $CenterContainer/VBox/SlotsRow/SlotP2/VBox/Status
+@onready var _settings_button: Button = $CenterContainer/VBox/SettingsButton
 @onready var _quit_button: Button = $CenterContainer/VBox/QuitButton
 
 
@@ -33,6 +35,7 @@ func _ready() -> void:
 	_apply_theme()
 	_refresh_slot(1)
 	_refresh_slot(2)
+	_settings_button.pressed.connect(_on_settings_pressed)
 	_quit_button.pressed.connect(get_tree().quit)
 
 
@@ -89,6 +92,10 @@ func _set_state_p2(new_state: _SlotState) -> void:
 	_try_start()
 
 
+func _on_settings_pressed() -> void:
+	get_tree().change_scene_to_file(_SETTINGS_SCENE)
+
+
 func _try_start() -> void:
 	var p1_ready := _state_p1 == _SlotState.READY
 	var p2_active := _state_p2 != _SlotState.IDLE
@@ -136,6 +143,27 @@ func _apply_theme() -> void:
 	_name_p2.add_theme_font_size_override("font_size", 34)
 	_status_p1.add_theme_font_size_override("font_size", 18)
 	_status_p2.add_theme_font_size_override("font_size", 18)
+
+	var settings_normal := StyleBoxFlat.new()
+	settings_normal.bg_color = Color(0.07, 0.07, 0.12)
+	settings_normal.border_color = Color(0.25, 0.35, 0.5)
+	settings_normal.set_border_width_all(2)
+	settings_normal.set_corner_radius_all(4)
+	settings_normal.content_margin_left = 40.0
+	settings_normal.content_margin_right = 40.0
+	settings_normal.content_margin_top = 12.0
+	settings_normal.content_margin_bottom = 12.0
+	_settings_button.add_theme_stylebox_override("normal", settings_normal)
+
+	var settings_hover := settings_normal.duplicate() as StyleBoxFlat
+	settings_hover.bg_color = Color(0.1, 0.12, 0.2)
+	settings_hover.border_color = _COLOR_P1
+	_settings_button.add_theme_stylebox_override("hover", settings_hover)
+
+	_settings_button.add_theme_color_override("font_color", _COLOR_DIM)
+	_settings_button.add_theme_color_override("font_hover_color", _COLOR_P1)
+	_settings_button.add_theme_font_size_override("font_size", 22)
+	_settings_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 
 	var quit_normal := StyleBoxFlat.new()
 	quit_normal.bg_color = Color(0.12, 0.04, 0.04)

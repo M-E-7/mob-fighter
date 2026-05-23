@@ -69,6 +69,10 @@ autowrap_mode = 3
 [node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
 custom_minimum_size = Vector2(0, 40)
 
+[node name="SettingsButton" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 50)
+text = "SETTINGS"
+
 [node name="QuitButton" type="Button" parent="CenterContainer/VBox"]
 custom_minimum_size = Vector2(200, 50)
 text = "QUIT"

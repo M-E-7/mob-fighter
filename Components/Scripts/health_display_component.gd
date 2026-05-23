@@ -26,6 +26,13 @@ func _ready() -> void:
 	EventBus.health_changed.connect(_on_health_changed)
 
 
+func hide_bars() -> void:
+	if is_instance_valid(bg_bar):
+		bg_bar.visible = false
+	if is_instance_valid(hp_bar):
+		hp_bar.visible = false
+
+
 func _on_health_changed(entity: Node, current_health: float, max_health: float) -> void:
 	if entity == owner and max_health > 0.0:
 		hp_bar.size.x = bar_width * (current_health / max_health)

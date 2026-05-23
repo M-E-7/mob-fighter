@@ -35,7 +35,7 @@ func _on_area_entered(area: Area2D) -> void:
 			return
 		if _same_team(target):
 			return
-		area.take_damage(damage)
+		area.take_damage(damage, source as LivingEntity)
 	queue_free()
 
 

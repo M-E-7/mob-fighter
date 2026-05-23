@@ -1,0 +1,80 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Levels/Settings/settings.gd" id="1_settings"]
+
+[node name="Settings" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_settings")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.047, 0.047, 0.07, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="CenterContainer/VBox"]
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 40)
+
+[node name="TogglesPanel" type="PanelContainer" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(520, 0)
+
+[node name="TogglesVBox" type="VBoxContainer" parent="CenterContainer/VBox/TogglesPanel"]
+theme_override_constants/separation = 16
+
+[node name="HealthRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="HealthLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/HealthRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show Health Bar"
+
+[node name="HealthToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/HealthRow"]
+layout_mode = 2
+
+[node name="XPRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="XPLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show XP Bar"
+
+[node name="XPToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow"]
+layout_mode = 2
+
+[node name="KillsRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="KillsLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show Kill Counter"
+
+[node name="KillsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow"]
+layout_mode = 2
+
+[node name="PowerupsRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="PowerupsLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show Active Power-Ups"
+
+[node name="PowerupsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow"]
+layout_mode = 2
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 40)
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 50)
+text = "BACK"
