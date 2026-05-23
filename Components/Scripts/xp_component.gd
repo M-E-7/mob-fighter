@@ -34,11 +34,14 @@ func _on_xp_collected(amount: float) -> void:
 		current_xp -= required
 		current_level += 1
 		EventBus.player_leveled_up.emit(entity)
+	required = base_xp_required * pow(2.0, float(current_level))
+	EventBus.xp_updated.emit(entity, current_xp, required, current_level)
 
 
 func apply_power_up(power_up: PowerUpData) -> void:
 	_bonuses[power_up.stat_key] = _bonuses.get(power_up.stat_key, 0.0) + power_up.bonus_percent
 	_apply_stat(power_up.stat_key)
+	EventBus.power_up_applied.emit(entity, power_up)
 
 
 func _apply_stat(stat_key: String) -> void:

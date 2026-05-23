@@ -36,6 +36,10 @@ func _ready() -> void:
 	else:
 		_setup_split_screen()
 
+	var hud := preload("res://UI/HUD.tscn").instantiate() as HUD
+	add_child(hud)
+	hud.setup(_player1, _player2, GameConfig.player_count)
+
 	_proc_gen.level_generated.connect(_on_level_generated)
 	EventBus.entity_died.connect(_on_entity_died)
 

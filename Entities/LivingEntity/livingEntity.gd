@@ -23,6 +23,8 @@ class_name LivingEntity
 @export var bullet_damage: float = 10.0
 @export var bullet_speed: float = 500.0
 
+var last_attacker: LivingEntity
+
 
 func _ready() -> void:
 	pass
