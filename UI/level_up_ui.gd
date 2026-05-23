@@ -8,6 +8,8 @@ class_name LevelUpUI
 @onready var _cards_p1: HBoxContainer = $BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P1Section/CardsContainerP1
 @onready var _cards_p2: HBoxContainer = $BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P2Section/CardsContainerP2
 @onready var _p2_section: VBoxContainer = $BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/P2Section
+@onready var _p2_separator: VSeparator = $BackgroundDim/CenterContainer/VBoxContainer/PlayersHBox/VSeparator
+@onready var _title_label: Label = $BackgroundDim/CenterContainer/VBoxContainer/TitleLabel
 
 var _p2_picks: Array[PowerUpData] = []
 var _p2_card_panels: Array[PanelContainer] = []
@@ -18,6 +20,10 @@ var _p2_picked: bool = false
 
 func _ready() -> void:
 	visible = false
+	if GameConfig.player_count == 1:
+		_p2_section.hide()
+		_p2_separator.hide()
+		_title_label.text = "Level Up! Choose your power-up:"
 	EventBus.player_leveled_up.connect(_on_player_leveled_up)
 
 

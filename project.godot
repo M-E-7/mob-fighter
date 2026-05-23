@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="MobFighter"
-run/main_scene="uid://cinxk34tq5oy0"
+run/main_scene="res://Levels/MainMenu/MainMenu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 EventBus="*res://Autoloads/event_bus.gd"
 PowerUpRegistry="*res://Autoloads/power_up_registry.gd"
+GameConfig="*res://Autoloads/game_config.gd"
 
 [display]
 

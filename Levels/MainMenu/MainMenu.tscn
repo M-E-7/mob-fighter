@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://cmainmenu0001"]
+
+[ext_resource type="Script" path="res://Levels/MainMenu/main_menu.gd" id="1_script"]
+
+[node name="MainMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.047, 0.047, 0.07, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="CenterContainer/VBox"]
+text = "MOB FIGHTER"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/VBox"]
+text = "A Local Co-Op Shooter"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 60)
+
+[node name="SlotsRow" type="HBoxContainer" parent="CenterContainer/VBox"]
+alignment = 1
+theme_override_constants/separation = 60
+
+[node name="SlotP1" type="PanelContainer" parent="CenterContainer/VBox/SlotsRow"]
+custom_minimum_size = Vector2(420, 180)
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/VBox/SlotsRow/SlotP1"]
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="Name" type="Label" parent="CenterContainer/VBox/SlotsRow/SlotP1/VBox"]
+text = "PLAYER 1"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="CenterContainer/VBox/SlotsRow/SlotP1/VBox"]
+text = "Press any key to join"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SlotP2" type="PanelContainer" parent="CenterContainer/VBox/SlotsRow"]
+custom_minimum_size = Vector2(420, 180)
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/VBox/SlotsRow/SlotP2"]
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="Name" type="Label" parent="CenterContainer/VBox/SlotsRow/SlotP2/VBox"]
+text = "PLAYER 2"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="CenterContainer/VBox/SlotsRow/SlotP2/VBox"]
+text = "Press any button to join"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 40)
+
+[node name="QuitButton" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 50)
+text = "QUIT"
