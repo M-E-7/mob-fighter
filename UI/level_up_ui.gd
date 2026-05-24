@@ -2,6 +2,11 @@ extends CanvasLayer
 class_name LevelUpUI
 
 @export var card_count: int = 3
+
+const _STAT_LABELS: Dictionary = {
+	"max_speed": "Speed", "fire_rate": "Fire Rate",
+	"bullet_damage": "Damage", "max_health": "Max HP", "bullet_speed": "Blt Spd",
+}
 @export var xp_component: XPComponent
 @export var xp_component_p2: XPComponent
 
@@ -114,6 +119,17 @@ func _build_p1_card(power_up: PowerUpData) -> PanelContainer:
 	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(desc_label)
 
+	if is_instance_valid(xp_component):
+		var cur: float = xp_component.entity.get(power_up.stat_key)
+		var nxt: float = xp_component.get_projected_stat(power_up.stat_key, power_up.bonus_percent)
+		var sname: String = _STAT_LABELS.get(power_up.stat_key, power_up.stat_key)
+		var delta_lbl := Label.new()
+		delta_lbl.text = "%s: %.0f → %.0f" % [sname, cur, nxt]
+		delta_lbl.add_theme_font_size_override("font_size", 13)
+		delta_lbl.modulate = Color(0.6, 1.0, 0.6)
+		delta_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(delta_lbl)
+
 	var btn := Button.new()
 	btn.text = "Choose"
 	btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -142,6 +158,17 @@ func _build_p2_card(power_up: PowerUpData) -> PanelContainer:
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(desc_label)
+
+	if is_instance_valid(xp_component_p2):
+		var cur: float = xp_component_p2.entity.get(power_up.stat_key)
+		var nxt: float = xp_component_p2.get_projected_stat(power_up.stat_key, power_up.bonus_percent)
+		var sname: String = _STAT_LABELS.get(power_up.stat_key, power_up.stat_key)
+		var delta_lbl := Label.new()
+		delta_lbl.text = "%s: %.0f → %.0f" % [sname, cur, nxt]
+		delta_lbl.add_theme_font_size_override("font_size", 13)
+		delta_lbl.modulate = Color(0.6, 1.0, 0.6)
+		delta_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(delta_lbl)
 
 	var hint := Label.new()
 	hint.text = "◄ ► to navigate · A to confirm"

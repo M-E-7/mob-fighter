@@ -19,6 +19,7 @@ var _camera_p1: Camera2D
 var _camera_p2: Camera2D
 var _p1_dead: bool = false
 var _p2_dead: bool = false
+var _hud: HUD
 
 
 func _ready() -> void:
@@ -36,9 +37,12 @@ func _ready() -> void:
 	else:
 		_setup_split_screen()
 
-	var hud := preload("res://UI/HUD.tscn").instantiate() as HUD
-	add_child(hud)
-	hud.setup(_player1, _player2, GameConfig.player_count)
+	_hud = preload("res://UI/HUD.tscn").instantiate() as HUD
+	add_child(_hud)
+	_hud.setup(_player1, _player2, GameConfig.player_count)
+
+	var ftm := preload("res://UI/FloatingTextManager.tscn").instantiate()
+	_subviewport_p1.add_child(ftm)
 
 	_proc_gen.level_generated.connect(_on_level_generated)
 	EventBus.entity_died.connect(_on_entity_died)
@@ -85,3 +89,20 @@ func _on_entity_died(entity: LivingEntity) -> void:
 	elif is_instance_valid(_player2) and entity == _player2:
 		_p2_dead = true
 		_overlay_p2.visible = true
+
+	var all_dead := _p1_dead and (GameConfig.player_count == 1 or _p2_dead)
+	if all_dead:
+		_show_game_over()
+
+
+func _show_game_over() -> void:
+	GameConfig.result_kills_p1 = _hud.get_kills(1)
+	GameConfig.result_kills_p2 = _hud.get_kills(2)
+	GameConfig.result_survival_time = _hud.get_survival_time()
+	var xp1 := _player1.get_node_or_null("XPComponent") as XPComponent if is_instance_valid(_player1) else null
+	GameConfig.result_level_p1 = xp1.current_level if xp1 else 0
+	var xp2 := _player2.get_node_or_null("XPComponent") as XPComponent if is_instance_valid(_player2) else null
+	GameConfig.result_level_p2 = xp2.current_level if xp2 else 0
+	var go := preload("res://UI/GameOverUI.tscn").instantiate() as GameOverUI
+	add_child(go)
+	go.setup(GameConfig.player_count)

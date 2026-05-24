@@ -72,6 +72,56 @@ text = "Show Active Power-Ups"
 [node name="PowerupsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow"]
 layout_mode = 2
 
+[node name="DamageNumRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="DamageNumLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show Damage Numbers"
+
+[node name="DamageNumToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow"]
+layout_mode = 2
+
+[node name="LowHPRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="LowHPLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Low HP Warning"
+
+[node name="LowHPToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow"]
+layout_mode = 2
+
+[node name="XPFlashRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="XPFlashLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "XP Level-Up Flash"
+
+[node name="XPFlashToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow"]
+layout_mode = 2
+
+[node name="TimerRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="TimerLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show Survival Timer"
+
+[node name="TimerToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow"]
+layout_mode = 2
+
+[node name="XPPickupRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+
+[node name="XPPickupLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Show XP Pickup Text"
+
+[node name="XPPickupToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow"]
+layout_mode = 2
+
 [node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
 custom_minimum_size = Vector2(0, 40)
 

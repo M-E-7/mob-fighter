@@ -51,6 +51,7 @@ func _on_lifetime_expired() -> void:
 func _collect() -> void:
 	_collected = true
 	EventBus.xp_collected.emit(xp_value)
+	EventBus.xp_orb_collected.emit(global_position, xp_value)
 	queue_free()
 
 

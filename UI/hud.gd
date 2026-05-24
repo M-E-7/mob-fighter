@@ -19,6 +19,7 @@ const _COLOR_BG := Color(0.05, 0.05, 0.08, 0.92)
 const _MARGIN := 16.0
 const _PANEL_MIN_W := 300.0
 const _SCREEN_W := 1920.0
+const _SCREEN_H := 1080.0
 const _PANEL_Y := 880.0
 
 const _POWERUP_ABBREVS: Dictionary = {
@@ -36,13 +37,29 @@ var _kills2: int = 0
 var _p1: _PanelRefs
 var _p2: _PanelRefs
 
+var _survival_time: float = 0.0
+var _timer_label: Label
+
+var _warn_p1: ColorRect
+var _warn_p2: ColorRect
+var _warn_tween_p1: Tween
+var _warn_tween_p2: Tween
+
+var _prev_level_p1: int = 0
+var _prev_level_p2: int = 0
+
 
 func _ready() -> void:
 	layer = 10
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
 	_p1 = _build_panel(_COLOR_P1)
 	add_child(_p1.panel)
 	_p2 = _build_panel(_COLOR_P2)
 	add_child(_p2.panel)
+
+	_build_timer_label()
+	_build_warnings()
 
 
 func setup(p1: LivingEntity, p2: LivingEntity, player_count: int) -> void:
@@ -54,6 +71,22 @@ func setup(p1: LivingEntity, p2: LivingEntity, player_count: int) -> void:
 	_init_display(p1, _p1)
 	if is_instance_valid(p2):
 		_init_display(p2, _p2)
+
+
+func get_survival_time() -> float:
+	return _survival_time
+
+
+func get_kills(player: int) -> int:
+	return _kills1 if player == 1 else _kills2
+
+
+func _process(delta: float) -> void:
+	if not is_instance_valid(_player1):
+		return
+	_survival_time += delta
+	var secs := int(_survival_time)
+	_timer_label.text = "%d:%02d" % [secs / 60, secs % 60]
 
 
 func _init_display(entity: LivingEntity, refs: _PanelRefs) -> void:
@@ -74,6 +107,7 @@ func _apply_settings() -> void:
 	_p2.kill_row.visible = GameConfig.hud_show_kills
 	_p1.powerup_row.visible = GameConfig.hud_show_powerups
 	_p2.powerup_row.visible = GameConfig.hud_show_powerups
+	_timer_label.get_parent().visible = GameConfig.hud_show_survival_timer
 
 
 func _position_panels(player_count: int) -> void:
@@ -81,9 +115,14 @@ func _position_panels(player_count: int) -> void:
 	_p1.panel.position = Vector2(_MARGIN, _PANEL_Y)
 	if player_count == 1:
 		_p2.panel.hide()
+		_warn_p1.size = Vector2(_SCREEN_W, _SCREEN_H)
+		_warn_p2.hide()
 	else:
 		_p2.panel.custom_minimum_size = Vector2(_PANEL_MIN_W, 0.0)
 		_p2.panel.position = Vector2(_SCREEN_W * 0.5 + _MARGIN, _PANEL_Y)
+		_warn_p1.size = Vector2(_SCREEN_W * 0.5, _SCREEN_H)
+		_warn_p2.position = Vector2(_SCREEN_W * 0.5, 0.0)
+		_warn_p2.size = Vector2(_SCREEN_W * 0.5, _SCREEN_H)
 
 
 func _connect_signals() -> void:
@@ -96,23 +135,35 @@ func _connect_signals() -> void:
 func _on_health_changed(entity: LivingEntity, current: float, maximum: float) -> void:
 	if entity == _player1:
 		_update_health(_p1, current, maximum)
+		_warn_tween_p1 = _get_active_tween(_warn_p1, _warn_tween_p1, current, maximum)
 	elif is_instance_valid(_player2) and entity == _player2:
 		_update_health(_p2, current, maximum)
+		_warn_tween_p2 = _get_active_tween(_warn_p2, _warn_tween_p2, current, maximum)
 
 
 func _on_xp_updated(entity: LivingEntity, current_xp: float, required_xp: float, level: int) -> void:
 	if entity == _player1:
+		if level > _prev_level_p1 and GameConfig.hud_show_xp_flash:
+			_flash_xp_bar(_p1.xp_bar)
+		_prev_level_p1 = level
 		_update_xp(_p1, current_xp, required_xp, level)
 	elif is_instance_valid(_player2) and entity == _player2:
+		if level > _prev_level_p2 and GameConfig.hud_show_xp_flash:
+			_flash_xp_bar(_p2.xp_bar)
+		_prev_level_p2 = level
 		_update_xp(_p2, current_xp, required_xp, level)
 
 
 func _on_entity_died(entity: LivingEntity) -> void:
 	if entity == _player1:
 		_p1.panel.modulate.a = 0.4
+		_stop_warning(_warn_p1, _warn_tween_p1)
+		_warn_tween_p1 = null
 		return
 	if is_instance_valid(_player2) and entity == _player2:
 		_p2.panel.modulate.a = 0.4
+		_stop_warning(_warn_p2, _warn_tween_p2)
+		_warn_tween_p2 = null
 		return
 	var killer := entity.last_attacker
 	if not is_instance_valid(killer):
@@ -151,6 +202,66 @@ func _update_xp(refs: _PanelRefs, current_xp: float, required_xp: float, level: 
 	refs.lv_label.text = "LV " + str(level + 1)
 	if required_xp > 0.0:
 		refs.xp_bar.value = current_xp / required_xp
+
+
+func _flash_xp_bar(bar: ProgressBar) -> void:
+	var t := create_tween()
+	t.tween_property(bar, "modulate", Color(1.8, 1.8, 0.3, 1.0), 0.15)
+	t.tween_property(bar, "modulate", Color.WHITE, 0.25)
+
+
+func _get_active_tween(rect: ColorRect, existing: Tween,
+		current: float, maximum: float) -> Tween:
+	if not GameConfig.hud_show_low_hp_warning:
+		return existing
+	var ratio := current / maximum if maximum > 0.0 else 1.0
+	if ratio < 0.25:
+		if existing and existing.is_running():
+			return existing
+		_stop_warning(rect, existing)
+		rect.show()
+		var t := create_tween().set_loops()
+		t.tween_property(rect, "modulate:a", 0.20, 0.45)
+		t.tween_property(rect, "modulate:a", 0.04, 0.45)
+		return t
+	else:
+		_stop_warning(rect, existing)
+		return null
+
+
+func _stop_warning(rect: ColorRect, tween: Tween) -> void:
+	if tween:
+		tween.kill()
+	rect.hide()
+
+
+func _build_timer_label() -> void:
+	var bar := Control.new()
+	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	bar.custom_minimum_size = Vector2(0, 36)
+	add_child(bar)
+
+	_timer_label = Label.new()
+	_timer_label.text = "0:00"
+	_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_timer_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_timer_label.add_theme_font_size_override("font_size", 18)
+	_timer_label.modulate = Color(0.85, 0.85, 0.9)
+	bar.add_child(_timer_label)
+
+
+func _build_warnings() -> void:
+	_warn_p1 = ColorRect.new()
+	_warn_p1.color = Color(1.0, 0.0, 0.0, 0.12)
+	_warn_p1.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_warn_p1.hide()
+	add_child(_warn_p1)
+
+	_warn_p2 = ColorRect.new()
+	_warn_p2.color = Color(1.0, 0.0, 0.0, 0.12)
+	_warn_p2.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_warn_p2.hide()
+	add_child(_warn_p2)
 
 
 func _build_panel(accent: Color) -> _PanelRefs:

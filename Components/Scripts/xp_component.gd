@@ -44,6 +44,12 @@ func apply_power_up(power_up: PowerUpData) -> void:
 	EventBus.power_up_applied.emit(entity, power_up)
 
 
+func get_projected_stat(stat_key: String, additional_bonus: float) -> float:
+	var base: float = _base_stats.get(stat_key, 0.0)
+	var current_bonus: float = _bonuses.get(stat_key, 0.0)
+	return base * (1.0 + current_bonus + additional_bonus)
+
+
 func _apply_stat(stat_key: String) -> void:
 	var base: float = _base_stats.get(stat_key, 0.0)
 	var bonus: float = _bonuses.get(stat_key, 0.0)

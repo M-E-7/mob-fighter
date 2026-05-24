@@ -11,6 +11,11 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _xp_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow/XPToggle
 @onready var _kills_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow/KillsToggle
 @onready var _powerups_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow/PowerupsToggle
+@onready var _damage_num_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow/DamageNumToggle
+@onready var _low_hp_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow/LowHPToggle
+@onready var _xp_flash_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow/XPFlashToggle
+@onready var _timer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow/TimerToggle
+@onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
 
@@ -24,6 +29,16 @@ func _ready() -> void:
 	_xp_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp = v)
 	_kills_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_kills = v)
 	_powerups_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_powerups = v)
+	_damage_num_toggle.button_pressed = GameConfig.hud_show_damage_numbers
+	_low_hp_toggle.button_pressed = GameConfig.hud_show_low_hp_warning
+	_xp_flash_toggle.button_pressed = GameConfig.hud_show_xp_flash
+	_timer_toggle.button_pressed = GameConfig.hud_show_survival_timer
+	_xp_pickup_toggle.button_pressed = GameConfig.hud_show_xp_pickup_text
+	_damage_num_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_damage_numbers = v)
+	_low_hp_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_low_hp_warning = v)
+	_xp_flash_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_flash = v)
+	_timer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_survival_timer = v)
+	_xp_pickup_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_pickup_text = v)
 	_back_button.pressed.connect(_on_back_pressed)
 
 
