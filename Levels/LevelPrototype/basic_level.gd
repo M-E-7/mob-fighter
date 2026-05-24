@@ -41,8 +41,25 @@ func _ready() -> void:
 	add_child(_hud)
 	_hud.setup(_player1, _player2, GameConfig.player_count)
 
+	var music_viz := preload("res://UI/MusicVisualizerHUD.tscn").instantiate()
+	add_child(music_viz)
+
 	var ftm := preload("res://UI/FloatingTextManager.tscn").instantiate()
 	_subviewport_p1.add_child(ftm)
+
+	var vis := LevelVisualsController.new()
+	add_child(vis)
+	var rects: Array[ColorRect] = []
+	var bg_p1 := _subviewport_p1.get_node_or_null("DebugBG") as ColorRect
+	if bg_p1:
+		rects.append(bg_p1)
+	if GameConfig.player_count == 2:
+		var bg_p2 := _subviewport_p2.get_node_or_null("DebugBG") as ColorRect
+		if bg_p2:
+			rects.append(bg_p2)
+	vis.setup(rects, _proc_gen)
+
+	MusicManager.start()
 
 	_proc_gen.level_generated.connect(_on_level_generated)
 	EventBus.entity_died.connect(_on_entity_died)
@@ -96,6 +113,7 @@ func _on_entity_died(entity: LivingEntity) -> void:
 
 
 func _show_game_over() -> void:
+	MusicManager.stop()
 	GameConfig.result_kills_p1 = _hud.get_kills(1)
 	GameConfig.result_kills_p2 = _hud.get_kills(2)
 	GameConfig.result_survival_time = _hud.get_survival_time()

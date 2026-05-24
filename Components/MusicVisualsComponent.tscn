@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bdl1g4n81lyhx"]
+
+[ext_resource type="Script" uid="uid://cve18q0ld5no4" path="res://Components/Scripts/music_visuals_component.gd" id="1_mvc"]
+
+[node name="MusicVisualsComponent" type="Node" unique_id=585375709]
+script = ExtResource("1_mvc")

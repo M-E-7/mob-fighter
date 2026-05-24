@@ -16,6 +16,9 @@ const SHADER_PATH := "res://Components/Shaders/neon_shader.gdshader"
 @export_range(0.0, 1.0, 0.05) var pulse_amount: float = 0.4
 
 
+var _material: ShaderMaterial
+
+
 func _ready() -> void:
 	if not entity:
 		return
@@ -23,15 +26,24 @@ func _ready() -> void:
 	if not visual:
 		push_warning("NeonShaderComponent: No visual node found on entity '%s'" % entity.name)
 		return
-	var material := ShaderMaterial.new()
-	material.shader = load(SHADER_PATH)
-	material.set_shader_parameter("neon_color", neon_color)
-	material.set_shader_parameter("glow_intensity", glow_intensity)
-	material.set_shader_parameter("outline_width", outline_width)
-	material.set_shader_parameter("glow_feather", glow_feather)
-	material.set_shader_parameter("pulse_speed", pulse_speed)
-	material.set_shader_parameter("pulse_amount", pulse_amount)
-	visual.material = material
+	_material = ShaderMaterial.new()
+	_material.shader = load(SHADER_PATH)
+	_material.set_shader_parameter("neon_color", neon_color)
+	_material.set_shader_parameter("glow_intensity", glow_intensity)
+	_material.set_shader_parameter("outline_width", outline_width)
+	_material.set_shader_parameter("glow_feather", glow_feather)
+	_material.set_shader_parameter("pulse_speed", pulse_speed)
+	_material.set_shader_parameter("pulse_amount", pulse_amount)
+	visual.material = _material
+
+
+func set_visual_params(glow: float, pulse_spd: float, feather: float, pulse_amt: float) -> void:
+	if not _material:
+		return
+	_material.set_shader_parameter("glow_intensity", glow)
+	_material.set_shader_parameter("pulse_speed", pulse_spd)
+	_material.set_shader_parameter("glow_feather", feather)
+	_material.set_shader_parameter("pulse_amount", pulse_amt)
 
 
 # Looks for CircleDisplay first (MeshInstance2D), falls back to SpriteDisplay,

@@ -24,9 +24,11 @@ var astar_grid: AStarGrid2D
 
 var _container: Node2D
 var _noise: FastNoiseLite
+var _renderer: WallRenderer
+var _outline_renderer: WallOutlineRenderer
 
 
-# Draws all wall rectangles in a single canvas pass
+# Draws filled wall rectangles — geometry is fixed after generation
 class WallRenderer extends Node2D:
 	var wall_rects: Array[Rect2] = []
 	var wall_color: Color = Color(0.25, 0.25, 0.3)
@@ -34,6 +36,45 @@ class WallRenderer extends Node2D:
 	func _draw() -> void:
 		for rect in wall_rects:
 			draw_rect(rect, wall_color)
+
+
+# Draws only the outer perimeter edges of wall groups as white lines.
+# Color is driven via self_modulate — no queue_redraw() needed per frame.
+class WallOutlineRenderer extends Node2D:
+	var line_width: float = 2.5
+
+	func compute_from_grid(grid: Array, w: int, h: int, cs: int) -> void:
+		# Collect all wall→empty boundary edges as line segments
+		var segments: Array[PackedVector2Array] = []
+		for y in range(h):
+			for x in range(w):
+				if not grid[y][x]:
+					continue
+				var x0 := x * cs
+				var y0 := y * cs
+				var x1 := x0 + cs
+				var y1 := y0 + cs
+				if x == 0 or not grid[y][x - 1]:
+					var seg := PackedVector2Array([Vector2(x0, y0), Vector2(x0, y1)])
+					segments.append(seg)
+				if x == w - 1 or not grid[y][x + 1]:
+					var seg := PackedVector2Array([Vector2(x1, y0), Vector2(x1, y1)])
+					segments.append(seg)
+				if y == 0 or not grid[y - 1][x]:
+					var seg := PackedVector2Array([Vector2(x0, y0), Vector2(x1, y0)])
+					segments.append(seg)
+				if y == h - 1 or not grid[y + 1][x]:
+					var seg := PackedVector2Array([Vector2(x0, y1), Vector2(x1, y1)])
+					segments.append(seg)
+		set_meta("segments", segments)
+		queue_redraw()
+
+	func _draw() -> void:
+		if not has_meta("segments"):
+			return
+		var segments: Array[PackedVector2Array] = get_meta("segments")
+		for seg in segments:
+			draw_line(seg[0], seg[1], Color.WHITE, line_width, true)
 
 
 func _ready() -> void:
@@ -54,6 +95,8 @@ func _clear() -> void:
 	if _container:
 		_container.queue_free()
 		_container = null
+	_renderer = null
+	_outline_renderer = null
 
 
 func _setup_noise() -> void:
@@ -80,8 +123,8 @@ func _build_level() -> void:
 	body.name = "Walls"
 
 	# Single renderer — one _draw() call for all walls
-	var renderer := WallRenderer.new()
-	renderer.name = "WallRenderer"
+	_renderer = WallRenderer.new()
+	_renderer.name = "WallRenderer"
 	var merged_rects: Array[Rect2] = []
 
 	# Greedy rectangle merging: collapse adjacent wall cells into large rectangles
@@ -123,10 +166,16 @@ func _build_level() -> void:
 
 			merged_rects.append(Rect2(rect_pos, rect_size))
 
-	renderer.wall_rects = merged_rects
+	_renderer.wall_rects = merged_rects
+
+	# Outline renderer: computed from raw grid to get true group perimeters
+	_outline_renderer = WallOutlineRenderer.new()
+	_outline_renderer.name = "WallOutlineRenderer"
+	_outline_renderer.compute_from_grid(grid, arena_width, arena_height, cell_size)
 
 	_container.add_child(body)
-	_container.add_child(renderer)
+	_container.add_child(_renderer)
+	_container.add_child(_outline_renderer)
 	_build_astar(grid)
 
 
@@ -141,6 +190,15 @@ func _build_astar(grid: Array) -> void:
 		for x in range(arena_width):
 			if grid[y][x]:
 				astar_grid.set_point_solid(Vector2i(x, y))
+
+
+func update_wall_visuals(edge_col: Color, glow_a: float) -> void:
+	if not _outline_renderer:
+		return
+	# Modulate alpha by glow strength; self_modulate is GPU-side — no redraw needed
+	var c := edge_col
+	c.a = clampf(glow_a + edge_col.a * 0.5, 0.0, 1.0)
+	_outline_renderer.self_modulate = c
 
 
 func _build_grid() -> Array:

@@ -8,6 +8,11 @@
 [ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
 [ext_resource type="PackedScene" path="res://Components/XPDropComponent.tscn" id="6_xpd"]
 [ext_resource type="PackedScene" path="res://Entities/ExperienceOrb/experience_orb.tscn" id="7_orb"]
+[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="9_nsc"]
+[ext_resource type="PackedScene" uid="uid://bdl1g4n81lyhx" path="res://Components/MusicVisualsComponent.tscn" id="10_mvc"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_enemy"]
+size = Vector2(18, 18)
 
 [node name="Enemy" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_atj7c")]
 script = ExtResource("2_ginvw")
@@ -27,10 +32,24 @@ entity = NodePath("..")
 entity = NodePath("..")
 
 [node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
+visible = false
 position = Vector2(-9.536743e-07, -0.08333515)
 scale = Vector2(0.14285715, 0.16823897)
 texture = ExtResource("4_kra7d")
 
-[node name="XPDropComponent" parent="." index="8" unique_id=112233445 node_paths=PackedStringArray("entity") instance=ExtResource("6_xpd")]
+[node name="CircleDisplay" type="MeshInstance2D" parent="." index="8" unique_id=387654321]
+mesh = SubResource("QuadMesh_enemy")
+
+[node name="XPDropComponent" parent="." index="9" unique_id=112233445 node_paths=PackedStringArray("entity") instance=ExtResource("6_xpd")]
 entity = NodePath("..")
 orb_scene = ExtResource("7_orb")
+
+[node name="NeonShaderComponent" parent="." index="10" unique_id=876543210 node_paths=PackedStringArray("entity") instance=ExtResource("9_nsc")]
+entity = NodePath("..")
+neon_color = Color(1, 0.15, 0.15, 1)
+pulse_speed = 3.0
+pulse_amount = 0.0
+
+[node name="MusicVisualsComponent" parent="." index="11" unique_id=765432109 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("10_mvc")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")

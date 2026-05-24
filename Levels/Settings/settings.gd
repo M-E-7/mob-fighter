@@ -16,6 +16,8 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _xp_flash_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow/XPFlashToggle
 @onready var _timer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow/TimerToggle
 @onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
+@onready var _music_visuals_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
+@onready var _music_visualizer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
 
@@ -34,11 +36,15 @@ func _ready() -> void:
 	_xp_flash_toggle.button_pressed = GameConfig.hud_show_xp_flash
 	_timer_toggle.button_pressed = GameConfig.hud_show_survival_timer
 	_xp_pickup_toggle.button_pressed = GameConfig.hud_show_xp_pickup_text
+	_music_visuals_toggle.button_pressed = GameConfig.music_visuals_enabled
+	_music_visualizer_toggle.button_pressed = GameConfig.show_music_visualizer
 	_damage_num_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_damage_numbers = v)
 	_low_hp_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_low_hp_warning = v)
 	_xp_flash_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_flash = v)
 	_timer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_survival_timer = v)
 	_xp_pickup_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_pickup_text = v)
+	_music_visuals_toggle.toggled.connect(func(v: bool) -> void: GameConfig.music_visuals_enabled = v)
+	_music_visualizer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.show_music_visualizer = v)
 	_back_button.pressed.connect(_on_back_pressed)
 
 

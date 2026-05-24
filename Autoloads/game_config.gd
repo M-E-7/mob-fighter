@@ -10,6 +10,8 @@ var hud_show_low_hp_warning: bool = true
 var hud_show_xp_flash: bool = true
 var hud_show_survival_timer: bool = true
 var hud_show_xp_pickup_text: bool = true
+var music_visuals_enabled: bool = true
+var show_music_visualizer: bool = true
 
 var result_kills_p1: int = 0
 var result_kills_p2: int = 0

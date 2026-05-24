@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 EventBus="*res://Autoloads/event_bus.gd"
 PowerUpRegistry="*res://Autoloads/power_up_registry.gd"
 GameConfig="*res://Autoloads/game_config.gd"
+MusicManager="*res://Autoloads/music_manager.gd"
 
 [display]
 
