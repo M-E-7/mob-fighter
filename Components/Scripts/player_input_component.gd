@@ -5,8 +5,11 @@ class_name PlayerInputComponent
 @export var entity: LivingEntity
 @export var target_viewport: SubViewport
 
+@export_group("Settings")
+@export_range(1.0, 30.0, 0.5) var turn_speed: float = 8.0
 
-func _process(_delta: float) -> void:
+
+func _process(delta: float) -> void:
 	if not entity:
 		return
 
@@ -20,4 +23,7 @@ func _process(_delta: float) -> void:
 	else:
 		world_mouse = entity.get_global_mouse_position()
 
-	aim_direction = (world_mouse - entity.global_position).normalized()
+	var mouse_dir := (world_mouse - entity.global_position).normalized()
+	var target_angle := mouse_dir.angle() + PI / 2.0
+	entity.rotation += clamp(angle_difference(entity.rotation, target_angle), -turn_speed * delta, turn_speed * delta)
+	aim_direction = Vector2.from_angle(entity.rotation - PI / 2.0)

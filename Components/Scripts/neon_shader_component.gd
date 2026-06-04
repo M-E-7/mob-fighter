@@ -2,6 +2,7 @@ extends Node
 class_name NeonShaderComponent
 
 const SHADER_PATH := "res://Components/Shaders/neon_shader.gdshader"
+const SPRITE_SHADER_PATH := "res://Components/Shaders/sprite_neon_shader.gdshader"
 
 @export var entity: LivingEntity
 
@@ -27,7 +28,7 @@ func _ready() -> void:
 		push_warning("NeonShaderComponent: No visual node found on entity '%s'" % entity.name)
 		return
 	_material = ShaderMaterial.new()
-	_material.shader = load(SHADER_PATH)
+	_material.shader = load(SPRITE_SHADER_PATH) if visual is Sprite2D else load(SHADER_PATH)
 	_material.set_shader_parameter("neon_color", neon_color)
 	_material.set_shader_parameter("glow_intensity", glow_intensity)
 	_material.set_shader_parameter("outline_width", outline_width)
