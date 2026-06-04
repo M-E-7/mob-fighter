@@ -11,6 +11,7 @@ class_name ThrusterComponent
 @export_range(0.0, 3.0) var music_bass_add: float = 0.6
 @export_range(0.0, 5.0) var beat_spike_strength: float = 1.2
 @export_range(0.05, 1.0) var beat_spike_decay: float = 0.15
+@export_range(0.0, 5.0) var turbo_brightness_add: float = 1.5
 
 var _beat_spike: float = 0.0
 var _sockets: Array[ThrusterSocket] = []
@@ -29,20 +30,21 @@ func _process(delta: float) -> void:
 
 	_beat_spike = maxf(0.0, _beat_spike - delta / beat_spike_decay)
 
-	var facing: Vector2 = Vector2.from_angle(entity.rotation - PI / 2.0)
-	var move: Vector2 = entity.inputComponent.move_vector
-	var forward_dot: float = move.dot(facing)
-	var strafe_dot: float = move.dot(facing.rotated(PI / 2.0))
+	var local_move: Vector2 = entity.inputComponent.move_vector
+	var turbo: bool = entity.inputComponent.thrust_pressed
+
+	var fire_main: bool = local_move.y < -forward_threshold or turbo
+	var fire_retro: bool = local_move.y > forward_threshold
+	var fire_strafe_left: bool = local_move.x > strafe_threshold
+	var fire_strafe_right: bool = local_move.x < -strafe_threshold
 
 	var brightness: float = base_brightness + MusicManager.bass * music_bass_add + _beat_spike * beat_spike_strength
-
-	var fire_main: bool = forward_dot > forward_threshold or entity.inputComponent.thrust_pressed
-	var fire_retro: bool = not fire_main and forward_dot < -forward_threshold
-	var fire_left: bool = not fire_main and not fire_retro and strafe_dot > strafe_threshold
-	var fire_right: bool = not fire_main and not fire_retro and strafe_dot < -strafe_threshold
+	var main_brightness: float = brightness + (turbo_brightness_add if turbo else 0.0)
 
 	for socket in _sockets:
-		socket.set_active(_socket_fires(socket, fire_main, fire_retro, fire_left, fire_right), brightness)
+		var active := _socket_fires(socket, fire_main, fire_retro, fire_strafe_left, fire_strafe_right)
+		var sock_brightness := main_brightness if socket.fire_when == ThrusterSocket.FireWhen.FORWARD else brightness
+		socket.set_active(active, sock_brightness)
 
 
 func _on_beat_detected() -> void:

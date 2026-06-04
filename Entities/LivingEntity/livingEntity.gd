@@ -13,6 +13,7 @@ class_name LivingEntity
 @export var max_speed: float = 400.0
 @export var acceleration: float = 800.0
 @export var friction: float = 100.0
+@export var turbo_speed_multiplier: float = 1.8
 
 @export_group("Health Settings")
 @export var max_health: float = 100.0

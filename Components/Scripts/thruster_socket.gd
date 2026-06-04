@@ -12,11 +12,13 @@ enum FireWhen { FORWARD, BACKWARD, STRAFE_LEFT, STRAFE_RIGHT }
 @export_range(0.0, 30.0) var shimmer_speed: float = 8.0
 @export_range(0.05, 2.0) var trail_duration: float = 0.4
 @export_range(1.0, 12.0) var trail_radius: float = 3.0
+@export_range(0.02, 1.0) var transition_time: float = 0.12
 
 var _mesh_instance: MeshInstance2D
 var _material: ShaderMaterial
 var _time: float = 0.0
-var _active: bool = false
+var _target_active: bool = false
+var _transition: float = 0.0
 
 var _trail_pos: Array[Vector2] = []
 var _trail_time: Array[float] = []
@@ -31,7 +33,7 @@ func _ready() -> void:
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(beam_width * 2.0, beam_length)
 	_mesh_instance.mesh = mesh
-	_mesh_instance.position = Vector2(0.0, beam_length * 0.5)
+	_mesh_instance.position = Vector2.ZERO
 
 	_material = ShaderMaterial.new()
 	_material.shader = load("res://Components/Shaders/thruster_beam.gdshader")
@@ -49,12 +51,25 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _active:
+	var step := delta / transition_time
+	if _target_active:
+		_transition = minf(_transition + step, 1.0)
+	else:
+		_transition = maxf(_transition - step, 0.0)
+
+	_mesh_instance.visible = _transition > 0.001
+	if _mesh_instance.visible:
+		var t := _transition
+		_mesh_instance.scale = Vector2(t, t)
+		_mesh_instance.position.y = beam_length * 0.5 * t
+		_mesh_instance.modulate.a = t
+
+	if _transition > 0.001:
 		_time += delta
 		_material.set_shader_parameter("time_offset", _time)
 
 		var wp: Vector2 = global_position
-		if _trail_pos.is_empty() or wp.distance_to(_last_sample_pos) >= _SAMPLE_DIST:
+		if _target_active and (_trail_pos.is_empty() or wp.distance_to(_last_sample_pos) >= _SAMPLE_DIST):
 			_trail_pos.append(wp)
 			_trail_time.append(Time.get_ticks_msec() * 0.001)
 			_last_sample_pos = wp
@@ -79,8 +94,7 @@ func _draw() -> void:
 
 
 func set_active(active: bool, brightness: float) -> void:
-	_active = active
-	_mesh_instance.visible = active
+	_target_active = active
 	if active:
 		_material.set_shader_parameter("brightness", brightness)
 
