@@ -12,6 +12,7 @@ class_name ThrusterComponent
 @export_range(0.0, 5.0) var beat_spike_strength: float = 1.2
 @export_range(0.05, 1.0) var beat_spike_decay: float = 0.15
 @export_range(0.0, 5.0) var turbo_brightness_add: float = 1.5
+@export_range(1.0, 3.0) var turbo_scale_mult: float = 1.4
 
 var _beat_spike: float = 0.0
 var _sockets: Array[ThrusterSocket] = []
@@ -43,8 +44,10 @@ func _process(delta: float) -> void:
 
 	for socket in _sockets:
 		var active := _socket_fires(socket, fire_main, fire_retro, fire_strafe_left, fire_strafe_right)
-		var sock_brightness := main_brightness if socket.fire_when == ThrusterSocket.FireWhen.FORWARD else brightness
-		socket.set_active(active, sock_brightness)
+		var is_main := socket.fire_when == ThrusterSocket.FireWhen.FORWARD
+		var sock_brightness := main_brightness if is_main else brightness
+		var sock_scale := turbo_scale_mult if (turbo and is_main) else 1.0
+		socket.set_active(active, sock_brightness, sock_scale)
 
 
 func _on_beat_detected() -> void:

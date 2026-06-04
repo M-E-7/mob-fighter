@@ -277,7 +277,7 @@ Player's `SpriteDisplay` (Sprite2D, `Entities/Player/player_ship.svg`) lives ins
 | `LeftSocket` | `(-10.1, 5.5)` | 90° | strafing to ship's right |
 | `RightSocket` | `(10.1, 5.5)` | −90° | strafing to ship's left |
 
-All groups fire **independently** — no priority chain. Each group fires when its corresponding key is held: W fires main, S fires retro, A fires right-side sockets (reaction thrust left), D fires left-side sockets (reaction thrust right). Space (turbo) always fires the main thruster regardless of W. `brightness` for non-main sockets is `base_brightness + MusicManager.bass * music_bass_add + beat_spike * beat_spike_strength`; main sockets additionally add `turbo_brightness_add` when turbo is active. Each socket's beam is a tapered cone shader (`Components/Shaders/thruster_beam.gdshader`) with additive blending, glow, and shimmer. Socket rotation determines beam direction — the beam always extends along the socket's local +Y axis. `player_ship.svg` has matching nozzle ellipses at each position.
+All groups fire **independently** — no priority chain. Each group fires when its corresponding key is held: W fires main, S fires retro, A fires right-side sockets (reaction thrust left), D fires left-side sockets (reaction thrust right). Space (turbo) always fires the main thruster regardless of W. `brightness` for non-main sockets is `base_brightness + MusicManager.bass * music_bass_add + beat_spike * beat_spike_strength`; main sockets additionally add `turbo_brightness_add` and scale by `turbo_scale_mult` when turbo is active (both exports on `ThrusterComponent`). Each socket's beam is a tapered cone shader (`Components/Shaders/thruster_beam.gdshader`) with additive blending, glow, and shimmer. Socket rotation determines beam direction — the beam always extends along the socket's local +Y axis. `player_ship.svg` has matching nozzle ellipses at each position.
 
 ---
 
@@ -294,7 +294,7 @@ Each player ship is a `ShipModel` scene (`Entities/Player/Ships/<ShipName>.tscn`
 ### ThrusterSocket (`Components/Scripts/thruster_socket.gd`)
 - Extends `Node2D`. Each socket is a nozzle attachment point placed by hand in the ship scene editor.
 - `fire_when: FireWhen` enum (`FORWARD`, `BACKWARD`, `STRAFE_LEFT`, `STRAFE_RIGHT`) — which movement direction activates this socket.
-- `beam_length`, `beam_width`, `beam_color`, `shimmer_strength`, `shimmer_speed`, `trail_duration`, `trail_radius`, `transition_time` — all `@export`, tunable per socket in the inspector.
+- `beam_length`, `beam_width`, `beam_color`, `shimmer_strength`, `shimmer_speed`, `trail_duration`, `trail_radius`, `transition_time` — all `@export`, tunable per socket in the inspector. Scale animates smoothly via `_current_scale_mult` lerping toward `_target_scale_mult` at the same rate as `transition_time`.
 - Has a single `BeamMesh` (`MeshInstance2D`) child. In `_ready()`, the socket creates a `QuadMesh` (`beam_width * 2.0` wide to give the outer halo room) and a `ShaderMaterial` pointing to `thruster_beam.gdshader`, then assigns both to the mesh.
 - `set_active(active: bool, brightness: float)` — sets `_target_active` and updates the `brightness` shader param; does **not** toggle visibility directly.
 - Appear/disappear uses a `_transition` float (0→1) driven each frame at rate `1 / transition_time`. The `BeamMesh` scale and `position.y` both scale with `_transition` (keeping the nozzle end fixed while the tail grows outward), and `modulate.a` fades simultaneously. The mesh is hidden only when `_transition ≤ 0.001`.

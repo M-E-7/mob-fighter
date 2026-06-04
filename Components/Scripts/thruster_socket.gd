@@ -19,6 +19,8 @@ var _material: ShaderMaterial
 var _time: float = 0.0
 var _target_active: bool = false
 var _transition: float = 0.0
+var _target_scale_mult: float = 1.0
+var _current_scale_mult: float = 1.0
 
 var _trail_pos: Array[Vector2] = []
 var _trail_time: Array[float] = []
@@ -57,12 +59,14 @@ func _process(delta: float) -> void:
 	else:
 		_transition = maxf(_transition - step, 0.0)
 
+	_current_scale_mult = move_toward(_current_scale_mult, _target_scale_mult, delta / transition_time)
+
 	_mesh_instance.visible = _transition > 0.001
 	if _mesh_instance.visible:
-		var t := _transition
-		_mesh_instance.scale = Vector2(t, t)
-		_mesh_instance.position.y = beam_length * 0.5 * t
-		_mesh_instance.modulate.a = t
+		var s := _transition * _current_scale_mult
+		_mesh_instance.scale = Vector2(s, s)
+		_mesh_instance.position.y = beam_length * 0.5 * s
+		_mesh_instance.modulate.a = _transition
 
 	if _transition > 0.001:
 		_time += delta
@@ -93,8 +97,9 @@ func _draw() -> void:
 		draw_circle(lp, trail_radius * frac,        Color(beam_color.r, beam_color.g, beam_color.b, a * 0.65))
 
 
-func set_active(active: bool, brightness: float) -> void:
+func set_active(active: bool, brightness: float, scale_mult: float = 1.0) -> void:
 	_target_active = active
+	_target_scale_mult = scale_mult
 	if active:
 		_material.set_shader_parameter("brightness", brightness)
 
