@@ -2,7 +2,7 @@ extends Area2D
 class_name Bullet
 ## Projectile that travels in a direction and deals damage on contact
 
-var speed: float = 500.0
+var speed: float = 1000.0
 var damage: float = 10.0
 var direction: Vector2 = Vector2.ZERO
 var source: Node2D
@@ -12,7 +12,7 @@ func _physics_process(delta: float) -> void:
 	position += direction * speed * delta
 
 
-func setup(dir: Vector2, dmg: float, src: Node2D, spd: float = 500.0) -> void:
+func setup(dir: Vector2, dmg: float, src: Node2D, spd: float = 1000.0) -> void:
 	direction = dir.normalized()
 	damage = dmg
 	source = src

@@ -22,7 +22,7 @@ class_name LivingEntity
 @export_group("Shooting Settings")
 @export var fire_rate: float = 5.0
 @export var bullet_damage: float = 10.0
-@export var bullet_speed: float = 500.0
+@export var bullet_speed: float = 1000.0
 
 var last_attacker: LivingEntity
 

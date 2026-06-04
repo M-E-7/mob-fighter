@@ -336,3 +336,5 @@ Each player ship is a `ShipModel` scene (`Entities/Player/Ships/<ShipName>.tscn`
 - Do not skip the scene file for a component — every component has both a `.gd` and a `.tscn`.
 - Do not use a plain `Node` root for any component that has `Node2D` children — use `Node2D`. A `Node` root silently orphans visual children from the canvas item tree, making them invisible.
 - Do not inject `ParticleProcessMaterial` into `GPUParticles2D` at runtime (`_ready()`). Define it as a `[sub_resource]` in the `.tscn` file — runtime injection is silently ignored by the rendering server.
+- Do not use `material_override` on `MeshInstance2D` — that property belongs to `MeshInstance3D`. The correct property is `material` (inherited from `CanvasItem`). Using the wrong name silently does nothing and the mesh renders plain white.
+- Do not use channel values above 1.0 in `canvas_item` shaders with `render_mode blend_add`. Additive blending accumulates naturally — values > 1.0 saturate immediately to white. Keep each layer's RGB ≤ 1.0 and let the additive blend mode create the glow.

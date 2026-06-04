@@ -1,9 +1,18 @@
 [gd_scene format=3 uid="uid://bw4k36ug8v1ji"]
 
 [ext_resource type="Script" uid="uid://cub4tw3u2o8n" path="res://Entities/Projectiles/bullet.gd" id="1_bullet"]
+[ext_resource type="Shader" path="res://Components/Shaders/laser_bolt.gdshader" id="2_shader"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("2_shader")
+shader_parameter/beam_color = Color(1, 0.15, 0.05, 1)
+shader_parameter/brightness = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_1"]
+size = Vector2(20, 5)
 
 [node name="Bullet" type="Area2D" unique_id=1719329206]
 collision_mask = 3
@@ -12,12 +21,9 @@ script = ExtResource("1_bullet")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1646644829]
 shape = SubResource("CircleShape2D_1")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=62478633]
-offset_left = -2.0
-offset_top = -2.0
-offset_right = 2.0
-offset_bottom = 2.0
-color = Color(0.8, 0.1, 0.1, 1)
+[node name="BeamMesh" type="MeshInstance2D" parent="." unique_id=62478634]
+mesh = SubResource("QuadMesh_1")
+material = SubResource("ShaderMaterial_1")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
