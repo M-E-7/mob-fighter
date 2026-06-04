@@ -40,4 +40,4 @@ entity = NodePath("..")
 entity = NodePath("..")
 neon_component = NodePath("../PlayerShip/NeonShaderComponent")
 
-[node name="PlayerShip" parent="." index="10" instance=ExtResource("12_ps")]
+[node name="PlayerShip" parent="." index="10" unique_id=1572525719 instance=ExtResource("12_ps")]

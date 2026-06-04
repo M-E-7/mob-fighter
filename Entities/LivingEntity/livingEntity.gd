@@ -10,9 +10,9 @@ class_name LivingEntity
 @export var healthDisplayComponent: HealthDisplayComponent
 
 @export_group("Movement Settings")
-@export var max_speed: float = 200.0
-@export var acceleration: float = 1000.0
-@export var friction: float = 800.0
+@export var max_speed: float = 400.0
+@export var acceleration: float = 800.0
+@export var friction: float = 100.0
 
 @export_group("Health Settings")
 @export var max_health: float = 100.0
