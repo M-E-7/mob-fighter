@@ -5,6 +5,7 @@ const SHADER_PATH := "res://Components/Shaders/neon_shader.gdshader"
 const SPRITE_SHADER_PATH := "res://Components/Shaders/sprite_neon_shader.gdshader"
 
 @export var entity: LivingEntity
+@export var visual_node: CanvasItem
 
 @export_group("Neon")
 @export var neon_color: Color = Color(1.0, 0.0, 0.2, 1.0)
@@ -21,11 +22,14 @@ var _material: ShaderMaterial
 
 
 func _ready() -> void:
-	if not entity:
-		return
-	var visual := _find_visual()
+	var visual: CanvasItem
+	if visual_node:
+		visual = visual_node
+	elif entity:
+		visual = _find_visual()
 	if not visual:
-		push_warning("NeonShaderComponent: No visual node found on entity '%s'" % entity.name)
+		if entity:
+			push_warning("NeonShaderComponent: No visual node found on entity '%s'" % entity.name)
 		return
 	_material = ShaderMaterial.new()
 	_material.shader = load(SPRITE_SHADER_PATH) if visual is Sprite2D else load(SHADER_PATH)
@@ -47,13 +51,13 @@ func set_visual_params(glow: float, pulse_spd: float, feather: float, pulse_amt:
 	_material.set_shader_parameter("pulse_amount", pulse_amt)
 
 
-# Looks for CircleDisplay first (MeshInstance2D), falls back to SpriteDisplay,
-# then any Sprite2D or MeshInstance2D child.
+# Searches the entity's full subtree for CircleDisplay or SpriteDisplay,
+# then falls back to any direct Sprite2D/MeshInstance2D child.
 func _find_visual() -> CanvasItem:
-	var node: Node = entity.get_node_or_null("CircleDisplay")
+	var node: Node = entity.find_child("CircleDisplay", true, false)
 	if node is CanvasItem:
 		return node as CanvasItem
-	node = entity.get_node_or_null("SpriteDisplay")
+	node = entity.find_child("SpriteDisplay", true, false)
 	if node is CanvasItem:
 		return node as CanvasItem
 	for child in entity.get_children():

@@ -19,6 +19,30 @@
   <ellipse cx="64" cy="105" rx="4" ry="4"
     fill="#FFFFFF" fill-opacity="0.35"/>
 
+  <!-- Left wing retro thruster nozzle (fires forward) -->
+  <ellipse cx="36" cy="75" rx="3" ry="4"
+    fill="#0D0D0F" stroke="#FFFFFF" stroke-width="1.5"/>
+  <ellipse cx="36" cy="71" rx="2" ry="2"
+    fill="#FFFFFF" fill-opacity="0.35"/>
+
+  <!-- Right wing retro thruster nozzle (fires forward) -->
+  <ellipse cx="92" cy="75" rx="3" ry="4"
+    fill="#0D0D0F" stroke="#FFFFFF" stroke-width="1.5"/>
+  <ellipse cx="92" cy="71" rx="2" ry="2"
+    fill="#FFFFFF" fill-opacity="0.35"/>
+
+  <!-- Left wing thruster nozzle -->
+  <ellipse cx="18" cy="89" rx="6" ry="4"
+    fill="#0D0D0F" stroke="#FFFFFF" stroke-width="1.5"/>
+  <ellipse cx="18" cy="93" rx="2.5" ry="2"
+    fill="#FFFFFF" fill-opacity="0.35"/>
+
+  <!-- Right wing thruster nozzle -->
+  <ellipse cx="110" cy="89" rx="6" ry="4"
+    fill="#0D0D0F" stroke="#FFFFFF" stroke-width="1.5"/>
+  <ellipse cx="110" cy="93" rx="2.5" ry="2"
+    fill="#FFFFFF" fill-opacity="0.35"/>
+
   <!-- Cockpit canopy (dark panel near nose) -->
   <polygon points="64,16 67,22 67,40 64,44 61,40 61,22"
     fill="#080810" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"/>

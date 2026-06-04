@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Entities/Player/Ships/ship_model.gd" id="1_sm"]
+[ext_resource type="Texture2D" uid="uid://dypydpi2sj1q1" path="res://Entities/Player/player_ship.svg" id="2_svg"]
+[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="3_nsc"]
+[ext_resource type="PackedScene" path="res://Components/ThrusterComponent.tscn" id="4_thr"]
+[ext_resource type="PackedScene" path="res://Components/ThrusterSocket.tscn" id="5_ts"]
+
+[sub_resource type="RectangleShape2D" id="RS_collision"]
+size = Vector2(28, 28)
+
+[node name="PlayerShip" type="Node2D" node_paths=PackedStringArray("neon_component", "thruster_component")]
+script = ExtResource("1_sm")
+collision_shape = SubResource("RS_collision")
+neon_component = NodePath("NeonShaderComponent")
+thruster_component = NodePath("ThrusterComponent")
+
+[node name="SpriteDisplay" type="Sprite2D" parent="."]
+scale = Vector2(0.21875, 0.21875)
+texture = ExtResource("2_svg")
+
+[node name="NeonShaderComponent" parent="." node_paths=PackedStringArray("entity", "visual_node") instance=ExtResource("3_nsc")]
+visual_node = NodePath("../SpriteDisplay")
+neon_color = Color(1.732707e-06, 0.6250728, 0.5000574, 1)
+glow_intensity = 2.8
+pulse_speed = 7.5
+pulse_amount = 0.0
+
+[node name="ThrusterComponent" parent="." instance=ExtResource("4_thr")]
+
+[node name="MainSocket" parent="ThrusterComponent" instance=ExtResource("5_ts")]
+position = Vector2(0, 7.4)
+fire_when = 0
+beam_length = 30.0
+beam_width = 11.0
+
+[node name="LeftRetroSocket" parent="ThrusterComponent" instance=ExtResource("5_ts")]
+position = Vector2(-6.1, 2.4)
+rotation = 3.14159265
+fire_when = 1
+beam_length = 18.0
+beam_width = 7.0
+
+[node name="RightRetroSocket" parent="ThrusterComponent" instance=ExtResource("5_ts")]
+position = Vector2(6.1, 2.4)
+rotation = 3.14159265
+fire_when = 1
+beam_length = 18.0
+beam_width = 7.0
+
+[node name="LeftSocket" parent="ThrusterComponent" instance=ExtResource("5_ts")]
+position = Vector2(-10.1, 5.5)
+rotation = 1.5707963
+fire_when = 2
+beam_length = 18.0
+beam_width = 7.0
+
+[node name="RightSocket" parent="ThrusterComponent" instance=ExtResource("5_ts")]
+position = Vector2(10.1, 5.5)
+rotation = -1.5707963
+fire_when = 3
+beam_length = 18.0
+beam_width = 7.0

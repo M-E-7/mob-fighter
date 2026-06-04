@@ -5,15 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://ccemi0og3li1u" path="res://Components/PlayerInputComponent.tscn" id="3_pic"]
 [ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
 [ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
-[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="7_01a4e"]
 [ext_resource type="PackedScene" path="res://Components/XPComponent.tscn" id="8_xpc"]
 [ext_resource type="PackedScene" uid="uid://bdl1g4n81lyhx" path="res://Components/MusicVisualsComponent.tscn" id="11_mvc"]
-[ext_resource type="Texture2D" path="res://Entities/Player/player_ship.svg" id="12_svg"]
+[ext_resource type="PackedScene" path="res://Entities/Player/Ships/PlayerShip.tscn" id="12_ps"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_physics"]
-size = Vector2(28, 28)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurtbox"]
 size = Vector2(28, 28)
 
 [node name="Player" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_tekja")]
@@ -21,12 +17,6 @@ script = ExtResource("2_4wf4l")
 inputComponent = NodePath("PlayerInputComponent")
 movementComponent = NodePath("MovementComponent")
 shootComponent = NodePath("ShootComponent")
-
-[node name="CollisionShape2D" parent="." unique_id=1985241145]
-shape = SubResource("RectangleShape2D_physics")
-
-[node name="CollisionShape2D" parent="HurtboxComponent" unique_id=1421386013]
-shape = SubResource("RectangleShape2D_hurtbox")
 
 [node name="PlayerInputComponent" parent="." index="0" unique_id=1327699038 node_paths=PackedStringArray("entity") instance=ExtResource("3_pic")]
 entity = NodePath("..")
@@ -37,20 +27,17 @@ entity = NodePath("..")
 [node name="ShootComponent" parent="." index="2" unique_id=549600327 node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
 entity = NodePath("..")
 
+[node name="CollisionShape2D" parent="." index="3" unique_id=1985241145]
+shape = SubResource("RectangleShape2D_physics")
+
 [node name="SpriteDisplay" parent="." index="7" unique_id=386316919]
-scale = Vector2(0.21875, 0.21875)
-texture = ExtResource("12_svg")
+visible = false
 
-[node name="NeonShaderComponent" parent="." index="8" unique_id=1473147525 node_paths=PackedStringArray("entity") instance=ExtResource("7_01a4e")]
-entity = NodePath("..")
-neon_color = Color(1.732707e-06, 0.6250728, 0.5000574, 1)
-glow_intensity = 2.8
-pulse_speed = 7.5
-pulse_amount = 0.0
-
-[node name="XPComponent" parent="." index="9" unique_id=998877665 node_paths=PackedStringArray("entity") instance=ExtResource("8_xpc")]
+[node name="XPComponent" parent="." index="8" unique_id=998877665 node_paths=PackedStringArray("entity") instance=ExtResource("8_xpc")]
 entity = NodePath("..")
 
-[node name="MusicVisualsComponent" parent="." index="10" unique_id=1887654321 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("11_mvc")]
+[node name="MusicVisualsComponent" parent="." index="9" unique_id=1887654321 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("11_mvc")]
 entity = NodePath("..")
-neon_component = NodePath("../NeonShaderComponent")
+neon_component = NodePath("../PlayerShip/NeonShaderComponent")
+
+[node name="PlayerShip" parent="." index="10" instance=ExtResource("12_ps")]
