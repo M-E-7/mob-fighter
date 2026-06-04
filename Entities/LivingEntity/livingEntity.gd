@@ -35,7 +35,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if movementComponent:
-		movementComponent.move(inputComponent.move_vector, delta)
+		movementComponent.move(inputComponent.move_vector, inputComponent.thrust_pressed, delta)
 
 	if shootComponent:
 		shootComponent.try_shoot(inputComponent.shoot_pressed, inputComponent.aim_direction, delta)

@@ -36,7 +36,7 @@ func _process(delta: float) -> void:
 
 	var brightness: float = base_brightness + MusicManager.bass * music_bass_add + _beat_spike * beat_spike_strength
 
-	var fire_main: bool = forward_dot > forward_threshold
+	var fire_main: bool = forward_dot > forward_threshold or entity.inputComponent.thrust_pressed
 	var fire_retro: bool = not fire_main and forward_dot < -forward_threshold
 	var fire_left: bool = not fire_main and not fire_retro and strafe_dot > strafe_threshold
 	var fire_right: bool = not fire_main and not fire_retro and strafe_dot < -strafe_threshold

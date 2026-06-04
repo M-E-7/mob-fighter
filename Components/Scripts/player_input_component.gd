@@ -15,6 +15,7 @@ func _process(delta: float) -> void:
 
 	move_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	shoot_pressed = Input.is_action_pressed("shoot")
+	thrust_pressed = Input.is_action_pressed("thrust_forward")
 
 	var world_mouse: Vector2
 	if target_viewport:
