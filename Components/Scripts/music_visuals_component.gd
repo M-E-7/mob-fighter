@@ -7,14 +7,14 @@ class_name MusicVisualsComponent
 
 @export_group("Band Influence")
 @export_range(0.0, 1.0, 0.01) var intensity_scale: float = 1.0
-@export_range(0.0, 5.0, 0.1) var bass_glow_add: float = 1.8
-@export_range(0.0, 10.0, 0.1) var mid_pulse_add: float = 5.0
-@export_range(0.0, 0.5, 0.01) var treble_feather_add: float = 0.13
-@export_range(0.0, 1.0, 0.05) var max_pulse_amount: float = 0.5
+@export_range(0.0, 5.0, 0.1) var bass_glow_add: float = 4.0
+@export_range(0.0, 10.0, 0.1) var mid_pulse_add: float = 8.0
+@export_range(0.0, 0.5, 0.01) var treble_feather_add: float = 0.25
+@export_range(0.0, 1.0, 0.05) var max_pulse_amount: float = 0.80
 
 @export_group("Beat Spike")
-@export_range(0.0, 5.0, 0.1) var beat_spike_strength: float = 1.5
-@export_range(0.05, 2.0, 0.05) var beat_spike_decay: float = 0.3
+@export_range(0.0, 5.0, 0.1) var beat_spike_strength: float = 3.0
+@export_range(0.05, 2.0, 0.05) var beat_spike_decay: float = 0.25
 
 var _base_glow: float = 0.0
 var _base_pulse: float = 0.0
@@ -27,6 +27,7 @@ func _ready() -> void:
 		_base_glow = neon_component.glow_intensity
 		_base_pulse = neon_component.pulse_speed
 		_base_feather = neon_component.glow_feather
+	add_to_group("music_visuals_component")
 	EventBus.beat_detected.connect(_on_beat_detected)
 
 

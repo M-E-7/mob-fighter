@@ -41,8 +41,22 @@ var _onset_peak: ColorRect
 var _beat_indicator: ColorRect
 var _cooldown_fill: ColorRect
 var _cooldown_container: Control
+var _song_label: Label
+var _timeline_bar: Control
+var _timeline_fill: ColorRect
+var _time_label: Label
+
+var _threshold_val_label: Label
+var _cooldown_val_label: Label
+var _smoothing_val_label: Label
+var _db_floor_val_label: Label
+var _spike_str_val_label: Label
+var _spike_dec_val_label: Label
+var _wall_glow_val_label: Label
+var _wall_pulse_val_label: Label
 
 var _beat_flash: float = 0.0
+var _timeline_dragging: bool = false
 var _peak_bass: float = 0.0
 var _peak_mid: float = 0.0
 var _peak_treble: float = 0.0
@@ -58,6 +72,7 @@ func _ready() -> void:
 	layer = 11
 	_build_ui()
 	EventBus.beat_detected.connect(_on_beat_detected)
+	MusicManager.song_changed.connect(_on_song_changed)
 
 
 func _process(delta: float) -> void:
@@ -69,7 +84,8 @@ func _process(delta: float) -> void:
 	_update_bar(_mid_fill, MusicManager.mid)
 	_update_bar(_treble_fill, MusicManager.treble)
 
-	var onset_normalized := clampf(MusicManager.onset_energy / (MusicManager.onset_threshold * 2.0), 0.0, 1.0)
+	var onset_denom := MusicManager.onset_threshold * 2.0
+	var onset_normalized := clampf(MusicManager.onset_energy / onset_denom, 0.0, 1.0) if onset_denom > 0.0 else 1.0
 	_update_bar(_onset_fill, onset_normalized)
 
 	_bass_label.text = "%.2f" % MusicManager.bass
@@ -96,9 +112,55 @@ func _process(delta: float) -> void:
 	_cooldown_fill.size.x = container_w * fraction
 	_cooldown_fill.color = _COLOR_COOLDOWN_READY.lerp(_COLOR_COOLDOWN_BUSY, fraction)
 
+	_threshold_val_label.text = "%.2f" % MusicManager.onset_threshold
+	_cooldown_val_label.text = "%.2f" % MusicManager.beat_cooldown
+	_smoothing_val_label.text = "%.2f" % MusicManager.smoothing
+	_db_floor_val_label.text = "%.0f" % MusicManager.db_floor
+
+	var lvc := get_tree().get_first_node_in_group("level_visuals_controller") as LevelVisualsController
+	if lvc:
+		_wall_glow_val_label.text = "%.2f" % lvc.wall_glow_peak
+		_wall_pulse_val_label.text = "%.2f" % lvc.wall_pulse_amount
+
+	var mvc := get_tree().get_first_node_in_group("music_visuals_component") as MusicVisualsComponent
+	if mvc:
+		_spike_str_val_label.text = "%.1f" % mvc.beat_spike_strength
+		_spike_dec_val_label.text = "%.2f" % mvc.beat_spike_decay
+
+	var duration := MusicManager.get_duration()
+	var position := MusicManager.get_position()
+	var timeline_fraction := clampf(position / duration, 0.0, 1.0) if duration > 0.0 else 0.0
+	_timeline_fill.size.x = _timeline_bar.size.x * timeline_fraction
+	_time_label.text = "%s / %s" % [_format_time(position), _format_time(duration)]
+
 
 func _on_beat_detected() -> void:
 	_beat_flash = 1.0
+
+
+func _on_song_changed(song_name: String) -> void:
+	_song_label.text = song_name
+
+
+func _on_timeline_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			_timeline_dragging = mb.pressed
+			if _timeline_dragging:
+				_seek_to_mouse(mb.position.x)
+	elif event is InputEventMouseMotion and _timeline_dragging:
+		_seek_to_mouse((event as InputEventMouseMotion).position.x)
+
+
+func _seek_to_mouse(local_x: float) -> void:
+	var ratio := clampf(local_x / _timeline_bar.size.x, 0.0, 1.0)
+	MusicManager.seek(ratio * MusicManager.get_duration())
+
+
+func _format_time(seconds: float) -> String:
+	var s := int(seconds)
+	return "%d:%02d" % [s / 60, s % 60]
 
 
 func _update_bar(fill: ColorRect, value: float) -> void:
@@ -146,13 +208,53 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 8)
 	panel.add_child(vbox)
 
-	# Song name
-	var song_label := Label.new()
-	song_label.text = "RisingHigh  —  Ace Combat 2"
-	song_label.add_theme_font_size_override("font_size", 11)
-	song_label.modulate = _COLOR_TEXT
-	song_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(song_label)
+	# Song name with prev/next navigation
+	var nav_row := HBoxContainer.new()
+	nav_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	nav_row.add_theme_constant_override("separation", 6)
+	vbox.add_child(nav_row)
+
+	var prev_btn := _make_nav_button("◀")
+	prev_btn.pressed.connect(MusicManager.prev_song)
+	nav_row.add_child(prev_btn)
+
+	_song_label = Label.new()
+	_song_label.text = MusicManager.current_song_name()
+	_song_label.add_theme_font_size_override("font_size", 11)
+	_song_label.modulate = _COLOR_TEXT
+	_song_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_song_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nav_row.add_child(_song_label)
+
+	var next_btn := _make_nav_button("▶")
+	next_btn.pressed.connect(MusicManager.next_song)
+	nav_row.add_child(next_btn)
+
+	# Timeline scrubber
+	_timeline_bar = Control.new()
+	_timeline_bar.custom_minimum_size = Vector2(0, 10)
+	_timeline_bar.size_flags_horizontal = Control.SIZE_FILL
+	_timeline_bar.mouse_filter = Control.MOUSE_FILTER_STOP
+	_timeline_bar.gui_input.connect(_on_timeline_input)
+	vbox.add_child(_timeline_bar)
+
+	var tl_bg := ColorRect.new()
+	tl_bg.color = _COLOR_BAR_BG
+	tl_bg.anchor_right = 1.0
+	tl_bg.anchor_bottom = 1.0
+	_timeline_bar.add_child(tl_bg)
+
+	_timeline_fill = ColorRect.new()
+	_timeline_fill.color = _COLOR_BASS
+	_timeline_fill.size = Vector2(0.0, 10.0)
+	_timeline_bar.add_child(_timeline_fill)
+
+	_time_label = Label.new()
+	_time_label.text = "0:00 / 0:00"
+	_time_label.add_theme_font_size_override("font_size", 10)
+	_time_label.modulate = _COLOR_RAW
+	_time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(_time_label)
 
 	# Beat indicator row
 	var beat_row := HBoxContainer.new()
@@ -228,6 +330,75 @@ func _build_ui() -> void:
 	_onset_thr_label = onset_col[2]
 	_onset_peak = onset_col[3]
 	bars_row.add_child(onset_col[4])
+
+	# Separator
+	var sep := ColorRect.new()
+	sep.color = _COLOR_BORDER
+	sep.custom_minimum_size = Vector2(0, 1)
+	sep.size_flags_horizontal = Control.SIZE_FILL
+	vbox.add_child(sep)
+
+	# Tuning sliders
+	var tuning_lbl := Label.new()
+	tuning_lbl.text = "TUNING"
+	tuning_lbl.add_theme_font_size_override("font_size", 10)
+	tuning_lbl.modulate = _COLOR_RAW
+	tuning_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(tuning_lbl)
+
+	var thr_row := _make_slider_row("ONSET THR", 0.0, 1.0, 0.01, MusicManager.onset_threshold)
+	_threshold_val_label = thr_row[1]
+	(thr_row[0] as HSlider).value_changed.connect(func(v: float) -> void: MusicManager.onset_threshold = v)
+	vbox.add_child(thr_row[2])
+
+	var cd_row := _make_slider_row("COOLDOWN", 0.0, 2.0, 0.05, MusicManager.beat_cooldown)
+	_cooldown_val_label = cd_row[1]
+	(cd_row[0] as HSlider).value_changed.connect(func(v: float) -> void: MusicManager.beat_cooldown = v)
+	vbox.add_child(cd_row[2])
+
+	var sm_row := _make_slider_row("SMOOTHING", 0.01, 0.5, 0.01, MusicManager.smoothing)
+	_smoothing_val_label = sm_row[1]
+	(sm_row[0] as HSlider).value_changed.connect(func(v: float) -> void: MusicManager.smoothing = v)
+	vbox.add_child(sm_row[2])
+
+	var db_row := _make_slider_row("DB FLOOR", -80.0, -20.0, 1.0, MusicManager.db_floor)
+	_db_floor_val_label = db_row[1]
+	(db_row[0] as HSlider).value_changed.connect(func(v: float) -> void: MusicManager.db_floor = v)
+	vbox.add_child(db_row[2])
+
+	var spike_str_row := _make_slider_row("SPIKE STR", 0.0, 5.0, 0.1, 3.0)
+	_spike_str_val_label = spike_str_row[1]
+	(spike_str_row[0] as HSlider).value_changed.connect(func(v: float) -> void:
+		for node: MusicVisualsComponent in get_tree().get_nodes_in_group("music_visuals_component"):
+			node.beat_spike_strength = v
+	)
+	vbox.add_child(spike_str_row[2])
+
+	var spike_dec_row := _make_slider_row("SPIKE DEC", 0.05, 2.0, 0.05, 0.25)
+	_spike_dec_val_label = spike_dec_row[1]
+	(spike_dec_row[0] as HSlider).value_changed.connect(func(v: float) -> void:
+		for node: MusicVisualsComponent in get_tree().get_nodes_in_group("music_visuals_component"):
+			node.beat_spike_decay = v
+	)
+	vbox.add_child(spike_dec_row[2])
+
+	var wall_glow_row := _make_slider_row("WALL GLOW", 0.0, 1.0, 0.01, 0.80)
+	_wall_glow_val_label = wall_glow_row[1]
+	(wall_glow_row[0] as HSlider).value_changed.connect(func(v: float) -> void:
+		var lvc := get_tree().get_first_node_in_group("level_visuals_controller") as LevelVisualsController
+		if lvc:
+			lvc.wall_glow_peak = v
+	)
+	vbox.add_child(wall_glow_row[2])
+
+	var wall_pulse_row := _make_slider_row("WALL PULSE", 0.0, 1.0, 0.01, 0.40)
+	_wall_pulse_val_label = wall_pulse_row[1]
+	(wall_pulse_row[0] as HSlider).value_changed.connect(func(v: float) -> void:
+		var lvc := get_tree().get_first_node_in_group("level_visuals_controller") as LevelVisualsController
+		if lvc:
+			lvc.wall_pulse_amount = v
+	)
+	vbox.add_child(wall_pulse_row[2])
 
 
 # Returns [fill, value_label, raw_label, peak_marker, column_vbox]
@@ -344,6 +515,61 @@ func _make_onset_column() -> Array:
 	col.add_child(name_label)
 
 	return [fill, val_label, thr_label, peak, col]
+
+
+# Returns [HSlider, value_label, row_container]
+func _make_slider_row(label_text: String, min_v: float, max_v: float, step: float, init_v: float) -> Array:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	row.size_flags_horizontal = Control.SIZE_FILL
+
+	var lbl := Label.new()
+	lbl.text = label_text
+	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.modulate = _COLOR_TEXT
+	lbl.custom_minimum_size = Vector2(72, 0)
+	row.add_child(lbl)
+
+	var slider := HSlider.new()
+	slider.min_value = min_v
+	slider.max_value = max_v
+	slider.step = step
+	slider.value = init_v
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.custom_minimum_size = Vector2(0, 16)
+	slider.focus_mode = Control.FOCUS_NONE
+	row.add_child(slider)
+
+	var val_lbl := Label.new()
+	val_lbl.text = "%.2f" % init_v
+	val_lbl.add_theme_font_size_override("font_size", 10)
+	val_lbl.modulate = _COLOR_ONSET
+	val_lbl.custom_minimum_size = Vector2(32, 0)
+	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(val_lbl)
+
+	return [slider, val_lbl, row]
+
+
+func _make_nav_button(icon: String) -> Button:
+	var btn := Button.new()
+	btn.text = icon
+	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_color_override("font_color", _COLOR_TEXT)
+	btn.add_theme_color_override("font_hover_color", Color.WHITE)
+	btn.add_theme_color_override("font_pressed_color", _COLOR_BEAT_ON)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.12, 0.12, 0.18)
+	style.set_corner_radius_all(4)
+	style.content_margin_left = 6.0
+	style.content_margin_right = 6.0
+	style.content_margin_top = 2.0
+	style.content_margin_bottom = 2.0
+	btn.add_theme_stylebox_override("normal", style)
+	var hover_style := style.duplicate() as StyleBoxFlat
+	hover_style.bg_color = Color(0.20, 0.20, 0.28)
+	btn.add_theme_stylebox_override("hover", hover_style)
+	return btn
 
 
 func _make_panel() -> PanelContainer:
