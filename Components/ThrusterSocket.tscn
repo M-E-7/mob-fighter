@@ -1,8 +1,8 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c7ocuk7ugeayx"]
 
-[ext_resource type="Script" path="res://Components/Scripts/thruster_socket.gd" id="1_ts"]
+[ext_resource type="Script" uid="uid://b1pocnwfccjit" path="res://Components/Scripts/thruster_socket.gd" id="1_ts"]
 
-[node name="ThrusterSocket" type="Node2D"]
+[node name="ThrusterSocket" type="Node2D" unique_id=1235586541]
 script = ExtResource("1_ts")
 
-[node name="BeamMesh" type="MeshInstance2D" parent="."]
+[node name="BeamMesh" type="MeshInstance2D" parent="." unique_id=1423475031]

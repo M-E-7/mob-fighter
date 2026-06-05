@@ -95,6 +95,7 @@ func _add_float_widget(row: HBoxContainer, def: Dictionary, cls: String, prop: S
 	slider.value = val
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	slider.custom_minimum_size = Vector2(200, 0)
+	slider.scrollable = false
 
 	var spin := SpinBox.new()
 	spin.min_value = slider.min_value

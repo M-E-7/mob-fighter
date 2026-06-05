@@ -427,3 +427,4 @@ Key rules:
 - Do not call `get_tree().change_scene_to_file()` while `get_tree().paused` is true — the new scene will not load. Always unpause first.
 - Do not set `Camera2D.ignore_rotation = false` when you also need a fixed (axis-aligned) camera mode. Toggle it per-frame based on the active mode; leaving it `false` permanently causes one-frame rotation jitter in fixed mode because the camera inherits the player node's rotation between `_physics_process` and `_process`.
 - Do not use `Camera2D.rotation` when the camera is a child of a rotating node — use `global_rotation` instead, otherwise the parent's rotation stacks on top.
+- Do not create `HSlider` nodes without setting `scrollable = false` — mouse scroll over a slider changes its value while the player is scrolling through settings, which is never intended.

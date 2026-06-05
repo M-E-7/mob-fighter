@@ -5,7 +5,7 @@ enum FireWhen { FORWARD, BACKWARD, STRAFE_LEFT, STRAFE_RIGHT }
 
 @export_group("Settings")
 @export var fire_when: FireWhen = FireWhen.FORWARD
-@export var beam_color: Color = Color(0.0, 0.625, 0.5, 1.0)
+@export var beam_color: Color = Color(0.356, 0.003, 0.027, 1.0)
 @export var beam_length: float = 24.0
 @export var beam_width: float = 8.0
 @export_range(0.0, 1.0) var shimmer_strength: float = 0.25

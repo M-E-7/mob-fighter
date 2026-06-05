@@ -19,11 +19,14 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
 @onready var _music_visuals_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
 @onready var _music_visualizer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
-@onready var _camera_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraRow/CameraToggle
-@onready var _sensitivity_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow/SensitivitySlider
-@onready var _sensitivity_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow/SensitivityValueLabel
-@onready var _smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow/SmoothingSlider
-@onready var _smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow/SmoothingValueLabel
+@onready var _camera_panel: PanelContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel
+@onready var _camera_vbox: VBoxContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox
+@onready var _camera_header: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraHeader
+@onready var _camera_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow/CameraToggle
+@onready var _sensitivity_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivitySlider
+@onready var _sensitivity_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivityValueLabel
+@onready var _smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingSlider
+@onready var _smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingValueLabel
 @onready var _advanced_button: Button = $CenterContainer/VBox/AdvancedButton
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
@@ -54,6 +57,8 @@ func _ready() -> void:
 	_music_visualizer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.show_music_visualizer = v)
 	_camera_toggle.button_pressed = GameConfig.camera_relative_mode
 	_camera_toggle.toggled.connect(func(v: bool) -> void: GameConfig.camera_relative_mode = v)
+	_sensitivity_slider.scrollable = false
+	_smoothing_slider.scrollable = false
 	_sensitivity_slider.value = GameConfig.mouse_sensitivity * 1000.0
 	_sensitivity_value_label.text = str(int(_sensitivity_slider.value))
 	_sensitivity_slider.value_changed.connect(func(v: float) -> void:
@@ -95,6 +100,27 @@ func _apply_theme() -> void:
 
 	var toggles_vbox: VBoxContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox
 	for row in toggles_vbox.get_children():
+		if row is HBoxContainer:
+			var lbl := row.get_child(0) as Label
+			if lbl:
+				lbl.add_theme_font_size_override("font_size", 18)
+				lbl.modulate = Color(0.85, 0.85, 0.9)
+
+	var cam_style := StyleBoxFlat.new()
+	cam_style.bg_color = Color(0.03, 0.07, 0.11, 1.0)
+	cam_style.border_color = Color(0.0, 0.5, 0.6)
+	cam_style.set_border_width_all(1)
+	cam_style.set_corner_radius_all(6)
+	cam_style.content_margin_left = 12.0
+	cam_style.content_margin_right = 12.0
+	cam_style.content_margin_top = 10.0
+	cam_style.content_margin_bottom = 10.0
+	_camera_panel.add_theme_stylebox_override("panel", cam_style)
+
+	_camera_header.add_theme_font_size_override("font_size", 13)
+	_camera_header.modulate = _COLOR_ACCENT
+
+	for row in _camera_vbox.get_children():
 		if row is HBoxContainer:
 			var lbl := row.get_child(0) as Label
 			if lbl:

@@ -142,24 +142,32 @@ text = "Music Visualizer HUD"
 [node name="MusicVisualizerToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow"]
 layout_mode = 2
 
-[node name="CameraRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="CameraPanel" type="PanelContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
 
-[node name="CameraLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraRow"]
+[node name="CameraVBox" type="VBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel"]
+theme_override_constants/separation = 12
+
+[node name="CameraHeader" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+text = "RELATIVE CAMERA"
+
+[node name="CameraRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+
+[node name="CameraLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Relative Camera"
 
-[node name="CameraToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraRow"]
+[node name="CameraToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
 layout_mode = 2
 
-[node name="SensitivityRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="SensitivityRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="SensitivityLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow"]
+[node name="SensitivityLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Mouse Sensitivity"
 
-[node name="SensitivitySlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow"]
+[node name="SensitivitySlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -168,20 +176,20 @@ max_value = 30.0
 step = 1.0
 value = 2.0
 
-[node name="SensitivityValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow"]
+[node name="SensitivityValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(32, 0)
 text = "2"
 horizontal_alignment = 2
 
-[node name="SmoothingRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="SmoothingRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="SmoothingLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow"]
+[node name="SmoothingLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Camera Smoothing"
 
-[node name="SmoothingSlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow"]
+[node name="SmoothingSlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -190,7 +198,7 @@ max_value = 30.0
 step = 1.0
 value = 30.0
 
-[node name="SmoothingValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow"]
+[node name="SmoothingValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(32, 0)
 text = "30"

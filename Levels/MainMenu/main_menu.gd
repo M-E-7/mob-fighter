@@ -37,6 +37,7 @@ func _ready() -> void:
 	_refresh_slot(2)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	_quit_button.pressed.connect(get_tree().quit)
+	_create_controls_guide()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -203,3 +204,57 @@ func _style_slot(panel: PanelContainer, bg: Color, border: Color) -> void:
 func _is_modifier_only(event: InputEventKey) -> bool:
 	return event.keycode in [KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_META,
 			KEY_CAPSLOCK, KEY_NUMLOCK, KEY_SCROLLLOCK]
+
+
+func _create_controls_guide() -> void:
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.05, 0.05, 0.08, 0.9)
+	style.border_color = _COLOR_BORDER_IDLE
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(8)
+	style.content_margin_left = 20.0
+	style.content_margin_right = 20.0
+	style.content_margin_top = 14.0
+	style.content_margin_bottom = 14.0
+	panel.add_theme_stylebox_override("panel", style)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+
+	var header := Label.new()
+	header.text = "CONTROLS"
+	header.add_theme_font_size_override("font_size", 14)
+	header.modulate = _COLOR_DIM
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(header)
+
+	for entry: Array in [["WASD", "Move"], ["Mouse", "Aim"], ["Left Click", "Shoot"], ["Space", "Turbo"]]:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 16)
+
+		var key_lbl := Label.new()
+		key_lbl.text = entry[0]
+		key_lbl.add_theme_font_size_override("font_size", 15)
+		key_lbl.modulate = _COLOR_P1
+		key_lbl.custom_minimum_size.x = 90.0
+
+		var desc_lbl := Label.new()
+		desc_lbl.text = entry[1]
+		desc_lbl.add_theme_font_size_override("font_size", 15)
+		desc_lbl.modulate = _COLOR_DIM
+
+		row.add_child(key_lbl)
+		row.add_child(desc_lbl)
+		vbox.add_child(row)
+
+	panel.add_child(vbox)
+	add_child(panel)
+
+	panel.anchor_left = 0.5
+	panel.anchor_right = 0.5
+	panel.anchor_top = 1.0
+	panel.anchor_bottom = 1.0
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	panel.offset_bottom = -24.0
