@@ -2,6 +2,7 @@ extends Control
 class_name Settings
 
 const _MAIN_MENU_SCENE := "res://Levels/MainMenu/MainMenu.tscn"
+const _ADVANCED_SCENE := "res://Levels/Settings/AdvancedSettings.tscn"
 
 const _COLOR_ACCENT := Color(0.0, 1.0, 0.9)
 const _COLOR_DIM := Color(0.45, 0.45, 0.5)
@@ -18,6 +19,7 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
 @onready var _music_visuals_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
 @onready var _music_visualizer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
+@onready var _advanced_button: Button = $CenterContainer/VBox/AdvancedButton
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
 
@@ -45,7 +47,12 @@ func _ready() -> void:
 	_xp_pickup_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_pickup_text = v)
 	_music_visuals_toggle.toggled.connect(func(v: bool) -> void: GameConfig.music_visuals_enabled = v)
 	_music_visualizer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.show_music_visualizer = v)
+	_advanced_button.pressed.connect(_on_advanced_pressed)
 	_back_button.pressed.connect(_on_back_pressed)
+
+
+func _on_advanced_pressed() -> void:
+	get_tree().change_scene_to_file(_ADVANCED_SCENE)
 
 
 func _on_back_pressed() -> void:
@@ -74,6 +81,27 @@ func _apply_theme() -> void:
 			if lbl:
 				lbl.add_theme_font_size_override("font_size", 18)
 				lbl.modulate = Color(0.85, 0.85, 0.9)
+
+	var adv_normal := StyleBoxFlat.new()
+	adv_normal.bg_color = Color(0.05, 0.1, 0.12)
+	adv_normal.border_color = Color(0.2, 0.5, 0.55)
+	adv_normal.set_border_width_all(2)
+	adv_normal.set_corner_radius_all(4)
+	adv_normal.content_margin_left = 40.0
+	adv_normal.content_margin_right = 40.0
+	adv_normal.content_margin_top = 12.0
+	adv_normal.content_margin_bottom = 12.0
+	_advanced_button.add_theme_stylebox_override("normal", adv_normal)
+
+	var adv_hover := adv_normal.duplicate() as StyleBoxFlat
+	adv_hover.bg_color = Color(0.08, 0.15, 0.18)
+	adv_hover.border_color = _COLOR_ACCENT
+	_advanced_button.add_theme_stylebox_override("hover", adv_hover)
+
+	_advanced_button.add_theme_color_override("font_color", Color(0.5, 0.8, 0.85))
+	_advanced_button.add_theme_color_override("font_hover_color", _COLOR_ACCENT)
+	_advanced_button.add_theme_font_size_override("font_size", 22)
+	_advanced_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 
 	var back_normal := StyleBoxFlat.new()
 	back_normal.bg_color = Color(0.07, 0.07, 0.12)

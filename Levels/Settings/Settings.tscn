@@ -145,6 +145,10 @@ layout_mode = 2
 [node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
 custom_minimum_size = Vector2(0, 40)
 
+[node name="AdvancedButton" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 50)
+text = "ADVANCED SETTINGS"
+
 [node name="BackButton" type="Button" parent="CenterContainer/VBox"]
 custom_minimum_size = Vector2(200, 50)
 text = "BACK"
