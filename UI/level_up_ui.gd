@@ -68,6 +68,7 @@ func _on_player_leveled_up(_player: LivingEntity) -> void:
 		_p2_section.modulate = Color(1, 1, 1, 1)
 
 	visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	get_tree().paused = true
 
 
@@ -208,3 +209,5 @@ func _try_close() -> void:
 	if _p1_picked and _p2_picked:
 		visible = false
 		get_tree().paused = false
+		if GameConfig.camera_relative_mode:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
