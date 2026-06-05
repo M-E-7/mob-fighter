@@ -12,6 +12,9 @@ var hud_show_survival_timer: bool = true
 var hud_show_xp_pickup_text: bool = true
 var music_visuals_enabled: bool = true
 var show_music_visualizer: bool = true
+var camera_relative_mode: bool = true
+var mouse_sensitivity: float = 0.002
+var camera_smoothing: float = 30.0
 
 var result_kills_p1: int = 0
 var result_kills_p2: int = 0

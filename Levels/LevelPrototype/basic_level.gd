@@ -22,6 +22,9 @@ var _p2_dead: bool = false
 var _hud: HUD
 var _pause_menu: PauseMenuUI
 var _game_over_shown: bool = false
+var _rel_cam_angle: float = 0.0
+var _display_cam_angle: float = 0.0
+var _input_comp_p1: PlayerInputComponent
 
 
 func _ready() -> void:
@@ -31,6 +34,7 @@ func _ready() -> void:
 
 	_camera_p1 = Camera2D.new()
 	_player1.add_child(_camera_p1)
+	_input_comp_p1 = _player1.get_node_or_null("PlayerInputComponent") as PlayerInputComponent
 
 	_level_up_ui.set("xp_component", _player1.get_node("XPComponent") as XPComponent)
 
@@ -61,6 +65,8 @@ func _ready() -> void:
 			rects.append(bg_p2)
 	vis.setup(rects, _proc_gen)
 
+	if GameConfig.camera_relative_mode:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	MusicManager.start()
 
 	_proc_gen.level_generated.connect(_on_level_generated)
@@ -85,7 +91,16 @@ func _setup_split_screen() -> void:
 	_level_up_ui.set("xp_component_p2", _player2.get_node("XPComponent") as XPComponent)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if GameConfig.camera_relative_mode:
+		_camera_p1.ignore_rotation = false
+		_display_cam_angle = lerp_angle(_display_cam_angle, _rel_cam_angle, clamp(GameConfig.camera_smoothing * delta, 0.0, 1.0))
+		_camera_p1.global_rotation = _display_cam_angle
+		if _input_comp_p1:
+			_input_comp_p1.relative_camera_angle = _rel_cam_angle
+	else:
+		_camera_p1.ignore_rotation = true
+
 	if GameConfig.player_count == 2 and not _p2_dead and is_instance_valid(_player2):
 		_camera_p2.global_position = _player2.global_position
 
@@ -115,6 +130,9 @@ func _on_entity_died(entity: LivingEntity) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if GameConfig.camera_relative_mode and event is InputEventMouseMotion:
+		_rel_cam_angle += (event as InputEventMouseMotion).relative.x * GameConfig.mouse_sensitivity
+		return
 	if event.is_action_pressed("ui_cancel") and not _game_over_shown:
 		_pause_game()
 
@@ -125,17 +143,21 @@ func _pause_game() -> void:
 		add_child(_pause_menu)
 		_pause_menu.resume_requested.connect(_resume_game)
 	_pause_menu.visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	get_tree().paused = true
 
 
 func _resume_game() -> void:
 	get_tree().paused = false
+	if GameConfig.camera_relative_mode:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(_pause_menu):
 		_pause_menu.visible = false
 
 
 func _show_game_over() -> void:
 	_game_over_shown = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	MusicManager.stop()
 	GameConfig.result_kills_p1 = _hud.get_kills(1)
 	GameConfig.result_kills_p2 = _hud.get_kills(2)

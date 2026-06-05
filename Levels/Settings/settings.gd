@@ -19,6 +19,11 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
 @onready var _music_visuals_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
 @onready var _music_visualizer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
+@onready var _camera_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraRow/CameraToggle
+@onready var _sensitivity_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow/SensitivitySlider
+@onready var _sensitivity_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SensitivityRow/SensitivityValueLabel
+@onready var _smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow/SmoothingSlider
+@onready var _smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/SmoothingRow/SmoothingValueLabel
 @onready var _advanced_button: Button = $CenterContainer/VBox/AdvancedButton
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
@@ -47,6 +52,20 @@ func _ready() -> void:
 	_xp_pickup_toggle.toggled.connect(func(v: bool) -> void: GameConfig.hud_show_xp_pickup_text = v)
 	_music_visuals_toggle.toggled.connect(func(v: bool) -> void: GameConfig.music_visuals_enabled = v)
 	_music_visualizer_toggle.toggled.connect(func(v: bool) -> void: GameConfig.show_music_visualizer = v)
+	_camera_toggle.button_pressed = GameConfig.camera_relative_mode
+	_camera_toggle.toggled.connect(func(v: bool) -> void: GameConfig.camera_relative_mode = v)
+	_sensitivity_slider.value = GameConfig.mouse_sensitivity * 1000.0
+	_sensitivity_value_label.text = str(int(_sensitivity_slider.value))
+	_sensitivity_slider.value_changed.connect(func(v: float) -> void:
+		GameConfig.mouse_sensitivity = v / 1000.0
+		_sensitivity_value_label.text = str(int(v))
+	)
+	_smoothing_slider.value = GameConfig.camera_smoothing
+	_smoothing_value_label.text = str(int(_smoothing_slider.value))
+	_smoothing_slider.value_changed.connect(func(v: float) -> void:
+		GameConfig.camera_smoothing = v
+		_smoothing_value_label.text = str(int(v))
+	)
 	_advanced_button.pressed.connect(_on_advanced_pressed)
 	_back_button.pressed.connect(_on_back_pressed)
 
