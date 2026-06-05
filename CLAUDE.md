@@ -374,6 +374,18 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 
 ---
 
+## Pause System
+
+ESC during gameplay is handled by `basic_level.gd` via `_unhandled_input`. It instantiates `PauseMenuUI` (`UI/PauseMenuUI.tscn`) lazily on first press, sets `get_tree().paused = true`, and shows the overlay. `PauseMenuUI` uses `PROCESS_MODE_ALWAYS` so its buttons and `_input` work while the tree is paused.
+
+Key rules:
+- `PauseMenuUI._input` guards `if not visible: return` — a hidden `PROCESS_MODE_ALWAYS` node still receives input, so without the guard it silently consumes ESC even when off-screen.
+- Always call `get_tree().paused = false` **before** `change_scene_to_file()` — a paused tree blocks scene loading.
+- Always call `MusicManager.stop()` before any scene transition that leaves the level (both game-over and pause-to-menu paths).
+- `basic_level._game_over_shown` blocks ESC after all players die so the pause menu can't open over the game-over screen. The LevelUpUI case is handled automatically: when LevelUpUI pauses the tree, `basic_level._unhandled_input` is suspended (default `PROCESS_MODE_PAUSABLE`) so ESC can't double-pause.
+
+---
+
 ## Anti-Patterns to Avoid
 
 - Do not put game logic in `LivingEntity` — delegate to a component.
@@ -386,3 +398,5 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 - Do not inject `ParticleProcessMaterial` into `GPUParticles2D` at runtime (`_ready()`). Define it as a `[sub_resource]` in the `.tscn` file — runtime injection is silently ignored by the rendering server.
 - Do not use `material_override` on `MeshInstance2D` — that property belongs to `MeshInstance3D`. The correct property is `material` (inherited from `CanvasItem`). Using the wrong name silently does nothing and the mesh renders plain white.
 - Do not use channel values above 1.0 in `canvas_item` shaders with `render_mode blend_add`. Additive blending accumulates naturally — values > 1.0 saturate immediately to white. Keep each layer's RGB ≤ 1.0 and let the additive blend mode create the glow.
+- Do not implement `_input` or `_unhandled_input` on a `PROCESS_MODE_ALWAYS` node without a `if not visible: return` guard. Hidden nodes with `PROCESS_MODE_ALWAYS` still receive input events, silently consuming them from nodes below in the stack.
+- Do not call `get_tree().change_scene_to_file()` while `get_tree().paused` is true — the new scene will not load. Always unpause first.

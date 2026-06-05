@@ -51,7 +51,7 @@ var _prev_level_p2: int = 0
 
 func _ready() -> void:
 	layer = 10
-	process_mode = Node.PROCESS_MODE_ALWAYS
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 
 	_p1 = _build_panel(_COLOR_P1)
 	add_child(_p1.panel)

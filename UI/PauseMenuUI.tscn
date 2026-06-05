@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://UI/pause_menu_ui.gd" id="1_pmui"]
+
+[node name="PauseMenuUI" type="CanvasLayer"]
+script = ExtResource("1_pmui")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.75)
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Dim"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="Dim/CenterContainer"]
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="Dim/CenterContainer/VBox"]
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Dim/CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 16)
+
+[node name="ContinueButton" type="Button" parent="Dim/CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 52)
+text = "CONTINUE"
+
+[node name="MenuButton" type="Button" parent="Dim/CenterContainer/VBox"]
+custom_minimum_size = Vector2(200, 52)
+text = "MAIN MENU"

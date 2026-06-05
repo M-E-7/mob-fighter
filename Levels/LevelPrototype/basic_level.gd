@@ -20,6 +20,8 @@ var _camera_p2: Camera2D
 var _p1_dead: bool = false
 var _p2_dead: bool = false
 var _hud: HUD
+var _pause_menu: PauseMenuUI
+var _game_over_shown: bool = false
 
 
 func _ready() -> void:
@@ -112,7 +114,28 @@ func _on_entity_died(entity: LivingEntity) -> void:
 		_show_game_over()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and not _game_over_shown:
+		_pause_game()
+
+
+func _pause_game() -> void:
+	if not is_instance_valid(_pause_menu):
+		_pause_menu = preload("res://UI/PauseMenuUI.tscn").instantiate() as PauseMenuUI
+		add_child(_pause_menu)
+		_pause_menu.resume_requested.connect(_resume_game)
+	_pause_menu.visible = true
+	get_tree().paused = true
+
+
+func _resume_game() -> void:
+	get_tree().paused = false
+	if is_instance_valid(_pause_menu):
+		_pause_menu.visible = false
+
+
 func _show_game_over() -> void:
+	_game_over_shown = true
 	MusicManager.stop()
 	GameConfig.result_kills_p1 = _hud.get_kills(1)
 	GameConfig.result_kills_p2 = _hud.get_kills(2)
