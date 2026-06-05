@@ -152,10 +152,64 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 ]
 
 var _overrides: Dictionary = {}
+# Actual inspector values read from .tscn files at startup (and refreshed from live nodes).
+var _base_values: Dictionary = {}
+
+# Scenes instantiated temporarily at startup to extract real inspector-configured defaults.
+# Component scenes first, then entity scenes so per-instance values overwrite template values.
+const _SEED_SCENES: Array[String] = [
+	"res://Components/PlayerInputComponent.tscn",
+	"res://Components/ControllerInputComponent.tscn",
+	"res://Components/MovementComponent.tscn",
+	"res://Components/XPComponent.tscn",
+	"res://Components/XPDropComponent.tscn",
+	"res://Components/MusicVisualsComponent.tscn",
+	"res://Components/NeonShaderComponent.tscn",
+	"res://Components/ThrusterComponent.tscn",
+	"res://Components/ThrusterSocket.tscn",
+	"res://Components/EnemySpawnerComponent.tscn",
+	"res://Components/ProcGenLevelComponent.tscn",
+	"res://Entities/Player/Ships/PlayerShip.tscn",
+	"res://Entities/Player/player.tscn",
+	"res://Entities/BasicEnemy/enemy.tscn",
+	"res://Entities/ExperienceOrb/experience_orb.tscn",
+]
 
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
+	_capture_node_props(MusicManager, "MusicManager")
+	_preload_scene_defaults()
+
+
+func _preload_scene_defaults() -> void:
+	for path: String in _SEED_SCENES:
+		var packed := load(path) as PackedScene
+		if not packed:
+			continue
+		var inst := packed.instantiate()
+		_scan_for_base_values(inst)
+		inst.free()
+
+
+func _scan_for_base_values(node: Node) -> void:
+	var script := node.get_script() as GDScript
+	if script:
+		var cls: String = script.get_global_name()
+		if not cls.is_empty():
+			_capture_node_props(node, cls)
+	for child in node.get_children():
+		_scan_for_base_values(child)
+
+
+func _capture_node_props(node: Node, cls: String) -> void:
+	if not _base_values.has(cls):
+		_base_values[cls] = {}
+	for def: Dictionary in PROPERTY_DEFS:
+		if def["class"] == cls:
+			var val: Variant = node.get(def["name"])
+			if val != null:
+				_base_values[cls][def["name"]] = val
 
 
 func set_override(cls: String, prop: String, value: Variant) -> void:
@@ -169,6 +223,8 @@ func set_override(cls: String, prop: String, value: Variant) -> void:
 func get_override(cls: String, prop: String) -> Variant:
 	if _overrides.has(cls) and _overrides[cls].has(prop):
 		return _overrides[cls][prop]
+	if _base_values.has(cls) and _base_values[cls].has(prop):
+		return _base_values[cls][prop]
 	return _get_default(cls, prop)
 
 
@@ -190,6 +246,8 @@ func _on_node_added(node: Node) -> void:
 	var cls: String = script.get_global_name()
 	if cls.is_empty():
 		return
+	# Capture pre-override inspector values before applying any overrides.
+	_capture_node_props(node, cls)
 	_apply_class_overrides(node, cls)
 	# Player2 inherits all Player overrides (movement + combat)
 	if cls == "Player2":

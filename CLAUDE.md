@@ -335,9 +335,10 @@ The Advanced Settings screen (`Levels/Settings/AdvancedSettings.tscn` + `advance
 
 - `PROPERTY_DEFS: Array[Dictionary]` — static table of all tunable properties. Each entry has: `"group"`, `"class"` (GDScript class name), `"name"`, `"type"` (TYPE_FLOAT / TYPE_INT / TYPE_BOOL / TYPE_COLOR), `"default"`, and optionally `"min"`, `"max"`, `"step"`.
 - `_overrides: Dictionary` — `{ class_name: { prop_name: value } }`. Populated by the UI; read by the node_added hook.
+- `_base_values: Dictionary` — `{ class_name: { prop_name: value } }`. Populated at autoload `_ready()` by `_preload_scene_defaults()`, which instantiates each scene in `_SEED_SCENES` in memory (no `_ready()` runs — only saved `.tscn` property values are read), scans the tree recursively, then frees the instance. Also refreshed from live nodes in `_on_node_added` before overrides are applied. Entity scenes are listed after component template scenes in `_SEED_SCENES` so per-instance values overwrite template values.
 - `set_override(cls, prop, value)` — stores an override and, for `MusicManager` class entries, applies it immediately to the live singleton.
-- `get_override(cls, prop)` — returns the current override or the default from `PROPERTY_DEFS`.
-- `_on_node_added(node)` — fired by `SceneTree.node_added` before the node's `_ready()`. Applies `_overrides[class_name]` via `node.set(prop, value)`. Special cases: `Player2` nodes also receive all `Player` overrides (movement + combat symmetry); `Enemy` nodes receive only the four combat props from `Player` overrides (`fire_rate`, `bullet_damage`, `bullet_speed`, `max_health`).
+- `get_override(cls, prop)` — returns, in priority order: user override → actual `.tscn` inspector value (from `_base_values`) → hardcoded default from `PROPERTY_DEFS`.
+- `_on_node_added(node)` — fired by `SceneTree.node_added` before the node's `_ready()`. Calls `_capture_node_props` to refresh `_base_values` from the live node's pre-override property values, then applies `_overrides[class_name]` via `node.set(prop, value)`. Special cases: `Player2` nodes also receive all `Player` overrides (movement + combat symmetry); `Enemy` nodes receive only the four combat props from `Player` overrides (`fire_rate`, `bullet_damage`, `bullet_speed`, `max_health`).
 
 ### Settings navigation flow
 
@@ -350,7 +351,7 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 
 ### Adding a new tunable property
 
-1. Add an entry to `PROPERTY_DEFS` in `advanced_config.gd` with the correct `"class"` (exact GDScript `class_name` of the owning node), `"group"`, `"name"`, `"type"`, and `"default"`.
+1. Add an entry to `PROPERTY_DEFS` in `advanced_config.gd` with the correct `"class"` (exact GDScript `class_name` of the owning node), `"group"`, `"name"`, `"type"`, and `"default"`. The `"default"` is a last-resort fallback only; `_base_values` (populated from `_SEED_SCENES` at startup) takes precedence. If the new property's class is not already covered by `_SEED_SCENES`, add its scene path there too.
 2. No other changes needed — the UI and override hook read from `PROPERTY_DEFS` automatically.
 3. If the property belongs to a class that needs special propagation (e.g. applying to both Player and Player2), add the case to `_on_node_added`.
 
