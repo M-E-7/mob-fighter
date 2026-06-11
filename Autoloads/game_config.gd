@@ -15,6 +15,8 @@ var show_music_visualizer: bool = true
 var camera_relative_mode: bool = true
 var mouse_sensitivity: float = 0.002
 var camera_smoothing: float = 30.0
+@export var camera_look_ahead: float = 150.0
+@export var camera_look_ahead_smoothing: float = 8.0
 
 var result_kills_p1: int = 0
 var result_kills_p2: int = 0

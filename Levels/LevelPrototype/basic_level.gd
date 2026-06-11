@@ -24,6 +24,7 @@ var _pause_menu: PauseMenuUI
 var _game_over_shown: bool = false
 var _rel_cam_angle: float = 0.0
 var _display_cam_angle: float = 0.0
+var _look_ahead_angle: float = 0.0
 var _input_comp_p1: PlayerInputComponent
 
 
@@ -33,7 +34,7 @@ func _ready() -> void:
 	$SplitScreenLayout.size = get_viewport().get_visible_rect().size
 
 	_camera_p1 = Camera2D.new()
-	_player1.add_child(_camera_p1)
+	_subviewport_p1.add_child(_camera_p1)
 	_input_comp_p1 = _player1.get_node_or_null("PlayerInputComponent") as PlayerInputComponent
 
 	_level_up_ui.set("xp_component", _player1.get_node("XPComponent") as XPComponent)
@@ -94,12 +95,20 @@ func _setup_split_screen() -> void:
 func _process(delta: float) -> void:
 	if GameConfig.camera_relative_mode:
 		_camera_p1.ignore_rotation = false
-		_display_cam_angle = lerp_angle(_display_cam_angle, _rel_cam_angle, clamp(GameConfig.camera_smoothing * delta, 0.0, 1.0))
+		var rot_w := 1.0 - exp(-GameConfig.camera_smoothing * delta)
+		_display_cam_angle = lerp_angle(_display_cam_angle, _rel_cam_angle, rot_w)
 		_camera_p1.global_rotation = _display_cam_angle
+		if not _p1_dead:
+			var la_w := 1.0 - exp(-GameConfig.camera_look_ahead_smoothing * delta)
+			_look_ahead_angle = lerp_angle(_look_ahead_angle, _rel_cam_angle, la_w)
+			var fwd := Vector2(sin(_look_ahead_angle), -cos(_look_ahead_angle))
+			_camera_p1.global_position = _player1.global_position + fwd * GameConfig.camera_look_ahead
 		if _input_comp_p1:
 			_input_comp_p1.relative_camera_angle = _rel_cam_angle
 	else:
 		_camera_p1.ignore_rotation = true
+		if not _p1_dead:
+			_camera_p1.global_position = _player1.global_position
 
 	if GameConfig.player_count == 2 and not _p2_dead and is_instance_valid(_player2):
 		_camera_p2.global_position = _player2.global_position
@@ -107,6 +116,7 @@ func _process(delta: float) -> void:
 
 func _on_level_generated(spawn_pos: Vector2) -> void:
 	_player1.global_position = spawn_pos
+	_camera_p1.global_position = spawn_pos
 	if is_instance_valid(_player2):
 		_player2.global_position = spawn_pos + Vector2(60, 0)
 		_camera_p2.global_position = spawn_pos + Vector2(60, 0)
@@ -116,9 +126,6 @@ func _on_level_generated(spawn_pos: Vector2) -> void:
 func _on_entity_died(entity: LivingEntity) -> void:
 	if entity == _player1:
 		_p1_dead = true
-		# Detach camera from player before player queue_frees so spectator view persists.
-		if is_instance_valid(_camera_p1):
-			_camera_p1.reparent(_subviewport_p1, true)
 		_overlay_p1.visible = true
 	elif is_instance_valid(_player2) and entity == _player2:
 		_p2_dead = true

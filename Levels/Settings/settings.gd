@@ -27,6 +27,10 @@ const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 @onready var _sensitivity_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivityValueLabel
 @onready var _smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingSlider
 @onready var _smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingValueLabel
+@onready var _look_ahead_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadSlider
+@onready var _look_ahead_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadValueLabel
+@onready var _la_smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingSlider
+@onready var _la_smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingValueLabel
 @onready var _advanced_button: Button = $CenterContainer/VBox/AdvancedButton
 @onready var _back_button: Button = $CenterContainer/VBox/BackButton
 
@@ -70,6 +74,20 @@ func _ready() -> void:
 	_smoothing_slider.value_changed.connect(func(v: float) -> void:
 		GameConfig.camera_smoothing = v
 		_smoothing_value_label.text = str(int(v))
+	)
+	_look_ahead_slider.scrollable = false
+	_look_ahead_slider.value = GameConfig.camera_look_ahead
+	_look_ahead_value_label.text = str(int(_look_ahead_slider.value))
+	_look_ahead_slider.value_changed.connect(func(v: float) -> void:
+		GameConfig.camera_look_ahead = v
+		_look_ahead_value_label.text = str(int(v))
+	)
+	_la_smoothing_slider.scrollable = false
+	_la_smoothing_slider.value = GameConfig.camera_look_ahead_smoothing
+	_la_smoothing_value_label.text = str(int(_la_smoothing_slider.value))
+	_la_smoothing_slider.value_changed.connect(func(v: float) -> void:
+		GameConfig.camera_look_ahead_smoothing = v
+		_la_smoothing_value_label.text = str(int(v))
 	)
 	_advanced_button.pressed.connect(_on_advanced_pressed)
 	_back_button.pressed.connect(_on_back_pressed)
