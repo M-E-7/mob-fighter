@@ -12,162 +12,169 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.047, 0.047, 0.07, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="Layout" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_right = 120
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
 
-[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBox" type="VBoxContainer" parent="Layout"]
+size_flags_vertical = 3
 theme_override_constants/separation = 24
 
-[node name="Title" type="Label" parent="CenterContainer/VBox"]
+[node name="Title" type="Label" parent="Layout/VBox"]
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="CenterContainer/VBox"]
-custom_minimum_size = Vector2(0, 40)
+[node name="ScrollContainer" type="ScrollContainer" parent="Layout/VBox"]
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="TogglesPanel" type="PanelContainer" parent="CenterContainer/VBox"]
+[node name="TogglesPanel" type="PanelContainer" parent="Layout/VBox/ScrollContainer"]
 custom_minimum_size = Vector2(520, 0)
+size_flags_horizontal = 3
 
-[node name="TogglesVBox" type="VBoxContainer" parent="CenterContainer/VBox/TogglesPanel"]
+[node name="TogglesVBox" type="VBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel"]
 theme_override_constants/separation = 16
 
-[node name="HealthRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="HealthRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="HealthLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/HealthRow"]
+[node name="HealthLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/HealthRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show Health Bar"
 
-[node name="HealthToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/HealthRow"]
+[node name="HealthToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/HealthRow"]
 layout_mode = 2
 
-[node name="XPRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="XPRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="XPLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow"]
+[node name="XPLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show XP Bar"
 
-[node name="XPToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow"]
+[node name="XPToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPRow"]
 layout_mode = 2
 
-[node name="KillsRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="KillsRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="KillsLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow"]
+[node name="KillsLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/KillsRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show Kill Counter"
 
-[node name="KillsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow"]
+[node name="KillsToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/KillsRow"]
 layout_mode = 2
 
-[node name="PowerupsRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="PowerupsRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="PowerupsLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow"]
+[node name="PowerupsLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/PowerupsRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show Active Power-Ups"
 
-[node name="PowerupsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow"]
+[node name="PowerupsToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/PowerupsRow"]
 layout_mode = 2
 
-[node name="DamageNumRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="DamageNumRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="DamageNumLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow"]
+[node name="DamageNumLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/DamageNumRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show Damage Numbers"
 
-[node name="DamageNumToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow"]
+[node name="DamageNumToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/DamageNumRow"]
 layout_mode = 2
 
-[node name="LowHPRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="LowHPRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="LowHPLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow"]
+[node name="LowHPLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/LowHPRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Low HP Warning"
 
-[node name="LowHPToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow"]
+[node name="LowHPToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/LowHPRow"]
 layout_mode = 2
 
-[node name="XPFlashRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="XPFlashRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="XPFlashLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow"]
+[node name="XPFlashLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPFlashRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "XP Level-Up Flash"
 
-[node name="XPFlashToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow"]
+[node name="XPFlashToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPFlashRow"]
 layout_mode = 2
 
-[node name="TimerRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="TimerRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="TimerLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow"]
+[node name="TimerLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/TimerRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show Survival Timer"
 
-[node name="TimerToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow"]
+[node name="TimerToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/TimerRow"]
 layout_mode = 2
 
-[node name="XPPickupRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="XPPickupRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="XPPickupLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow"]
+[node name="XPPickupLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPPickupRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Show XP Pickup Text"
 
-[node name="XPPickupToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow"]
+[node name="XPPickupToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPPickupRow"]
 layout_mode = 2
 
-[node name="MusicVisualsRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="MusicVisualsRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="MusicVisualsLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow"]
+[node name="MusicVisualsLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualsRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Music Visuals"
 
-[node name="MusicVisualsToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow"]
+[node name="MusicVisualsToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualsRow"]
 layout_mode = 2
 
-[node name="MusicVisualizerRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="MusicVisualizerRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="MusicVisualizerLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow"]
+[node name="MusicVisualizerLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualizerRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Music Visualizer HUD"
 
-[node name="MusicVisualizerToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow"]
+[node name="MusicVisualizerToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualizerRow"]
 layout_mode = 2
 
-[node name="CameraPanel" type="PanelContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox"]
+[node name="CameraPanel" type="PanelContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox"]
 
-[node name="CameraVBox" type="VBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel"]
+[node name="CameraVBox" type="VBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel"]
 theme_override_constants/separation = 12
 
-[node name="CameraHeader" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="CameraHeader" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 text = "RELATIVE CAMERA"
 
-[node name="CameraRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="CameraRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="CameraLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
+[node name="CameraLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Relative Camera"
 
-[node name="CameraToggle" type="CheckButton" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
+[node name="CameraToggle" type="CheckButton" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow"]
 layout_mode = 2
 
-[node name="SensitivityRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="SensitivityRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="SensitivityLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
+[node name="SensitivityLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Mouse Sensitivity"
 
-[node name="SensitivitySlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
+[node name="SensitivitySlider" type="HSlider" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -176,20 +183,20 @@ max_value = 30.0
 step = 1.0
 value = 2.0
 
-[node name="SensitivityValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
+[node name="SensitivityValueLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(32, 0)
 text = "2"
 horizontal_alignment = 2
 
-[node name="SmoothingRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="SmoothingRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="SmoothingLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
+[node name="SmoothingLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Camera Smoothing"
 
-[node name="SmoothingSlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
+[node name="SmoothingSlider" type="HSlider" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -198,20 +205,20 @@ max_value = 30.0
 step = 1.0
 value = 30.0
 
-[node name="SmoothingValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
+[node name="SmoothingValueLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(32, 0)
 text = "30"
 horizontal_alignment = 2
 
-[node name="LookAheadRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="LookAheadRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="LookAheadLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
+[node name="LookAheadLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Look-Ahead"
 
-[node name="LookAheadSlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
+[node name="LookAheadSlider" type="HSlider" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -220,20 +227,20 @@ max_value = 400.0
 step = 10.0
 value = 150.0
 
-[node name="LookAheadValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
+[node name="LookAheadValueLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(36, 0)
 text = "150"
 horizontal_alignment = 2
 
-[node name="LookAheadSmoothingRow" type="HBoxContainer" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
+[node name="LookAheadSmoothingRow" type="HBoxContainer" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox"]
 
-[node name="LookAheadSmoothingLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
+[node name="LookAheadSmoothingLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "LA Smoothing"
 
-[node name="LookAheadSmoothingSlider" type="HSlider" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
+[node name="LookAheadSmoothingSlider" type="HSlider" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 custom_minimum_size = Vector2(120, 0)
@@ -242,19 +249,16 @@ max_value = 30.0
 step = 1.0
 value = 8.0
 
-[node name="LookAheadSmoothingValueLabel" type="Label" parent="CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
+[node name="LookAheadSmoothingValueLabel" type="Label" parent="Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(32, 0)
 text = "8"
 horizontal_alignment = 2
 
-[node name="Spacer2" type="Control" parent="CenterContainer/VBox"]
-custom_minimum_size = Vector2(0, 40)
-
-[node name="AdvancedButton" type="Button" parent="CenterContainer/VBox"]
+[node name="AdvancedButton" type="Button" parent="Layout/VBox"]
 custom_minimum_size = Vector2(200, 50)
 text = "ADVANCED SETTINGS"
 
-[node name="BackButton" type="Button" parent="CenterContainer/VBox"]
+[node name="BackButton" type="Button" parent="Layout/VBox"]
 custom_minimum_size = Vector2(200, 50)
 text = "BACK"

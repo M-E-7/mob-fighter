@@ -7,32 +7,32 @@ const _ADVANCED_SCENE := "res://Levels/Settings/AdvancedSettings.tscn"
 const _COLOR_ACCENT := Color(0.0, 1.0, 0.9)
 const _COLOR_DIM := Color(0.45, 0.45, 0.5)
 
-@onready var _title: Label = $CenterContainer/VBox/Title
-@onready var _health_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/HealthRow/HealthToggle
-@onready var _xp_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPRow/XPToggle
-@onready var _kills_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/KillsRow/KillsToggle
-@onready var _powerups_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/PowerupsRow/PowerupsToggle
-@onready var _damage_num_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/DamageNumRow/DamageNumToggle
-@onready var _low_hp_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/LowHPRow/LowHPToggle
-@onready var _xp_flash_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPFlashRow/XPFlashToggle
-@onready var _timer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/TimerRow/TimerToggle
-@onready var _xp_pickup_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
-@onready var _music_visuals_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
-@onready var _music_visualizer_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
-@onready var _camera_panel: PanelContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel
-@onready var _camera_vbox: VBoxContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox
-@onready var _camera_header: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraHeader
-@onready var _camera_toggle: CheckButton = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow/CameraToggle
-@onready var _sensitivity_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivitySlider
-@onready var _sensitivity_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivityValueLabel
-@onready var _smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingSlider
-@onready var _smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingValueLabel
-@onready var _look_ahead_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadSlider
-@onready var _look_ahead_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadValueLabel
-@onready var _la_smoothing_slider: HSlider = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingSlider
-@onready var _la_smoothing_value_label: Label = $CenterContainer/VBox/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingValueLabel
-@onready var _advanced_button: Button = $CenterContainer/VBox/AdvancedButton
-@onready var _back_button: Button = $CenterContainer/VBox/BackButton
+@onready var _title: Label = $Layout/VBox/Title
+@onready var _health_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/HealthRow/HealthToggle
+@onready var _xp_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPRow/XPToggle
+@onready var _kills_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/KillsRow/KillsToggle
+@onready var _powerups_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/PowerupsRow/PowerupsToggle
+@onready var _damage_num_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/DamageNumRow/DamageNumToggle
+@onready var _low_hp_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/LowHPRow/LowHPToggle
+@onready var _xp_flash_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPFlashRow/XPFlashToggle
+@onready var _timer_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/TimerRow/TimerToggle
+@onready var _xp_pickup_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/XPPickupRow/XPPickupToggle
+@onready var _music_visuals_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualsRow/MusicVisualsToggle
+@onready var _music_visualizer_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/MusicVisualizerRow/MusicVisualizerToggle
+@onready var _camera_panel: PanelContainer = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel
+@onready var _camera_vbox: VBoxContainer = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox
+@onready var _camera_header: Label = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraHeader
+@onready var _camera_toggle: CheckButton = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/CameraRow/CameraToggle
+@onready var _sensitivity_slider: HSlider = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivitySlider
+@onready var _sensitivity_value_label: Label = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SensitivityRow/SensitivityValueLabel
+@onready var _smoothing_slider: HSlider = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingSlider
+@onready var _smoothing_value_label: Label = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/SmoothingRow/SmoothingValueLabel
+@onready var _look_ahead_slider: HSlider = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadSlider
+@onready var _look_ahead_value_label: Label = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadRow/LookAheadValueLabel
+@onready var _la_smoothing_slider: HSlider = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingSlider
+@onready var _la_smoothing_value_label: Label = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox/CameraPanel/CameraVBox/LookAheadSmoothingRow/LookAheadSmoothingValueLabel
+@onready var _advanced_button: Button = $Layout/VBox/AdvancedButton
+@onready var _back_button: Button = $Layout/VBox/BackButton
 
 
 func _ready() -> void:
@@ -114,9 +114,9 @@ func _apply_theme() -> void:
 	panel_style.content_margin_right = 32.0
 	panel_style.content_margin_top = 24.0
 	panel_style.content_margin_bottom = 24.0
-	$CenterContainer/VBox/TogglesPanel.add_theme_stylebox_override("panel", panel_style)
+	$Layout/VBox/ScrollContainer/TogglesPanel.add_theme_stylebox_override("panel", panel_style)
 
-	var toggles_vbox: VBoxContainer = $CenterContainer/VBox/TogglesPanel/TogglesVBox
+	var toggles_vbox: VBoxContainer = $Layout/VBox/ScrollContainer/TogglesPanel/TogglesVBox
 	for row in toggles_vbox.get_children():
 		if row is HBoxContainer:
 			var lbl := row.get_child(0) as Label
