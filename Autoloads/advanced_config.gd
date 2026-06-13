@@ -27,6 +27,10 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 1000.0, "min": 100.0, "max": 3000.0, "step": 10.0},
 	{"group": "Combat", "class": "Player", "name": "max_health",
 		"type": TYPE_FLOAT, "default": 100.0, "min": 10.0, "max": 10000.0, "step": 10.0},
+	{"group": "Combat", "class": "Player", "name": "bullet_color",
+		"type": TYPE_COLOR, "default": Color(0.0, 1.0, 0.3, 1.0)},
+	{"group": "Combat", "class": "Enemy", "name": "bullet_color",
+		"type": TYPE_COLOR, "default": Color(1.0, 0.15, 0.05, 1.0)},
 
 	# ── Enemy Spawning ───────────────────────────────────────────────────────────
 	{"group": "Enemy Spawning", "class": "EnemySpawnerComponent", "name": "spawn_interval",

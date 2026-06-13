@@ -14,7 +14,15 @@ var _color: Color = Color(1.0, 0.3, 0.1)
 
 func _ready() -> void:
 	if beam_mesh and beam_mesh.material is ShaderMaterial:
-		_color = (beam_mesh.material as ShaderMaterial).get_shader_parameter("beam_color")
+		var mat := (beam_mesh.material as ShaderMaterial).duplicate()
+		beam_mesh.material = mat
+		_color = mat.get_shader_parameter("beam_color")
+
+
+func set_color(c: Color) -> void:
+	_color = c
+	if beam_mesh and beam_mesh.material is ShaderMaterial:
+		(beam_mesh.material as ShaderMaterial).set_shader_parameter("beam_color", c)
 
 
 func _physics_process(delta: float) -> void:

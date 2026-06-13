@@ -22,6 +22,7 @@ script = ExtResource("2_p2")
 inputComponent = NodePath("ControllerInputComponent")
 movementComponent = NodePath("MovementComponent")
 shootComponent = NodePath("ShootComponent")
+bullet_color = Color(0.0, 1.0, 0.3, 1.0)
 
 [node name="CollisionShape2D" parent="." unique_id=1985241145]
 shape = SubResource("RectangleShape2D_physics")

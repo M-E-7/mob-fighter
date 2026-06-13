@@ -18,6 +18,7 @@ script = ExtResource("2_4wf4l")
 inputComponent = NodePath("PlayerInputComponent")
 movementComponent = NodePath("MovementComponent")
 shootComponent = NodePath("ShootComponent")
+bullet_color = Color(0.0, 1.0, 0.3, 1.0)
 
 [node name="PlayerInputComponent" parent="." index="0" unique_id=1327699038 node_paths=PackedStringArray("entity") instance=ExtResource("3_pic")]
 entity = NodePath("..")

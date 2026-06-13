@@ -23,6 +23,7 @@ class_name LivingEntity
 @export var fire_rate: float = 5.0
 @export var bullet_damage: float = 10.0
 @export var bullet_speed: float = 1000.0
+@export var bullet_color: Color = Color(1, 0.15, 0.05, 1)
 
 var last_attacker: LivingEntity
 

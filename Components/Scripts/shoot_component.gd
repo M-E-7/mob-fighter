@@ -26,4 +26,5 @@ func shoot(direction: Vector2) -> void:
 
 	entity.get_parent().add_child(bullet)
 	bullet.global_position = entity.global_position
+	bullet.set_color(entity.bullet_color)
 	EventBus.entity_shot.emit(entity, entity.global_position + direction * muzzle_offset, direction)
