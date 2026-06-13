@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dv1x8y406a3bc"]
+
+[ext_resource type="Script" uid="uid://ef5hi8jk1lm3n" path="res://Components/Scripts/relative_camera_component.gd" id="1_fghij"]
+
+[node name="RelativeCameraComponent" type="Node"]
+script = ExtResource("1_fghij")

@@ -22,10 +22,6 @@ var _p2_dead: bool = false
 var _hud: HUD
 var _pause_menu: PauseMenuUI
 var _game_over_shown: bool = false
-var _rel_cam_angle: float = 0.0
-var _display_cam_angle: float = 0.0
-var _look_ahead_angle: float = 0.0
-var _input_comp_p1: PlayerInputComponent
 
 
 func _ready() -> void:
@@ -35,7 +31,15 @@ func _ready() -> void:
 
 	_camera_p1 = Camera2D.new()
 	_subviewport_p1.add_child(_camera_p1)
-	_input_comp_p1 = _player1.get_node_or_null("PlayerInputComponent") as PlayerInputComponent
+	var input_comp_p1 := _player1.get_node_or_null("PlayerInputComponent") as PlayerInputComponent
+
+	var fixed_cam_p1 := preload("res://Components/FixedCameraComponent.tscn").instantiate() as FixedCameraComponent
+	add_child(fixed_cam_p1)
+	fixed_cam_p1.setup(_player1, _camera_p1)
+
+	var rel_cam_p1 := preload("res://Components/RelativeCameraComponent.tscn").instantiate() as RelativeCameraComponent
+	add_child(rel_cam_p1)
+	rel_cam_p1.setup(_player1, _camera_p1, input_comp_p1)
 
 	_level_up_ui.set("xp_component", _player1.get_node("XPComponent") as XPComponent)
 
@@ -95,35 +99,16 @@ func _setup_single_player() -> void:
 
 
 func _setup_split_screen() -> void:
-	# Camera2DP2 lives in SubViewportP2 and is position-synced to Player2 in _process().
-	# Explicitly share SubViewportP1's world so P2's camera sees the same scene.
+	# P2's camera lives in SubViewportP2, sharing SubViewportP1's world_2d so it sees the same scene.
 	_camera_p2 = Camera2D.new()
 	_subviewport_p2.world_2d = _subviewport_p1.world_2d
 	_subviewport_p2.add_child(_camera_p2)
 	_camera_p2.global_position = _player2.global_position
 	_level_up_ui.set("xp_component_p2", _player2.get_node("XPComponent") as XPComponent)
 
-
-func _process(delta: float) -> void:
-	if GameConfig.camera_relative_mode:
-		_camera_p1.ignore_rotation = false
-		var rot_w := 1.0 - exp(-GameConfig.camera_smoothing * delta)
-		_display_cam_angle = lerp_angle(_display_cam_angle, _rel_cam_angle, rot_w)
-		_camera_p1.global_rotation = _display_cam_angle
-		if not _p1_dead:
-			var la_w := 1.0 - exp(-GameConfig.camera_look_ahead_smoothing * delta)
-			_look_ahead_angle = lerp_angle(_look_ahead_angle, _rel_cam_angle, la_w)
-			var fwd := Vector2(sin(_look_ahead_angle), -cos(_look_ahead_angle))
-			_camera_p1.global_position = _player1.global_position + fwd * GameConfig.camera_look_ahead
-		if _input_comp_p1:
-			_input_comp_p1.relative_camera_angle = _rel_cam_angle
-	else:
-		_camera_p1.ignore_rotation = true
-		if not _p1_dead:
-			_camera_p1.global_position = _player1.global_position
-
-	if GameConfig.player_count == 2 and not _p2_dead and is_instance_valid(_player2):
-		_camera_p2.global_position = _player2.global_position
+	var fixed_cam_p2 := preload("res://Components/FixedCameraComponent.tscn").instantiate() as FixedCameraComponent
+	add_child(fixed_cam_p2)
+	fixed_cam_p2.setup(_player2, _camera_p2)
 
 
 func _on_level_generated(spawn_pos: Vector2) -> void:
@@ -149,8 +134,8 @@ func _on_entity_died(entity: LivingEntity) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if GameConfig.camera_relative_mode and event is InputEventMouseMotion:
-		_rel_cam_angle += (event as InputEventMouseMotion).relative.x * GameConfig.mouse_sensitivity
+	if event.is_action_pressed("toggle_camera_mode") and not _game_over_shown:
+		_toggle_camera_mode()
 		return
 	if event.is_action_pressed("ui_cancel") and not _game_over_shown:
 		_pause_game()
@@ -172,6 +157,14 @@ func _resume_game() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(_pause_menu):
 		_pause_menu.visible = false
+
+
+func _toggle_camera_mode() -> void:
+	GameConfig.camera_relative_mode = not GameConfig.camera_relative_mode
+	if GameConfig.camera_relative_mode:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _show_game_over() -> void:

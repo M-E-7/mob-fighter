@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bm4qw3oakp2r7"]
+
+[ext_resource type="Script" uid="uid://ch9g2jk4lm7np" path="res://Components/Scripts/fixed_camera_component.gd" id="1_axbcd"]
+
+[node name="FixedCameraComponent" type="Node"]
+script = ExtResource("1_axbcd")
