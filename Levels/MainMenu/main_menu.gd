@@ -235,7 +235,7 @@ func _create_controls_guide() -> void:
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(header)
 
-	for entry: Array in [["WASD", "Move"], ["Mouse", "Aim"], ["Left Click", "Shoot"], ["Space", "Turbo"]]:
+	for entry: Array in [["WASD", "Move"], ["Mouse", "Aim"], ["Left Click", "Shoot"], ["Space", "Turbo"], ["X", "Toggle Camera"]]:
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 16)
 
