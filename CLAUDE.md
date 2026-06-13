@@ -267,7 +267,7 @@ The neon look uses **two different bloom paths** — a cheap screen-space glow i
 `FXManagerComponent` (`Components/Scripts/fx_manager_component.gd`, level-scope `Node2D` child of SubViewportP1) is the only spawner of one-shot effects. It subscribes to EventBus and spawns `Effects/*.tscn` scenes as its own children at captured world positions — **never parent FX to a dying entity**. Entity position/neon color are read synchronously inside the `entity_died` handler (the entity's `queue_free()` only takes effect after signal emission).
 
 - `entity_died` (enemy only) → `EnemyDeathFX` (shockwave ring + particle burst in the enemy's neon color) + optional hit-stop (`Engine.time_scale` dip; restore timer **must** use `create_timer(d, true, false, true)` — `ignore_time_scale` — and is skipped while paused, guarded by a re-entrancy counter).
-- `bullet_impacted(source, world_position, direction, color)` → `BulletImpactFX` sparks (emitted by `bullet.gd` before `queue_free()`; color cached from the BeamMesh material in `_ready()`).
+- `bullet_impacted(source, world_position, direction, color)` → `BulletImpactFX` sparks (emitted by `bullet.gd` before `queue_free()`; color is `entity.bullet_color`, applied to the bullet via `ShootComponent` after spawning).
 - `entity_shot(entity, world_position, direction)` → `MuzzleFlashFX` (emitted by `ShootComponent.shoot()`; players only unless `enemy_muzzle_flash` is on).
 - `xp_orb_collected` → gold pickup sparkle.
 
@@ -399,7 +399,7 @@ The Advanced Settings screen (`Levels/Settings/AdvancedSettings.tscn` + `advance
 - `_base_values: Dictionary` — `{ class_name: { prop_name: value } }`. Populated at autoload `_ready()` by `_preload_scene_defaults()`, which instantiates each scene in `_SEED_SCENES` in memory (no `_ready()` runs — only saved `.tscn` property values are read), scans the tree recursively, then frees the instance. Also refreshed from live nodes in `_on_node_added` before overrides are applied. Entity scenes are listed after component template scenes in `_SEED_SCENES` so per-instance values overwrite template values.
 - `set_override(cls, prop, value)` — stores an override and, for `MusicManager` class entries, applies it immediately to the live singleton.
 - `get_override(cls, prop)` — returns, in priority order: user override → actual `.tscn` inspector value (from `_base_values`) → hardcoded default from `PROPERTY_DEFS`.
-- `_on_node_added(node)` — fired by `SceneTree.node_added` before the node's `_ready()`. Calls `_capture_node_props` to refresh `_base_values` from the live node's pre-override property values, then applies `_overrides[class_name]` via `node.set(prop, value)`. Special cases: `Player2` nodes also receive all `Player` overrides (movement + combat symmetry); `Enemy` nodes receive only the four combat props from `Player` overrides (`fire_rate`, `bullet_damage`, `bullet_speed`, `max_health`).
+- `_on_node_added(node)` — fired by `SceneTree.node_added` before the node's `_ready()`. Calls `_capture_node_props` to refresh `_base_values` from the live node's pre-override property values, then applies `_overrides[class_name]` via `node.set(prop, value)`. Special cases: `Player2` nodes also receive all `Player` overrides (movement + combat symmetry); `Enemy` nodes receive only the four combat props from `Player` overrides (`fire_rate`, `bullet_damage`, `bullet_speed`, `max_health`). `bullet_color` is intentionally **not** in `_COMBAT_PROPS` — Player and Enemy bullet colors are independently tunable.
 
 ### Settings navigation flow
 
@@ -422,7 +422,7 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 |---|---|
 | Player Movement | `Player`, `Player2` |
 | Player Input | `PlayerInputComponent` |
-| Combat | `Player`, `Player2`, `Enemy` (combat props only) |
+| Combat | `Player`, `Player2`, `Enemy` (combat props only); `bullet_color` separate per class — not propagated |
 | Enemy Spawning | `EnemySpawnerComponent` |
 | Level Generation | `ProcGenLevelComponent` |
 | Controller Input | `ControllerInputComponent` |
@@ -513,6 +513,7 @@ Key rules:
 - Do not add a `WorldEnvironment` node anywhere — the glow environment comes from the `default_environment` project setting (root viewport only; see **Bloom & Glow**).
 - **Do not set `use_hdr_2d = true` on a SubViewport.** It pulls the full Forward+ 3D post pipeline into the subviewport (~100 ms/frame → ~1 fps). In-game bloom comes from `screen_glow.gdshader`, not HDR 2D.
 - Do not inject runtime `ParticleProcessMaterial` or leave `GPUParticles2D.texture` unset (invisible particles); do not share a per-instance-animated `ShaderMaterial` between scene instances without `resource_local_to_scene = true`.
+- When you need different `set_shader_parameter()` values per scene instance at runtime (e.g. bullet color), call `.duplicate()` on the `ShaderMaterial` in `_ready()` and reassign it before setting parameters — otherwise all live instances that share the same sub_resource change simultaneously.
 - Do not apply screen shake to `Camera2D.global_position` or rotation — `offset` only. Position fights the per-frame camera sync in `basic_level._process`; rotation fights `_display_cam_angle` writes in relative mode.
 - Do not restore `Engine.time_scale` with a normal timer after hit-stop — the timer must be created with `ignore_time_scale = true` or it is slowed by its own effect.
 - Do not write `RenderingServer.global_shader_parameter_set` for the `mus_*` globals from anywhere except `MusicManager._process`.
