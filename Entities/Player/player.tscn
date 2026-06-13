@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://Components/XPComponent.tscn" id="8_xpc"]
 [ext_resource type="PackedScene" uid="uid://bdl1g4n81lyhx" path="res://Components/MusicVisualsComponent.tscn" id="11_mvc"]
 [ext_resource type="PackedScene" path="res://Entities/Player/Ships/PlayerShip.tscn" id="12_ps"]
+[ext_resource type="PackedScene" path="res://Components/HitFlashComponent.tscn" id="13_hfc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_physics"]
 size = Vector2(28, 28)
@@ -41,3 +42,7 @@ entity = NodePath("..")
 neon_component = NodePath("../PlayerShip/NeonShaderComponent")
 
 [node name="PlayerShip" parent="." index="10" unique_id=1572525719 instance=ExtResource("12_ps")]
+
+[node name="HitFlashComponent" parent="." index="11" node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("13_hfc")]
+entity = NodePath("..")
+neon_component = NodePath("../PlayerShip/NeonShaderComponent")

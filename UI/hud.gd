@@ -16,6 +16,10 @@ class _PanelRefs:
 const _COLOR_P1 := Color(0.0, 1.0, 0.9)
 const _COLOR_P2 := Color(1.0, 0.6, 0.0)
 const _COLOR_BG := Color(0.05, 0.05, 0.08, 0.92)
+const _COLOR_XP := Color(1.0, 0.85, 0.2)
+const _LOW_HP_THRESHOLD := 0.25
+const _SPIKE_DECAY := 0.45
+const _THEME := preload("res://UI/Themes/neon_theme.tres")
 const _MARGIN := 16.0
 const _PANEL_MIN_W := 300.0
 const _SCREEN_W := 1920.0
@@ -42,8 +46,11 @@ var _timer_label: Label
 
 var _warn_p1: ColorRect
 var _warn_p2: ColorRect
-var _warn_tween_p1: Tween
-var _warn_tween_p2: Tween
+var _low_hp_p1: float = 0.0
+var _low_hp_p2: float = 0.0
+var _hurt_spike_p1: float = 0.0
+var _hurt_spike_p2: float = 0.0
+var _vignette_time: float = 0.0
 
 var _prev_level_p1: int = 0
 var _prev_level_p2: int = 0
@@ -82,6 +89,7 @@ func get_kills(player: int) -> int:
 
 
 func _process(delta: float) -> void:
+	_update_vignettes(delta)
 	if not is_instance_valid(_player1):
 		return
 	_survival_time += delta
@@ -129,16 +137,26 @@ func _connect_signals() -> void:
 	EventBus.health_changed.connect(_on_health_changed)
 	EventBus.xp_updated.connect(_on_xp_updated)
 	EventBus.entity_died.connect(_on_entity_died)
+	EventBus.entity_damaged.connect(_on_entity_damaged)
 	EventBus.power_up_applied.connect(_on_power_up_applied)
 
 
 func _on_health_changed(entity: LivingEntity, current: float, maximum: float) -> void:
 	if entity == _player1:
 		_update_health(_p1, current, maximum)
-		_warn_tween_p1 = _get_active_tween(_warn_p1, _warn_tween_p1, current, maximum)
+		_low_hp_p1 = _low_hp_severity(current, maximum)
 	elif is_instance_valid(_player2) and entity == _player2:
 		_update_health(_p2, current, maximum)
-		_warn_tween_p2 = _get_active_tween(_warn_p2, _warn_tween_p2, current, maximum)
+		_low_hp_p2 = _low_hp_severity(current, maximum)
+
+
+func _on_entity_damaged(entity: LivingEntity, _amount: float) -> void:
+	if not GameConfig.hud_show_low_hp_warning:
+		return
+	if entity == _player1:
+		_hurt_spike_p1 = 1.0
+	elif is_instance_valid(_player2) and entity == _player2:
+		_hurt_spike_p2 = 1.0
 
 
 func _on_xp_updated(entity: LivingEntity, current_xp: float, required_xp: float, level: int) -> void:
@@ -157,13 +175,15 @@ func _on_xp_updated(entity: LivingEntity, current_xp: float, required_xp: float,
 func _on_entity_died(entity: LivingEntity) -> void:
 	if entity == _player1:
 		_p1.panel.modulate.a = 0.4
-		_stop_warning(_warn_p1, _warn_tween_p1)
-		_warn_tween_p1 = null
+		_low_hp_p1 = 0.0
+		_hurt_spike_p1 = 0.0
+		_warn_p1.hide()
 		return
 	if is_instance_valid(_player2) and entity == _player2:
 		_p2.panel.modulate.a = 0.4
-		_stop_warning(_warn_p2, _warn_tween_p2)
-		_warn_tween_p2 = null
+		_low_hp_p2 = 0.0
+		_hurt_spike_p2 = 0.0
+		_warn_p2.hide()
 		return
 	var killer := entity.last_attacker
 	if not is_instance_valid(killer):
@@ -210,29 +230,30 @@ func _flash_xp_bar(bar: ProgressBar) -> void:
 	t.tween_property(bar, "modulate", Color.WHITE, 0.25)
 
 
-func _get_active_tween(rect: ColorRect, existing: Tween,
-		current: float, maximum: float) -> Tween:
-	if not GameConfig.hud_show_low_hp_warning:
-		return existing
-	var ratio := current / maximum if maximum > 0.0 else 1.0
-	if ratio < 0.25:
-		if existing and existing.is_running():
-			return existing
-		_stop_warning(rect, existing)
-		rect.show()
-		var t := create_tween().set_loops()
-		t.tween_property(rect, "modulate:a", 0.20, 0.45)
-		t.tween_property(rect, "modulate:a", 0.04, 0.45)
-		return t
-	else:
-		_stop_warning(rect, existing)
-		return null
+func _low_hp_severity(current: float, maximum: float) -> float:
+	if not GameConfig.hud_show_low_hp_warning or maximum <= 0.0:
+		return 0.0
+	var ratio := current / maximum
+	if ratio >= _LOW_HP_THRESHOLD:
+		return 0.0
+	return 1.0 - ratio / _LOW_HP_THRESHOLD
 
 
-func _stop_warning(rect: ColorRect, tween: Tween) -> void:
-	if tween:
-		tween.kill()
-	rect.hide()
+func _update_vignettes(delta: float) -> void:
+	_vignette_time += delta
+	_hurt_spike_p1 = maxf(0.0, _hurt_spike_p1 - delta / _SPIKE_DECAY)
+	_hurt_spike_p2 = maxf(0.0, _hurt_spike_p2 - delta / _SPIKE_DECAY)
+	var pulse := 0.7 + 0.3 * sin(_vignette_time * 5.0)
+	_apply_vignette(_warn_p1, _low_hp_p1 * pulse + _hurt_spike_p1 * 0.8)
+	_apply_vignette(_warn_p2, _low_hp_p2 * pulse + _hurt_spike_p2 * 0.8)
+
+
+func _apply_vignette(rect: ColorRect, intensity: float) -> void:
+	if intensity <= 0.001:
+		rect.hide()
+		return
+	rect.show()
+	(rect.material as ShaderMaterial).set_shader_parameter("intensity", intensity)
 
 
 func _build_timer_label() -> void:
@@ -251,23 +272,27 @@ func _build_timer_label() -> void:
 
 
 func _build_warnings() -> void:
-	_warn_p1 = ColorRect.new()
-	_warn_p1.color = Color(1.0, 0.0, 0.0, 0.12)
-	_warn_p1.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_warn_p1.hide()
-	add_child(_warn_p1)
+	_warn_p1 = _build_vignette()
+	_warn_p2 = _build_vignette()
 
-	_warn_p2 = ColorRect.new()
-	_warn_p2.color = Color(1.0, 0.0, 0.0, 0.12)
-	_warn_p2.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_warn_p2.hide()
-	add_child(_warn_p2)
+
+func _build_vignette() -> ColorRect:
+	var rect := ColorRect.new()
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://Components/Shaders/damage_vignette.gdshader")
+	mat.set_shader_parameter("intensity", 0.0)
+	rect.material = mat
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.hide()
+	add_child(rect)
+	return rect
 
 
 func _build_panel(accent: Color) -> _PanelRefs:
 	var refs := _PanelRefs.new()
 
 	var panel := PanelContainer.new()
+	panel.theme = _THEME
 	var style := StyleBoxFlat.new()
 	style.bg_color = _COLOR_BG
 	style.border_color = accent
@@ -304,6 +329,7 @@ func _build_panel(accent: Color) -> _PanelRefs:
 	hp_bar.show_percentage = false
 	hp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hp_bar.custom_minimum_size = Vector2(140, 16)
+	hp_bar.add_theme_stylebox_override("fill", _accent_fill(accent))
 	health_row.add_child(hp_bar)
 	refs.hp_bar = hp_bar
 
@@ -335,6 +361,7 @@ func _build_panel(accent: Color) -> _PanelRefs:
 	xp_bar.show_percentage = false
 	xp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	xp_bar.custom_minimum_size = Vector2(140, 16)
+	xp_bar.add_theme_stylebox_override("fill", _accent_fill(_COLOR_XP))
 	xp_row.add_child(xp_bar)
 	refs.xp_bar = xp_bar
 
@@ -364,3 +391,10 @@ func _build_panel(accent: Color) -> _PanelRefs:
 	refs.powerup_row = powerup_row
 
 	return refs
+
+
+func _accent_fill(color: Color) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = color
+	sb.set_corner_radius_all(3)
+	return sb

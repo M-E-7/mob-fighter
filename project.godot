@@ -90,3 +90,24 @@ p2_confirm={
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+viewport/hdr_2d=true
+environment/defaults/default_environment="res://Resources/neon_environment.tres"
+
+[shader_globals]
+
+mus_bass={
+"type": "float",
+"value": 0.0
+}
+mus_mid={
+"type": "float",
+"value": 0.0
+}
+mus_treble={
+"type": "float",
+"value": 0.0
+}
+mus_beat={
+"type": "float",
+"value": 0.0
+}

@@ -7,6 +7,10 @@ signal entity_died(entity: LivingEntity)
 # Damage
 signal entity_damaged(entity: LivingEntity, amount: float)
 
+# Combat FX
+signal entity_shot(entity: LivingEntity, world_position: Vector2, direction: Vector2)
+signal bullet_impacted(source: LivingEntity, world_position: Vector2, direction: Vector2, color: Color)
+
 # Health
 signal health_changed(entity: LivingEntity, current_health: float, max_health: float)
 

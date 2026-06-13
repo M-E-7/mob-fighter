@@ -7,13 +7,13 @@ class_name MusicVisualsComponent
 
 @export_group("Band Influence")
 @export_range(0.0, 1.0, 0.01) var intensity_scale: float = 1.0
-@export_range(0.0, 5.0, 0.1) var bass_glow_add: float = 4.0
+@export_range(0.0, 5.0, 0.1) var bass_glow_add: float = 1.2
 @export_range(0.0, 10.0, 0.1) var mid_pulse_add: float = 8.0
 @export_range(0.0, 0.5, 0.01) var treble_feather_add: float = 0.25
 @export_range(0.0, 1.0, 0.05) var max_pulse_amount: float = 0.80
 
 @export_group("Beat Spike")
-@export_range(0.0, 5.0, 0.1) var beat_spike_strength: float = 3.0
+@export_range(0.0, 5.0, 0.1) var beat_spike_strength: float = 0.8
 @export_range(0.05, 2.0, 0.05) var beat_spike_decay: float = 0.25
 
 var _base_glow: float = 0.0

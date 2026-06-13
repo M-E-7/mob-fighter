@@ -16,6 +16,7 @@ signal song_changed(song_name: String)
 @export_range(0.0, 1.0, 0.01) var onset_threshold: float = 0.15
 # @export_range(0.05, 2.0, 0.05) var beat_cooldown: float = 0.35
 @export_range(0.05, 2.0, 0.05) var beat_cooldown: float = 0
+@export_range(0.05, 1.0, 0.05) var beat_flash_decay: float = 0.25
 
 var bass: float = 0.0
 var mid: float = 0.0
@@ -29,6 +30,7 @@ var current_song_index: int = 0
 
 var _player: AudioStreamPlayer
 var _analyzer: AudioEffectSpectrumAnalyzerInstance
+var _beat_flash: float = 0.0
 var _bass_history: Array[float] = []
 var _mid_history: Array[float] = []
 var _treble_history: Array[float] = []
@@ -126,10 +128,20 @@ func _process(delta: float) -> void:
 	)
 
 	beat_cooldown_remaining = maxf(0.0, beat_cooldown_remaining - delta)
+	_beat_flash = maxf(0.0, _beat_flash - delta / beat_flash_decay)
 
 	if onset_energy > onset_threshold and beat_cooldown_remaining <= 0.0:
 		EventBus.beat_detected.emit()
 		beat_cooldown_remaining = beat_cooldown
+		_beat_flash = 1.0
+
+	# Shader globals let any material react to music without a script reference.
+	# Zeroed when music visuals are disabled so every consumer is gated centrally.
+	var vis := 1.0 if GameConfig.music_visuals_enabled else 0.0
+	RenderingServer.global_shader_parameter_set(&"mus_bass", bass * vis)
+	RenderingServer.global_shader_parameter_set(&"mus_mid", mid * vis)
+	RenderingServer.global_shader_parameter_set(&"mus_treble", treble * vis)
+	RenderingServer.global_shader_parameter_set(&"mus_beat", _beat_flash * vis)
 
 
 func _push_history(history: Array[float], value: float) -> void:

@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://cmainmenu0001"]
 
 [ext_resource type="Script" path="res://Levels/MainMenu/main_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://UI/Themes/neon_theme.tres" id="2_theme"]
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource("2_theme")
 script = ExtResource("1_script")
 
 [node name="Background" type="ColorRect" parent="."]

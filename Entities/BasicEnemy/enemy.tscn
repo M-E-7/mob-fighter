@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" path="res://Entities/ExperienceOrb/experience_orb.tscn" id="7_orb"]
 [ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="9_nsc"]
 [ext_resource type="PackedScene" uid="uid://bdl1g4n81lyhx" path="res://Components/MusicVisualsComponent.tscn" id="10_mvc"]
+[ext_resource type="PackedScene" path="res://Components/HitFlashComponent.tscn" id="11_hfc"]
+[ext_resource type="PackedScene" path="res://Components/SpawnFXComponent.tscn" id="12_sfx"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_enemy"]
 size = Vector2(18, 18)
@@ -53,3 +55,12 @@ pulse_amount = 0.0
 [node name="MusicVisualsComponent" parent="." index="11" unique_id=765432109 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("10_mvc")]
 entity = NodePath("..")
 neon_component = NodePath("../NeonShaderComponent")
+
+[node name="HitFlashComponent" parent="." index="12" node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("11_hfc")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")
+
+[node name="SpawnFXComponent" parent="." index="13" node_paths=PackedStringArray("entity", "neon_component", "hit_flash_component") instance=ExtResource("12_sfx")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")
+hit_flash_component = NodePath("../HitFlashComponent")

@@ -1,0 +1,101 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Effects/Scripts/enemy_death_fx.gd" id="1_edfx"]
+[ext_resource type="Shader" path="res://Components/Shaders/shockwave_ring.gdshader" id="2_ring"]
+
+[sub_resource type="ShaderMaterial" id="SM_ring"]
+resource_local_to_scene = true
+shader = ExtResource("2_ring")
+shader_parameter/ring_color = Color(0, 1, 0.9, 1)
+shader_parameter/progress = 0.0
+shader_parameter/brightness = 1.6
+
+[sub_resource type="QuadMesh" id="QM_ring"]
+size = Vector2(120, 120)
+
+[sub_resource type="Gradient" id="Grad_dot"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.6, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GT2D_dot"]
+gradient = SubResource("Grad_dot")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Curve" id="Curve_shrink"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CT_shrink"]
+curve = SubResource("Curve_shrink")
+
+[sub_resource type="Gradient" id="Grad_fade"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1.6, 1.6, 1.6, 1, 1, 1, 1, 0.8, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GT1D_fade"]
+gradient = SubResource("Grad_fade")
+use_hdr = true
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_burst"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 4.0
+spread = 180.0
+initial_velocity_min = 120.0
+initial_velocity_max = 320.0
+gravity = Vector3(0, 0, 0)
+damping_min = 80.0
+damping_max = 140.0
+scale_min = 0.15
+scale_max = 0.4
+scale_curve = SubResource("CT_shrink")
+color_ramp = SubResource("GT1D_fade")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_embers"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 8.0
+spread = 180.0
+initial_velocity_min = 15.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 0, 0)
+damping_min = 10.0
+damping_max = 30.0
+scale_min = 0.08
+scale_max = 0.18
+scale_curve = SubResource("CT_shrink")
+color_ramp = SubResource("GT1D_fade")
+
+[node name="EnemyDeathFX" type="Node2D" node_paths=PackedStringArray("ring_mesh", "burst", "embers")]
+script = ExtResource("1_edfx")
+ring_mesh = NodePath("RingMesh")
+burst = NodePath("Burst")
+embers = NodePath("Embers")
+
+[node name="RingMesh" type="MeshInstance2D" parent="."]
+material = SubResource("SM_ring")
+mesh = SubResource("QM_ring")
+
+[node name="Burst" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 24
+texture = SubResource("GT2D_dot")
+lifetime = 0.6
+one_shot = true
+explosiveness = 1.0
+randomness = 0.3
+process_material = SubResource("PPM_burst")
+
+[node name="Embers" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 8
+texture = SubResource("GT2D_dot")
+lifetime = 1.2
+one_shot = true
+explosiveness = 1.0
+randomness = 0.4
+process_material = SubResource("PPM_embers")

@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://UI/game_over_ui.gd" id="1_goui"]
+[ext_resource type="Theme" path="res://UI/Themes/neon_theme.tres" id="2_theme"]
 
 [node name="GameOverUI" type="CanvasLayer"]
 script = ExtResource("1_goui")
@@ -8,6 +9,7 @@ script = ExtResource("1_goui")
 [node name="Dim" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource("2_theme")
 color = Color(0, 0, 0, 0.75)
 mouse_filter = 2
 
@@ -19,6 +21,8 @@ anchor_bottom = 1.0
 theme_override_constants/separation = 24
 
 [node name="Title" type="Label" parent="Dim/CenterContainer/VBox"]
+theme_override_colors/font_color = Color(2, 0.35, 0.5, 1)
+theme_override_font_sizes/font_size = 56
 text = "GAME OVER"
 horizontal_alignment = 1
 

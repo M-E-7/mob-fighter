@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://Components/XPComponent.tscn" id="8_xpc"]
 [ext_resource type="PackedScene" path="res://Components/MusicVisualsComponent.tscn" id="11_mvc"]
 [ext_resource type="Texture2D" path="res://Entities/Player/player_ship.svg" id="12_svg"]
+[ext_resource type="PackedScene" path="res://Components/HitFlashComponent.tscn" id="13_hfc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_physics"]
 size = Vector2(28, 28)
@@ -44,7 +45,7 @@ texture = ExtResource("12_svg")
 [node name="NeonShaderComponent" parent="." index="8" unique_id=2473147525 node_paths=PackedStringArray("entity") instance=ExtResource("7_01a4e")]
 entity = NodePath("..")
 neon_color = Color(1.0, 0.35, 0.05, 1)
-glow_intensity = 2.8
+glow_intensity = 1.6
 pulse_speed = 7.5
 pulse_amount = 0.0
 
@@ -54,4 +55,8 @@ track_xp = false
 
 [node name="MusicVisualsComponent" parent="." index="10" unique_id=2887654321 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("11_mvc")]
 entity = NodePath("..")
-neon_component = NodePath("NeonShaderComponent")
+neon_component = NodePath("../NeonShaderComponent")
+
+[node name="HitFlashComponent" parent="." index="11" node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("13_hfc")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")

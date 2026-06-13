@@ -3,6 +3,7 @@ class_name ShootComponent
 
 @export var entity: LivingEntity
 @export var bullet_scene: PackedScene
+@export var muzzle_offset: float = 20.0
 
 var shoot_timer: float = 0.0
 
@@ -25,3 +26,4 @@ func shoot(direction: Vector2) -> void:
 
 	entity.get_parent().add_child(bullet)
 	bullet.global_position = entity.global_position
+	EventBus.entity_shot.emit(entity, entity.global_position + direction * muzzle_offset, direction)

@@ -28,24 +28,51 @@ var _renderer: WallRenderer
 var _outline_renderer: WallOutlineRenderer
 
 
-# Draws filled wall rectangles — geometry is fixed after generation
+# Draws filled wall rectangles as a single batched mesh — geometry is fixed after
+# generation. wall_fill.gdshader computes the panel look from world position, so the
+# mesh only needs vertices (one draw_mesh call instead of thousands of draw_rect calls).
 class WallRenderer extends Node2D:
 	var wall_rects: Array[Rect2] = []
-	var wall_color: Color = Color(0.25, 0.25, 0.3)
+	var _mesh: ArrayMesh
+
+	func build_mesh() -> void:
+		if wall_rects.is_empty():
+			return
+		var verts := PackedVector2Array()
+		verts.resize(wall_rects.size() * 6)
+		var i := 0
+		for rect in wall_rects:
+			var p0 := rect.position
+			var p1 := rect.position + Vector2(rect.size.x, 0.0)
+			var p2 := rect.position + rect.size
+			var p3 := rect.position + Vector2(0.0, rect.size.y)
+			verts[i] = p0; verts[i + 1] = p1; verts[i + 2] = p2
+			verts[i + 3] = p0; verts[i + 4] = p2; verts[i + 5] = p3
+			i += 6
+		var arrays := []
+		arrays.resize(Mesh.ARRAY_MAX)
+		arrays[Mesh.ARRAY_VERTEX] = verts
+		_mesh = ArrayMesh.new()
+		_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		queue_redraw()
 
 	func _draw() -> void:
-		for rect in wall_rects:
-			draw_rect(rect, wall_color)
+		if _mesh:
+			draw_mesh(_mesh, null)
 
 
 # Draws only the outer perimeter edges of wall groups as white lines.
 # Color is driven via self_modulate — no queue_redraw() needed per frame.
 class WallOutlineRenderer extends Node2D:
-	var line_width: float = 2.5
+	var line_width: float = 4.0
+
+	# One flat array of endpoint pairs so the whole outline draws in a single
+	# batched draw_multiline call instead of tens of thousands of draw_line calls.
+	var _points: PackedVector2Array = PackedVector2Array()
 
 	func compute_from_grid(grid: Array, w: int, h: int, cs: int) -> void:
-		# Collect all wall→empty boundary edges as line segments
-		var segments: Array[PackedVector2Array] = []
+		# Collect all wall→empty boundary edges as a flat list of segment endpoints
+		_points = PackedVector2Array()
 		for y in range(h):
 			for x in range(w):
 				if not grid[y][x]:
@@ -55,26 +82,26 @@ class WallOutlineRenderer extends Node2D:
 				var x1 := x0 + cs
 				var y1 := y0 + cs
 				if x == 0 or not grid[y][x - 1]:
-					var seg := PackedVector2Array([Vector2(x0, y0), Vector2(x0, y1)])
-					segments.append(seg)
+					_points.append(Vector2(x0, y0))
+					_points.append(Vector2(x0, y1))
 				if x == w - 1 or not grid[y][x + 1]:
-					var seg := PackedVector2Array([Vector2(x1, y0), Vector2(x1, y1)])
-					segments.append(seg)
+					_points.append(Vector2(x1, y0))
+					_points.append(Vector2(x1, y1))
 				if y == 0 or not grid[y - 1][x]:
-					var seg := PackedVector2Array([Vector2(x0, y0), Vector2(x1, y0)])
-					segments.append(seg)
+					_points.append(Vector2(x0, y0))
+					_points.append(Vector2(x1, y0))
 				if y == h - 1 or not grid[y + 1][x]:
-					var seg := PackedVector2Array([Vector2(x0, y1), Vector2(x1, y1)])
-					segments.append(seg)
-		set_meta("segments", segments)
+					_points.append(Vector2(x0, y1))
+					_points.append(Vector2(x1, y1))
 		queue_redraw()
 
 	func _draw() -> void:
-		if not has_meta("segments"):
+		if _points.is_empty():
 			return
-		var segments: Array[PackedVector2Array] = get_meta("segments")
-		for seg in segments:
-			draw_line(seg[0], seg[1], Color.WHITE, line_width, true)
+		# Two batched passes: wide translucent under-pass (no AA — bloom hides it)
+		# plus a crisp pass. Each is a single draw call regardless of segment count.
+		draw_multiline(_points, Color(1, 1, 1, 0.3), line_width * 3.0)
+		draw_multiline(_points, Color.WHITE, line_width)
 
 
 func _ready() -> void:
@@ -125,6 +152,9 @@ func _build_level() -> void:
 	# Single renderer — one _draw() call for all walls
 	_renderer = WallRenderer.new()
 	_renderer.name = "WallRenderer"
+	var wall_mat := ShaderMaterial.new()
+	wall_mat.shader = load("res://Components/Shaders/wall_fill.gdshader")
+	_renderer.material = wall_mat
 	var merged_rects: Array[Rect2] = []
 
 	# Greedy rectangle merging: collapse adjacent wall cells into large rectangles
@@ -167,6 +197,7 @@ func _build_level() -> void:
 			merged_rects.append(Rect2(rect_pos, rect_size))
 
 	_renderer.wall_rects = merged_rects
+	_renderer.build_mesh()
 
 	# Outline renderer: computed from raw grid to get true group perimeters
 	_outline_renderer = WallOutlineRenderer.new()

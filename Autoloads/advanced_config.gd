@@ -79,12 +79,16 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 200.0, "min": 10.0, "max": 1000.0, "step": 10.0},
 	{"group": "Experience Orbs", "class": "ExperienceOrb", "name": "lifetime",
 		"type": TYPE_FLOAT, "default": 8.0, "min": 1.0, "max": 60.0, "step": 0.5},
+	{"group": "Experience Orbs", "class": "ExperienceOrb", "name": "trail_duration",
+		"type": TYPE_FLOAT, "default": 0.35, "min": 0.0, "max": 1.0, "step": 0.05},
+	{"group": "Experience Orbs", "class": "ExperienceOrb", "name": "trail_radius",
+		"type": TYPE_FLOAT, "default": 4.0, "min": 0.0, "max": 10.0, "step": 0.5},
 
 	# ── Neon Visuals ──────────────────────────────────────────────────────────────
 	{"group": "Neon Visuals", "class": "NeonShaderComponent", "name": "neon_color",
 		"type": TYPE_COLOR, "default": Color(1.0, 0.0, 0.2, 1.0)},
 	{"group": "Neon Visuals", "class": "NeonShaderComponent", "name": "glow_intensity",
-		"type": TYPE_FLOAT, "default": 2.5, "min": 0.0, "max": 20.0, "step": 0.1},
+		"type": TYPE_FLOAT, "default": 1.4, "min": 0.0, "max": 20.0, "step": 0.1},
 	{"group": "Neon Visuals", "class": "NeonShaderComponent", "name": "outline_width",
 		"type": TYPE_FLOAT, "default": 0.06, "min": 0.0, "max": 0.5, "step": 0.01},
 	{"group": "Neon Visuals", "class": "NeonShaderComponent", "name": "glow_feather",
@@ -98,7 +102,7 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "intensity_scale",
 		"type": TYPE_FLOAT, "default": 1.0, "min": 0.0, "max": 5.0, "step": 0.05},
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "bass_glow_add",
-		"type": TYPE_FLOAT, "default": 4.0, "min": 0.0, "max": 20.0, "step": 0.1},
+		"type": TYPE_FLOAT, "default": 1.2, "min": 0.0, "max": 20.0, "step": 0.1},
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "mid_pulse_add",
 		"type": TYPE_FLOAT, "default": 8.0, "min": 0.0, "max": 20.0, "step": 0.1},
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "treble_feather_add",
@@ -106,7 +110,7 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "max_pulse_amount",
 		"type": TYPE_FLOAT, "default": 0.8, "min": 0.0, "max": 2.0, "step": 0.01},
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "beat_spike_strength",
-		"type": TYPE_FLOAT, "default": 3.0, "min": 0.0, "max": 20.0, "step": 0.1},
+		"type": TYPE_FLOAT, "default": 0.8, "min": 0.0, "max": 20.0, "step": 0.1},
 	{"group": "Music Reactivity", "class": "MusicVisualsComponent", "name": "beat_spike_decay",
 		"type": TYPE_FLOAT, "default": 0.25, "min": 0.0, "max": 2.0, "step": 0.01},
 
@@ -142,6 +146,68 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 	{"group": "Thruster Sockets", "class": "ThrusterSocket", "name": "transition_time",
 		"type": TYPE_FLOAT, "default": 0.12, "min": 0.01, "max": 1.0, "step": 0.01},
 
+	# ── Hit Flash ─────────────────────────────────────────────────────────────────
+	{"group": "Hit Flash", "class": "HitFlashComponent", "name": "flash_decay",
+		"type": TYPE_FLOAT, "default": 0.12, "min": 0.02, "max": 0.5, "step": 0.01},
+	{"group": "Hit Flash", "class": "HitFlashComponent", "name": "flash_strength",
+		"type": TYPE_FLOAT, "default": 1.0, "min": 0.0, "max": 1.0, "step": 0.05},
+	{"group": "Hit Flash", "class": "HitFlashComponent", "name": "punch_scale",
+		"type": TYPE_FLOAT, "default": 1.18, "min": 1.0, "max": 2.0, "step": 0.01},
+	{"group": "Hit Flash", "class": "HitFlashComponent", "name": "punch_decay",
+		"type": TYPE_FLOAT, "default": 0.14, "min": 0.05, "max": 0.5, "step": 0.01},
+
+	# ── Background ────────────────────────────────────────────────────────────────
+	{"group": "Background", "class": "LevelVisualsController", "name": "grid_intensity",
+		"type": TYPE_FLOAT, "default": 0.22, "min": 0.0, "max": 1.0, "step": 0.01},
+	{"group": "Background", "class": "LevelVisualsController", "name": "star_intensity",
+		"type": TYPE_FLOAT, "default": 1.0, "min": 0.0, "max": 2.0, "step": 0.05},
+	{"group": "Background", "class": "LevelVisualsController", "name": "nebula_strength",
+		"type": TYPE_FLOAT, "default": 0.45, "min": 0.0, "max": 1.0, "step": 0.01},
+	{"group": "Background", "class": "LevelVisualsController", "name": "grid_size",
+		"type": TYPE_FLOAT, "default": 256.0, "min": 64.0, "max": 1024.0, "step": 16.0},
+	{"group": "Background", "class": "LevelVisualsController", "name": "wall_edge_overbright",
+		"type": TYPE_FLOAT, "default": 1.6, "min": 1.0, "max": 3.0, "step": 0.1},
+
+	# ── Spawn FX ──────────────────────────────────────────────────────────────────
+	{"group": "Spawn FX", "class": "SpawnFXComponent", "name": "spawn_duration",
+		"type": TYPE_FLOAT, "default": 0.45, "min": 0.1, "max": 2.0, "step": 0.05},
+	{"group": "Spawn FX", "class": "SpawnFXComponent", "name": "invulnerable_while_spawning",
+		"type": TYPE_BOOL, "default": false},
+	{"group": "Spawn FX", "class": "SpawnFXComponent", "name": "ring_overbright",
+		"type": TYPE_FLOAT, "default": 1.8, "min": 1.0, "max": 3.0, "step": 0.1},
+
+	# ── Screen Shake ──────────────────────────────────────────────────────────────
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "kill_trauma",
+		"type": TYPE_FLOAT, "default": 0.2, "min": 0.0, "max": 1.0, "step": 0.05},
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "hurt_trauma",
+		"type": TYPE_FLOAT, "default": 0.35, "min": 0.0, "max": 1.0, "step": 0.05},
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "trauma_decay",
+		"type": TYPE_FLOAT, "default": 1.8, "min": 0.5, "max": 5.0, "step": 0.1},
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "max_offset",
+		"type": TYPE_FLOAT, "default": 14.0, "min": 0.0, "max": 40.0, "step": 0.5},
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "shake_frequency",
+		"type": TYPE_FLOAT, "default": 28.0, "min": 1.0, "max": 60.0, "step": 0.5},
+	{"group": "Screen Shake", "class": "ScreenShakeController", "name": "distance_falloff",
+		"type": TYPE_FLOAT, "default": 600.0, "min": 100.0, "max": 2000.0, "step": 50.0},
+
+	# ── Impact FX ─────────────────────────────────────────────────────────────────
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "death_fx_enabled",
+		"type": TYPE_BOOL, "default": true},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "impact_fx_enabled",
+		"type": TYPE_BOOL, "default": true},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "muzzle_flash_enabled",
+		"type": TYPE_BOOL, "default": true},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "enemy_muzzle_flash",
+		"type": TYPE_BOOL, "default": false},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "hit_stop_enabled",
+		"type": TYPE_BOOL, "default": true},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "hit_stop_duration",
+		"type": TYPE_FLOAT, "default": 0.04, "min": 0.0, "max": 0.3, "step": 0.01},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "hit_stop_scale",
+		"type": TYPE_FLOAT, "default": 0.15, "min": 0.05, "max": 1.0, "step": 0.05},
+	{"group": "Impact FX", "class": "FXManagerComponent", "name": "max_active_fx",
+		"type": TYPE_INT, "default": 48, "min": 8, "max": 128, "step": 1},
+
 	# ── Audio Analysis (MusicManager autoload — applied immediately) ──────────────
 	{"group": "Audio Analysis", "class": "MusicManager", "name": "smoothing",
 		"type": TYPE_FLOAT, "default": 0.2, "min": 0.0, "max": 0.99, "step": 0.01},
@@ -149,6 +215,8 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 0.15, "min": 0.01, "max": 2.0, "step": 0.01},
 	{"group": "Audio Analysis", "class": "MusicManager", "name": "beat_cooldown",
 		"type": TYPE_FLOAT, "default": 0.0, "min": 0.0, "max": 2.0, "step": 0.05},
+	{"group": "Audio Analysis", "class": "MusicManager", "name": "beat_flash_decay",
+		"type": TYPE_FLOAT, "default": 0.25, "min": 0.05, "max": 1.0, "step": 0.05},
 ]
 
 var _overrides: Dictionary = {}
@@ -169,6 +237,9 @@ const _SEED_SCENES: Array[String] = [
 	"res://Components/ThrusterSocket.tscn",
 	"res://Components/EnemySpawnerComponent.tscn",
 	"res://Components/ProcGenLevelComponent.tscn",
+	"res://Components/FXManagerComponent.tscn",
+	"res://Components/HitFlashComponent.tscn",
+	"res://Components/SpawnFXComponent.tscn",
 	"res://Entities/Player/Ships/PlayerShip.tscn",
 	"res://Entities/Player/player.tscn",
 	"res://Entities/BasicEnemy/enemy.tscn",

@@ -9,6 +9,7 @@ uniform float glow_feather : hint_range(0.01, 0.5, 0.01) = 0.15;
 uniform float glow_intensity : hint_range(1.0, 5.0, 0.1) = 2.5;
 uniform float pulse_speed : hint_range(0.0, 10.0, 0.5) = 2.0;
 uniform float pulse_amount : hint_range(0.0, 1.0, 0.05) = 0.4;
+uniform float flash_amount : hint_range(0.0, 1.0, 0.01) = 0.0;
 
 void fragment() {
 	// Remap UV to [-0.5, 0.5] so the center is at 0,0
@@ -30,8 +31,13 @@ void fragment() {
 	// Clip everything outside the quad boundary
 	float mask = step(dist, 0.5);
 
-	float alpha = clamp(outline + glow * 0.6, 0.0, 1.0) * mask;
+	float alpha = clamp(outline + glow * 0.6, 0.0, 1.0);
 	vec3 color = neon_color.rgb * glow_intensity * pulse * clamp(outline + glow, 0.0, 1.0);
 
-	COLOR = vec4(color, alpha);
+	// Hit flash: light the whole disc, not just the rim, and push toward hot white.
+	float body = 1.0 - smoothstep(radius - 0.04, radius + 0.02, dist);
+	color = mix(color, vec3(2.8), flash_amount * 0.85);
+	alpha = max(alpha, body * flash_amount);
+
+	COLOR = vec4(color, alpha * mask);
 }

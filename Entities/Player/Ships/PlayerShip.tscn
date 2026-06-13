@@ -22,7 +22,7 @@ texture = ExtResource("2_svg")
 [node name="NeonShaderComponent" parent="." node_paths=PackedStringArray("entity", "visual_node") instance=ExtResource("3_nsc")]
 visual_node = NodePath("../SpriteDisplay")
 neon_color = Color(1.732707e-06, 0.6250728, 0.5000574, 1)
-glow_intensity = 2.8
+glow_intensity = 1.6
 pulse_speed = 7.5
 pulse_amount = 0.0
 

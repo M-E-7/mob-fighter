@@ -135,7 +135,13 @@ func _refresh_slot(player: int) -> void:
 
 func _apply_theme() -> void:
 	_title.add_theme_font_size_override("font_size", 96)
-	_title.modulate = _COLOR_P1
+	# Overbright font color — the HDR root viewport blooms it for a real neon sign look.
+	_title.add_theme_color_override("font_color", Color(0.25, 1.6, 1.45))
+	var pulse := create_tween().set_loops()
+	pulse.tween_property(_title, "modulate", Color(1.2, 1.2, 1.2), 1.6) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_property(_title, "modulate", Color(0.85, 0.85, 0.85), 1.6) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	_subtitle.add_theme_font_size_override("font_size", 22)
 	_subtitle.modulate = _COLOR_DIM

@@ -9,7 +9,7 @@ const SPRITE_SHADER_PATH := "res://Components/Shaders/sprite_neon_shader.gdshade
 
 @export_group("Neon")
 @export var neon_color: Color = Color(1.0, 0.0, 0.2, 1.0)
-@export_range(1.0, 5.0, 0.1) var glow_intensity: float = 2.5
+@export_range(1.0, 5.0, 0.1) var glow_intensity: float = 1.4
 @export_range(0.01, 0.3, 0.005) var outline_width: float = 0.06
 @export_range(0.01, 0.5, 0.01) var glow_feather: float = 0.15
 
@@ -19,6 +19,7 @@ const SPRITE_SHADER_PATH := "res://Components/Shaders/sprite_neon_shader.gdshade
 
 
 var _material: ShaderMaterial
+var _visual: CanvasItem
 
 
 func _ready() -> void:
@@ -31,6 +32,7 @@ func _ready() -> void:
 		if entity:
 			push_warning("NeonShaderComponent: No visual node found on entity '%s'" % entity.name)
 		return
+	_visual = visual
 	_material = ShaderMaterial.new()
 	_material.shader = load(SPRITE_SHADER_PATH) if visual is Sprite2D else load(SHADER_PATH)
 	_material.set_shader_parameter("neon_color", neon_color)
@@ -49,6 +51,15 @@ func set_visual_params(glow: float, pulse_spd: float, feather: float, pulse_amt:
 	_material.set_shader_parameter("pulse_speed", pulse_spd)
 	_material.set_shader_parameter("glow_feather", feather)
 	_material.set_shader_parameter("pulse_amount", pulse_amt)
+
+
+func set_flash(amount: float) -> void:
+	if _material:
+		_material.set_shader_parameter("flash_amount", amount)
+
+
+func get_visual() -> CanvasItem:
+	return _visual
 
 
 # Searches the entity's full subtree for CircleDisplay or SpriteDisplay,

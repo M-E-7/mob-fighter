@@ -9,14 +9,15 @@ radius = 2.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
 shader = ExtResource("2_shader")
 shader_parameter/beam_color = Color(1, 0.15, 0.05, 1)
-shader_parameter/brightness = 1.0
+shader_parameter/brightness = 1.6
 
 [sub_resource type="QuadMesh" id="QuadMesh_1"]
 size = Vector2(20, 5)
 
-[node name="Bullet" type="Area2D" unique_id=1719329206]
+[node name="Bullet" type="Area2D" unique_id=1719329206 node_paths=PackedStringArray("beam_mesh")]
 collision_mask = 3
 script = ExtResource("1_bullet")
+beam_mesh = NodePath("BeamMesh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1646644829]
 shape = SubResource("CircleShape2D_1")

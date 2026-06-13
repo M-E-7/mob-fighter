@@ -24,7 +24,11 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	var font := ThemeDB.fallback_font
-	var c := _color
-	c.a = _alpha
-	draw_string(font, Vector2(-_font_size, 0), _text,
-			HORIZONTAL_ALIGNMENT_CENTER, -1, _font_size, c)
+	var pos := Vector2(-_font_size, 0)
+	var outline := Color(0.0, 0.0, 0.05, _alpha * 0.85)
+	draw_string_outline(font, pos, _text,
+			HORIZONTAL_ALIGNMENT_CENTER, -1, _font_size, 4, outline)
+	# Overbright fill blooms in the HDR world canvas.
+	var bright := Color(_color.r * 1.6, _color.g * 1.6, _color.b * 1.6, _alpha)
+	draw_string(font, pos, _text,
+			HORIZONTAL_ALIGNMENT_CENTER, -1, _font_size, bright)

@@ -57,14 +57,26 @@ func _ready() -> void:
 	var vis := LevelVisualsController.new()
 	add_child(vis)
 	var rects: Array[ColorRect] = []
-	var bg_p1 := _subviewport_p1.get_node_or_null("DebugBG") as ColorRect
+	var bg_cams: Array[Camera2D] = []
+	var bg_p1 := _subviewport_p1.get_node_or_null("BackgroundLayer/NeonBackground") as ColorRect
 	if bg_p1:
 		rects.append(bg_p1)
+		bg_cams.append(_camera_p1)
 	if GameConfig.player_count == 2:
-		var bg_p2 := _subviewport_p2.get_node_or_null("DebugBG") as ColorRect
+		var bg_p2 := _subviewport_p2.get_node_or_null("BackgroundLayer/NeonBackground") as ColorRect
 		if bg_p2:
 			rects.append(bg_p2)
-	vis.setup(rects, _proc_gen)
+			bg_cams.append(_camera_p2)
+	vis.setup(rects, _proc_gen, bg_cams)
+
+	var shake := ScreenShakeController.new()
+	add_child(shake)
+	var shake_cams: Array[Camera2D] = [_camera_p1]
+	var shake_players: Array[LivingEntity] = [_player1]
+	if GameConfig.player_count == 2:
+		shake_cams.append(_camera_p2)
+		shake_players.append(_player2)
+	shake.setup(shake_cams, shake_players)
 
 	if GameConfig.camera_relative_mode:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/fx_manager_component.gd" id="1_fxm"]
+[ext_resource type="PackedScene" path="res://Effects/EnemyDeathFX.tscn" id="2_death"]
+[ext_resource type="PackedScene" path="res://Effects/BulletImpactFX.tscn" id="3_impact"]
+[ext_resource type="PackedScene" path="res://Effects/MuzzleFlashFX.tscn" id="4_muzzle"]
+
+[node name="FXManagerComponent" type="Node2D"]
+script = ExtResource("1_fxm")
+death_fx_scene = ExtResource("2_death")
+impact_fx_scene = ExtResource("3_impact")
+muzzle_fx_scene = ExtResource("4_muzzle")

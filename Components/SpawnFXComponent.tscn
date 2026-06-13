@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Components/Scripts/spawn_fx_component.gd" id="1_sfx"]
+[ext_resource type="Shader" path="res://Components/Shaders/shockwave_ring.gdshader" id="2_ring"]
+
+[sub_resource type="ShaderMaterial" id="SM_ring"]
+resource_local_to_scene = true
+shader = ExtResource("2_ring")
+shader_parameter/ring_color = Color(0, 1, 0.9, 1)
+shader_parameter/progress = 1.0
+shader_parameter/brightness = 1.4
+
+[sub_resource type="QuadMesh" id="QM_ring"]
+size = Vector2(90, 90)
+
+[node name="SpawnFXComponent" type="Node2D" node_paths=PackedStringArray("ring_mesh")]
+script = ExtResource("1_sfx")
+ring_mesh = NodePath("RingMesh")
+
+[node name="RingMesh" type="MeshInstance2D" parent="."]
+visible = false
+material = SubResource("SM_ring")
+mesh = SubResource("QM_ring")
