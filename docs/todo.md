@@ -25,10 +25,10 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Repurpose `XPComponent`: bank orbs into `RunState.currency`; strip the auto-level-up branch + `current_level`
   - [x] **Remove the in-run level-up** — retire the `player_leveled_up` → `LevelUpUI` trigger (keep the card layout for the shop)
   - [x] `EventBus.currency_changed(total)`; HUD Bits readout
-- [ ] **P2 — Objective + exit portal** `[high]`
-  - [ ] Objective driver keyed off `current_level` (kill quota / survive timer / boss); track via `entity_died` + frame timer
-  - [ ] `ExitPort` Area2D entity; spawn on objective complete; stop spawner; overlap → `MusicManager.stop()` → Sandbox (stub)
-  - [ ] HUD objective-progress readout
+- [x] **P2 — Objective + exit portal** `[high]`
+  - [x] Objective driver (`LevelObjectiveComponent`) keyed off `current_level` (kill-quota shipped; survive-timer/boss deferred); tracks group-`enemy` `entity_died`
+  - [x] `ExitPort` Area2D entity; spawn on objective complete; overlap → `MusicManager.stop()` → Sandbox (stub). Spawner-stop/enemy-clear are optional `@export` flags (default: keep spawning, per the agreed sector feel)
+  - [x] HUD objective-progress readout (`hud_show_objective` toggle)
 - [ ] **P3 — Sandbox (shop)** `[high]`
   - [ ] `Levels/Sandbox/` scene reusing the `LevelUpUI` card pattern + `neon_theme.tres`
   - [ ] Extend `PowerUpData` with `cost: int`; generic-upgrade catalog via the `PowerUpRegistry._make()` pattern
@@ -77,9 +77,13 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
 
 ## UI / HUD
 
-- [ ] **Sector HUD: objective progress + Bits balance + sector number** `[high]` *(feeds P2; reframe of wave/kill counter)*
+- [x] **Sector HUD: objective progress + Bits balance + sector number** `[high]` *(P2: objective readout + sector number + Bits all on the HUD)*
 - [ ] **Boss intro + HP bar** `[high]` *(feeds P6)*
 - [ ] **Off-screen enemy indicators / minimap** `[med]`
+- [ ] **Off-screen ExitPort marker + distance indicator** `[high]` *(P2 UX follow-up)*
+  - [ ] Edge-of-screen arrow/marker pointing toward the portal while it is off-screen
+  - [ ] Distance-to-port readout on/near the marker
+  - [ ] Hide once the port is on-screen; consider sharing the mechanic with the off-screen enemy indicators above
 - [ ] **Acquired Upgrades / Daemons (build) display during run** `[med]`
 - [ ] **Controller / keybind remapping screen** `[low]`
 - [ ] **Co-op join / ready flow** `[low]`

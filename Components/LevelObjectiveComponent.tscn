@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://level_objective_component"]
+
+[ext_resource type="Script" path="res://Components/Scripts/level_objective_component.gd" id="1_obj"]
+[ext_resource type="PackedScene" path="res://Entities/ExitPort/ExitPort.tscn" id="2_port"]
+
+[node name="LevelObjectiveComponent" type="Node"]
+script = ExtResource("1_obj")
+exit_port_scene = ExtResource("2_port")

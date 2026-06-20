@@ -22,6 +22,10 @@ func start(proc_gen: ProcGenLevelComponent) -> void:
 	_active = true
 
 
+func stop() -> void:
+	_active = false
+
+
 func _process(delta: float) -> void:
 	if not _active:
 		return

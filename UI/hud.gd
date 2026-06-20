@@ -41,6 +41,7 @@ var _p2: _PanelRefs
 var _survival_time: float = 0.0
 var _timer_label: Label
 var _bits_label: Label
+var _objective_label: Label
 
 var _warn_p1: ColorRect
 var _warn_p2: ColorRect
@@ -62,6 +63,7 @@ func _ready() -> void:
 
 	_build_timer_label()
 	_build_bits_label()
+	_build_objective_label()
 	_build_warnings()
 
 
@@ -108,6 +110,7 @@ func _apply_settings() -> void:
 	_p1.powerup_row.visible = GameConfig.hud_show_powerups
 	_p2.powerup_row.visible = GameConfig.hud_show_powerups
 	_timer_label.get_parent().visible = GameConfig.hud_show_survival_timer
+	_objective_label.get_parent().visible = GameConfig.hud_show_objective
 
 
 func _position_panels(player_count: int) -> void:
@@ -131,6 +134,8 @@ func _connect_signals() -> void:
 	EventBus.entity_died.connect(_on_entity_died)
 	EventBus.entity_damaged.connect(_on_entity_damaged)
 	EventBus.power_up_applied.connect(_on_power_up_applied)
+	EventBus.objective_progress_changed.connect(_on_objective_progress_changed)
+	EventBus.sector_objective_completed.connect(_on_sector_objective_completed)
 
 
 func _on_health_changed(entity: LivingEntity, current: float, maximum: float) -> void:
@@ -260,6 +265,30 @@ func _build_bits_label() -> void:
 
 func _set_bits(total: int) -> void:
 	_bits_label.text = "%d %s" % [total, RunState.CURRENCY_NAME]
+
+
+func _build_objective_label() -> void:
+	var bar := Control.new()
+	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	bar.offset_top = 70.0
+	bar.offset_bottom = 70.0
+	add_child(bar)
+
+	_objective_label = Label.new()
+	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_objective_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_objective_label.add_theme_font_size_override("font_size", 20)
+	_objective_label.modulate = Color(0.7, 0.95, 1.0)
+	bar.add_child(_objective_label)
+
+
+func _on_objective_progress_changed(current: int, target: int) -> void:
+	_objective_label.text = "SECTOR %d   Purge %d/%d" % [RunState.current_level, current, target]
+
+
+func _on_sector_objective_completed() -> void:
+	_objective_label.text = "SECTOR CLEAR — reach the Exit Port"
+	_objective_label.modulate = Color(0.4, 1.0, 0.5)
 
 
 func _build_warnings() -> void:

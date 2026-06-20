@@ -11,6 +11,7 @@ const _SVP2 := "SplitScreenLayout/SubViewportContainerP2/SubViewportP2"
 @onready var _player1: LivingEntity = get_node(_SVP1 + "/Player")
 @onready var _player2: LivingEntity = get_node(_SVP1 + "/Player2")
 @onready var _spawner: EnemySpawnerComponent = get_node(_SVP1 + "/EnemySpawnerComponent")
+@onready var _objective: LevelObjectiveComponent = get_node(_SVP1 + "/LevelObjectiveComponent")
 @onready var _overlay_p1: Control = $SplitScreenLayout/OverlayP1
 @onready var _overlay_p2: Control = $SplitScreenLayout/OverlayP2
 
@@ -21,6 +22,7 @@ var _p2_dead: bool = false
 var _hud: HUD
 var _pause_menu: PauseMenuUI
 var _game_over_shown: bool = false
+var _transitioning: bool = false
 
 
 func _ready() -> void:
@@ -85,6 +87,7 @@ func _ready() -> void:
 
 	_proc_gen.level_generated.connect(_on_level_generated)
 	EventBus.entity_died.connect(_on_entity_died)
+	EventBus.exit_port_entered.connect(_on_exit_port_entered)
 
 
 func _setup_single_player() -> void:
@@ -114,6 +117,7 @@ func _on_level_generated(spawn_pos: Vector2) -> void:
 		_player2.global_position = spawn_pos + Vector2(60, 0)
 		_camera_p2.global_position = spawn_pos + Vector2(60, 0)
 	_spawner.start(_proc_gen)
+	_objective.start(_proc_gen, _spawner)
 
 
 func _on_entity_died(entity: LivingEntity) -> void:
@@ -174,3 +178,15 @@ func _show_game_over() -> void:
 	var go := preload("res://UI/GameOverUI.tscn").instantiate() as GameOverUI
 	add_child(go)
 	go.setup(GameConfig.player_count)
+
+
+func _on_exit_port_entered() -> void:
+	if _transitioning or _game_over_shown:
+		return
+	_transitioning = true
+	get_tree().paused = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	MusicManager.stop()
+	# Deferred: this fires inside Area2D.body_entered (a physics callback), where freeing
+	# the level's collision objects is illegal.
+	get_tree().change_scene_to_file.call_deferred("res://Levels/Sandbox/Sandbox.tscn")

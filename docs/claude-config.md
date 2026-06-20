@@ -52,3 +52,5 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 | Screen Shake | `ScreenShakeController` |
 | Impact FX | `FXManagerComponent` (FX toggles + hit-stop) |
 | Audio Analysis | `MusicManager` (applied immediately, not via node_added) |
+| Sector Objective | `LevelObjectiveComponent` (kill quota + exit-port placement + on-complete flags) |
+| Exit Port | `ExitPort` (beacon visuals + spawn animation) |

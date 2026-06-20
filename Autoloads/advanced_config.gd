@@ -217,6 +217,34 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 0.0, "min": 0.0, "max": 2.0, "step": 0.05},
 	{"group": "Audio Analysis", "class": "MusicManager", "name": "beat_flash_decay",
 		"type": TYPE_FLOAT, "default": 0.25, "min": 0.05, "max": 1.0, "step": 0.05},
+
+	# ── Sector Objective ──────────────────────────────────────────────────────────
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "base_kill_quota",
+		"type": TYPE_INT, "default": 20, "min": 1, "max": 500, "step": 1},
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "port_spawn_distance",
+		"type": TYPE_FLOAT, "default": 1500.0, "min": 0.0, "max": 6000.0, "step": 50.0},
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "port_placement_attempts",
+		"type": TYPE_INT, "default": 8, "min": 1, "max": 32, "step": 1},
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "port_open_search_radius",
+		"type": TYPE_INT, "default": 12, "min": 1, "max": 40, "step": 1},
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "stop_spawner_on_complete",
+		"type": TYPE_BOOL, "default": false},
+	{"group": "Sector Objective", "class": "LevelObjectiveComponent", "name": "clear_enemies_on_complete",
+		"type": TYPE_BOOL, "default": false},
+
+	# ── Exit Port ─────────────────────────────────────────────────────────────────
+	{"group": "Exit Port", "class": "ExitPort", "name": "base_radius",
+		"type": TYPE_FLOAT, "default": 40.0, "min": 8.0, "max": 200.0, "step": 2.0},
+	{"group": "Exit Port", "class": "ExitPort", "name": "pulse_speed",
+		"type": TYPE_FLOAT, "default": 4.0, "min": 0.0, "max": 20.0, "step": 0.5},
+	{"group": "Exit Port", "class": "ExitPort", "name": "pulse_amount",
+		"type": TYPE_FLOAT, "default": 0.1, "min": 0.0, "max": 1.0, "step": 0.05},
+	{"group": "Exit Port", "class": "ExitPort", "name": "halo_scale",
+		"type": TYPE_FLOAT, "default": 3.0, "min": 1.0, "max": 8.0, "step": 0.5},
+	{"group": "Exit Port", "class": "ExitPort", "name": "spawn_scale_duration",
+		"type": TYPE_FLOAT, "default": 0.4, "min": 0.0, "max": 2.0, "step": 0.05},
+	{"group": "Exit Port", "class": "ExitPort", "name": "port_color",
+		"type": TYPE_COLOR, "default": Color(0.2, 1.0, 0.9, 1.0)},
 ]
 
 var _overrides: Dictionary = {}
@@ -237,6 +265,7 @@ const _SEED_SCENES: Array[String] = [
 	"res://Components/ThrusterSocket.tscn",
 	"res://Components/EnemySpawnerComponent.tscn",
 	"res://Components/ProcGenLevelComponent.tscn",
+	"res://Components/LevelObjectiveComponent.tscn",
 	"res://Components/FXManagerComponent.tscn",
 	"res://Components/HitFlashComponent.tscn",
 	"res://Components/SpawnFXComponent.tscn",
@@ -244,6 +273,7 @@ const _SEED_SCENES: Array[String] = [
 	"res://Entities/Player/player.tscn",
 	"res://Entities/BasicEnemy/enemy.tscn",
 	"res://Entities/ExperienceOrb/experience_orb.tscn",
+	"res://Entities/ExitPort/ExitPort.tscn",
 ]
 
 

@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://Components/FXManagerComponent.tscn" id="7_fxm"]
 [ext_resource type="Shader" path="res://Components/Shaders/neon_background.gdshader" id="8_bg"]
 [ext_resource type="Shader" path="res://Components/Shaders/screen_glow.gdshader" id="9_glow"]
+[ext_resource type="PackedScene" path="res://Components/LevelObjectiveComponent.tscn" id="10_obj"]
 
 [sub_resource type="ShaderMaterial" id="SM_bg_p1"]
 shader = ExtResource("8_bg")
@@ -67,6 +68,8 @@ arena_height = 400
 enemy_scene = ExtResource("2_i5jxq")
 spawn_interval = 1.0
 max_enemies = 50
+
+[node name="LevelObjectiveComponent" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" instance=ExtResource("10_obj")]
 
 [node name="FXManagerComponent" parent="SplitScreenLayout/SubViewportContainerP1/SubViewportP1" instance=ExtResource("7_fxm")]
 

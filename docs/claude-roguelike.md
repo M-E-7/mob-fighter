@@ -2,7 +2,7 @@
 
 > Extension of the root `CLAUDE.md`. Read this before working on the run loop, currency, the shop, the modifier ("Daemon") system, bosses, or meta-progression. The master gotcha list lives in `CLAUDE.md`; the phased build order lives in `docs/todo.md`.
 
-**Implementation status: P1 DONE; P2–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section for the as-built notes. Everything else (`MetaProgression`, `ExitPort`, the Sandbox, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
+**Implementation status: P1–P2 DONE; P3–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section. **Built (P2):** the `LevelObjectiveComponent` objective driver (kill-quota), the `ExitPort` entity, the HUD objective readout, and a stub Sandbox — see the **Objectives & exit portal** section. Everything else (`MetaProgression`, the full Sandbox shop, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
 
 ---
 
@@ -98,6 +98,16 @@ A small objective driver (a `LevelObjectiveComponent`, or inline in `basic_level
 | 10 | **final boss** — the rogue AI / system core |
 
 Track progress off existing signals: `EventBus.entity_died` for kill quotas (the HUD already counts kills via `last_attacker`), a frame timer for survival, boss-death for boss sectors. On completion: stop the spawner and spawn an **`ExitPort`** (`Area2D`) near the player. Player overlap → `MusicManager.stop()` → load the Sandbox. Surface objective progress on the HUD (reuse the kill/timer labels).
+
+**As built (P2).** A `LevelObjectiveComponent` (`Components/Scripts/level_objective_component.gd`, a `Node` inside `SubViewportP1`) is the driver — `basic_level._on_level_generated()` calls `_objective.start(proc_gen, spawner)` alongside the spawner. Only the **kill-quota** objective ships (survive-timer / collect-Bits / boss deferred); it counts deaths of nodes in the `"enemy"` group (shared/co-op-correct — **not** per-`last_attacker`, which would mis-split a shared objective) and emits `EventBus.objective_progress_changed(current, target)`. On completion it emits `EventBus.sector_objective_completed()` and spawns the **`ExitPort`**. New EventBus signals: `objective_progress_changed`, `sector_objective_completed`, `exit_port_entered`.
+
+- **ExitPort detection:** the port is an `Area2D` (`Entities/ExitPort/`) with `collision_mask = 1`; the player body triggers `body_entered`, which emits `EventBus.exit_port_entered`. `basic_level._on_exit_port_entered()` unpauses, stops music, and **defers** `change_scene_to_file` — the handler runs inside a physics callback, where freeing collision objects is illegal (see the gotcha in `CLAUDE.md`).
+- **Port placement:** snapped to a walkable cell that is **path-reachable** from the player via `ProcGenLevelComponent.astar_grid`, so it can never spawn inside a wall or an isolated pocket.
+- **Spawner-on-complete is configurable, default OFF:** `stop_spawner_on_complete` / `clear_enemies_on_complete` `@export` flags let future sectors stop spawns or wipe enemies; the default sector keeps spawning (agreed feel).
+- **HUD:** a top-center objective label (`SECTOR n   Purge x/y` → `SECTOR CLEAR — reach the Exit Port`), gated by `GameConfig.hud_show_objective`.
+- **Tunables:** objective + port values are exposed both as `@export`s and in **Advanced Settings** (`AdvancedConfig` groups *Sector Objective* / *Exit Port*).
+- **Sandbox stub:** `Levels/Sandbox/` is a P2 placeholder (→ MainMenu); P3 replaces it with the real shop.
+- **Pending UX:** an off-screen ExitPort marker + distance indicator (tracked in `docs/todo.md`).
 
 ---
 

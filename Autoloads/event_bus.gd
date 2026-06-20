@@ -22,3 +22,8 @@ signal power_up_applied(player: LivingEntity, power_up: PowerUpData)
 
 # Music
 signal beat_detected()
+
+# Roguelike run loop
+signal objective_progress_changed(current: int, target: int)
+signal sector_objective_completed()
+signal exit_port_entered()
