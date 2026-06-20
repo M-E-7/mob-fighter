@@ -21,7 +21,7 @@ func _on_entity_damaged(entity: LivingEntity, amount: float) -> void:
 func _on_xp_orb_collected(world_position: Vector2, amount: float) -> void:
 	if not GameConfig.hud_show_xp_pickup_text:
 		return
-	_spawn(world_position, "+" + str(int(amount)) + " XP", _COLOR_XP, 14)
+	_spawn(world_position, "+" + str(int(amount)) + " " + RunState.CURRENCY_NAME, _COLOR_XP, 14)
 
 
 func _spawn(world_pos: Vector2, text: String, color: Color, font_size: int) -> void:

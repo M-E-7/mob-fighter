@@ -20,11 +20,11 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
 
 > Convert the survival prototype into a run-based roguelike. Design & contract: `docs/claude-roguelike.md`. Phases are ordered; each is independently playable/verifiable. Working content names (Bits, Daemons, Sandbox, Sectors…) are placeholders — easy to swap.
 
-- [ ] **P1 — RunState + currency refactor** `[high]`
-  - [ ] Add `RunState` autoload (no `class_name`): `current_level`, `currency`, `owned_upgrades`, `owned_modifiers`, `reset()`, `apply_to(entity)`
-  - [ ] Repurpose `XPComponent`: bank orbs into `RunState.currency`; strip the auto-level-up branch + `current_level`
-  - [ ] **Remove the in-run level-up** — retire the `player_leveled_up` → `LevelUpUI` trigger (keep the card layout for the shop)
-  - [ ] `EventBus.currency_changed(total)`; HUD Bits readout
+- [x] **P1 — RunState + currency refactor** `[high]`
+  - [x] Add `RunState` autoload (no `class_name`): `current_level`, `currency`, `owned_upgrades`, `owned_modifiers`, `reset()`, `apply_to(entity)`
+  - [x] Repurpose `XPComponent`: bank orbs into `RunState.currency`; strip the auto-level-up branch + `current_level`
+  - [x] **Remove the in-run level-up** — retire the `player_leveled_up` → `LevelUpUI` trigger (keep the card layout for the shop)
+  - [x] `EventBus.currency_changed(total)`; HUD Bits readout
 - [ ] **P2 — Objective + exit portal** `[high]`
   - [ ] Objective driver keyed off `current_level` (kill quota / survive timer / boss); track via `entity_died` + frame timer
   - [ ] `ExitPort` Area2D entity; spawn on objective complete; stop spawner; overlap → `MusicManager.stop()` → Sandbox (stub)

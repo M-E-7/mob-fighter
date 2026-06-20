@@ -13,7 +13,6 @@ const _SVP2 := "SplitScreenLayout/SubViewportContainerP2/SubViewportP2"
 @onready var _spawner: EnemySpawnerComponent = get_node(_SVP1 + "/EnemySpawnerComponent")
 @onready var _overlay_p1: Control = $SplitScreenLayout/OverlayP1
 @onready var _overlay_p2: Control = $SplitScreenLayout/OverlayP2
-@onready var _level_up_ui: Node = $LevelUpUI
 
 var _camera_p1: Camera2D
 var _camera_p2: Camera2D
@@ -40,8 +39,6 @@ func _ready() -> void:
 	var rel_cam_p1 := preload("res://Components/RelativeCameraComponent.tscn").instantiate() as RelativeCameraComponent
 	add_child(rel_cam_p1)
 	rel_cam_p1.setup(_player1, _camera_p1, input_comp_p1)
-
-	_level_up_ui.set("xp_component", _player1.get_node("XPComponent") as XPComponent)
 
 	if GameConfig.player_count == 1:
 		_setup_single_player()
@@ -104,7 +101,6 @@ func _setup_split_screen() -> void:
 	_subviewport_p2.world_2d = _subviewport_p1.world_2d
 	_subviewport_p2.add_child(_camera_p2)
 	_camera_p2.global_position = _player2.global_position
-	_level_up_ui.set("xp_component_p2", _player2.get_node("XPComponent") as XPComponent)
 
 	var fixed_cam_p2 := preload("res://Components/FixedCameraComponent.tscn").instantiate() as FixedCameraComponent
 	add_child(fixed_cam_p2)
@@ -174,10 +170,7 @@ func _show_game_over() -> void:
 	GameConfig.result_kills_p1 = _hud.get_kills(1)
 	GameConfig.result_kills_p2 = _hud.get_kills(2)
 	GameConfig.result_survival_time = _hud.get_survival_time()
-	var xp1 := _player1.get_node_or_null("XPComponent") as XPComponent if is_instance_valid(_player1) else null
-	GameConfig.result_level_p1 = xp1.current_level if xp1 else 0
-	var xp2 := _player2.get_node_or_null("XPComponent") as XPComponent if is_instance_valid(_player2) else null
-	GameConfig.result_level_p2 = xp2.current_level if xp2 else 0
+	GameConfig.result_currency = RunState.currency
 	var go := preload("res://UI/GameOverUI.tscn").instantiate() as GameOverUI
 	add_child(go)
 	go.setup(GameConfig.player_count)

@@ -22,6 +22,7 @@ PowerUpRegistry="*res://Autoloads/power_up_registry.gd"
 GameConfig="*res://Autoloads/game_config.gd"
 MusicManager="*res://Autoloads/music_manager.gd"
 AdvancedConfig="*res://Autoloads/advanced_config.gd"
+RunState="*res://Autoloads/run_state.gd"
 
 [display]
 

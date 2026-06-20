@@ -2,7 +2,7 @@
 
 > Extension of the root `CLAUDE.md`. Read this before working on the run loop, currency, the shop, the modifier ("Daemon") system, bosses, or meta-progression. The master gotcha list lives in `CLAUDE.md`; the phased build order lives in `docs/todo.md`.
 
-**Implementation status: DESIGN — not yet built.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. Names of autoloads, signals, methods, and scenes below (`RunState`, `MetaProgression`, `currency_changed`, `ExitPort`, etc.) are the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — keep them centralized.
+**Implementation status: P1 DONE; P2–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section for the as-built notes. Everything else (`MetaProgression`, `ExitPort`, the Sandbox, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
 
 ---
 
@@ -71,7 +71,7 @@ func reset() -> void                # zero everything; called by MainMenu on Sta
 func apply_to(entity: LivingEntity) -> void  # re-apply upgrades + daemons on each sector spawn
 ```
 
-**Players are not persisted across scenes.** Each sector instantiates fresh `Player` entities (as today). On spawn, the level calls `RunState.apply_to(player)`, which re-derives stats from base and installs daemons — so the split-screen/camera wiring in `basic_level.gd` is untouched. `apply_to` reuses `XPComponent`'s existing machinery: `_base_stats` + `_apply_stat()` (`xp_component.gd:53-59`) for stat multipliers, and/or `AdvancedConfig.set_override(cls, prop, value)` for pre-`_ready()` application.
+**Players are not persisted across scenes.** Each sector instantiates fresh `Player` entities (as today). On spawn, the level should call `RunState.apply_to(player)`, which re-derives stats from base and installs daemons — so the split-screen/camera wiring in `basic_level.gd` is untouched. `apply_to` reuses `XPComponent`'s existing machinery (`_base_stats` + `_apply_stat()` / `apply_power_up()`) for stat multipliers, and/or `AdvancedConfig.set_override(cls, prop, value)` for pre-`_ready()` application. **As built (P1):** `apply_to` is implemented — it looks each owned `stat_key` up in `PowerUpRegistry` and applies it once per stack — but is **not yet called** on spawn; that wiring lands in P3 with the Sandbox (until then `owned_upgrades` is always empty).
 
 ---
 
@@ -80,10 +80,10 @@ func apply_to(entity: LivingEntity) -> void  # re-apply upgrades + daemons on ea
 Orbs become a spendable currency, **single shared wallet, banked on pickup** (co-op-friendly; matches the existing entity-less signal).
 
 - **Unchanged:** `XPDropComponent` drops orbs on `entity_died`; `ExperienceOrb` magnet-collects and emits `EventBus.xp_collected(amount)`.
-- **Changed:** strip the auto-level-up branch from `XPComponent._on_xp_collected` (`xp_component.gd:33-36`) and the `current_level` field. On pickup, add to `RunState.currency` and emit a new `EventBus.currency_changed(total)` for the HUD.
-- **Removed:** the in-run level-up. Delete the `player_leveled_up` trigger of `LevelUpUI`. `LevelUpUI`'s card layout (P1 click / P2 arrow-nav) is **refactored into the Sandbox shop**, not thrown away.
+- **As built (P1):** `RunState` is the **sole** subscriber to `EventBus.xp_collected` (`run_state.gd`); it banks `int(amount)` into `RunState.currency` and emits `EventBus.currency_changed(total)` for the HUD. Banking lives in `RunState`, **not** `XPComponent`, because the pickup signal is entity-less — every player's `XPComponent` would otherwise double-count it into the shared wallet. `XPComponent` lost its XP/level state (`current_xp`, `current_level`, `base_xp_required`, `track_xp`, `_on_xp_collected`) and is now a pure stat-upgrade holder (`_base_stats` / `_bonuses` / `apply_power_up` / `get_projected_stat`).
+- **As built (P1):** the in-run level-up is gone — the `player_leveled_up` and `xp_updated` signals were removed, and the `LevelUpUI` node was deleted from `basic_level.tscn`. `UI/LevelUpUI.tscn` + `level_up_ui.gd` are **kept** (the `player_leveled_up` connection neutered) so the card layout (P1 click / P2 arrow-nav) can be **refactored into the Sandbox shop**.
 
-> Renaming "Experience Orb" → the final currency name touches `ExperienceOrb`, `XPComponent`, `XPDropComponent`, the `Experience Orbs` / `XP & Progression` groups in `AdvancedConfig.PROPERTY_DEFS`, and the HUD. Centralize the display string.
+> The display string is centralized as `RunState.CURRENCY_NAME` (P1). A *full* rename of the class/file identifiers — `ExperienceOrb`, `XPComponent`, `XPDropComponent`, the `Experience Orbs` / `XP & Progression` groups in `AdvancedConfig.PROPERTY_DEFS` — is deferred; do it in one pass once the final name is locked.
 
 ---
 

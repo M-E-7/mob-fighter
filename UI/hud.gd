@@ -6,9 +6,6 @@ class _PanelRefs:
 	var health_row: Control
 	var hp_bar: ProgressBar
 	var hp_text: Label
-	var xp_row: Control
-	var xp_bar: ProgressBar
-	var lv_label: Label
 	var kill_row: Control
 	var kill_count: Label
 	var powerup_row: HFlowContainer
@@ -43,6 +40,7 @@ var _p2: _PanelRefs
 
 var _survival_time: float = 0.0
 var _timer_label: Label
+var _bits_label: Label
 
 var _warn_p1: ColorRect
 var _warn_p2: ColorRect
@@ -51,9 +49,6 @@ var _low_hp_p2: float = 0.0
 var _hurt_spike_p1: float = 0.0
 var _hurt_spike_p2: float = 0.0
 var _vignette_time: float = 0.0
-
-var _prev_level_p1: int = 0
-var _prev_level_p2: int = 0
 
 
 func _ready() -> void:
@@ -66,6 +61,7 @@ func _ready() -> void:
 	add_child(_p2.panel)
 
 	_build_timer_label()
+	_build_bits_label()
 	_build_warnings()
 
 
@@ -78,6 +74,7 @@ func setup(p1: LivingEntity, p2: LivingEntity, player_count: int) -> void:
 	_init_display(p1, _p1)
 	if is_instance_valid(p2):
 		_init_display(p2, _p2)
+	_set_bits(RunState.currency)
 
 
 func get_survival_time() -> float:
@@ -100,17 +97,12 @@ func _process(delta: float) -> void:
 func _init_display(entity: LivingEntity, refs: _PanelRefs) -> void:
 	if entity.healthComponent:
 		_update_health(refs, entity.healthComponent.current_health, entity.healthComponent.max_health)
-	var xp_comp := entity.get_node_or_null("XPComponent") as XPComponent
-	if xp_comp:
-		var required := xp_comp.base_xp_required * pow(2.0, float(xp_comp.current_level))
-		_update_xp(refs, xp_comp.current_xp, required, xp_comp.current_level)
 
 
 func _apply_settings() -> void:
 	_p1.health_row.visible = GameConfig.hud_show_health
 	_p2.health_row.visible = GameConfig.hud_show_health
-	_p1.xp_row.visible = GameConfig.hud_show_xp
-	_p2.xp_row.visible = GameConfig.hud_show_xp
+	_bits_label.visible = GameConfig.hud_show_xp
 	_p1.kill_row.visible = GameConfig.hud_show_kills
 	_p2.kill_row.visible = GameConfig.hud_show_kills
 	_p1.powerup_row.visible = GameConfig.hud_show_powerups
@@ -135,7 +127,7 @@ func _position_panels(player_count: int) -> void:
 
 func _connect_signals() -> void:
 	EventBus.health_changed.connect(_on_health_changed)
-	EventBus.xp_updated.connect(_on_xp_updated)
+	EventBus.currency_changed.connect(_on_currency_changed)
 	EventBus.entity_died.connect(_on_entity_died)
 	EventBus.entity_damaged.connect(_on_entity_damaged)
 	EventBus.power_up_applied.connect(_on_power_up_applied)
@@ -159,17 +151,8 @@ func _on_entity_damaged(entity: LivingEntity, _amount: float) -> void:
 		_hurt_spike_p2 = 1.0
 
 
-func _on_xp_updated(entity: LivingEntity, current_xp: float, required_xp: float, level: int) -> void:
-	if entity == _player1:
-		if level > _prev_level_p1 and GameConfig.hud_show_xp_flash:
-			_flash_xp_bar(_p1.xp_bar)
-		_prev_level_p1 = level
-		_update_xp(_p1, current_xp, required_xp, level)
-	elif is_instance_valid(_player2) and entity == _player2:
-		if level > _prev_level_p2 and GameConfig.hud_show_xp_flash:
-			_flash_xp_bar(_p2.xp_bar)
-		_prev_level_p2 = level
-		_update_xp(_p2, current_xp, required_xp, level)
+func _on_currency_changed(total: int) -> void:
+	_set_bits(total)
 
 
 func _on_entity_died(entity: LivingEntity) -> void:
@@ -218,18 +201,6 @@ func _update_health(refs: _PanelRefs, current: float, maximum: float) -> void:
 	refs.hp_text.text = str(int(current)) + " / " + str(int(maximum))
 
 
-func _update_xp(refs: _PanelRefs, current_xp: float, required_xp: float, level: int) -> void:
-	refs.lv_label.text = "LV " + str(level + 1)
-	if required_xp > 0.0:
-		refs.xp_bar.value = current_xp / required_xp
-
-
-func _flash_xp_bar(bar: ProgressBar) -> void:
-	var t := create_tween()
-	t.tween_property(bar, "modulate", Color(1.8, 1.8, 0.3, 1.0), 0.15)
-	t.tween_property(bar, "modulate", Color.WHITE, 0.25)
-
-
 func _low_hp_severity(current: float, maximum: float) -> float:
 	if not GameConfig.hud_show_low_hp_warning or maximum <= 0.0:
 		return 0.0
@@ -269,6 +240,26 @@ func _build_timer_label() -> void:
 	_timer_label.add_theme_font_size_override("font_size", 18)
 	_timer_label.modulate = Color(0.85, 0.85, 0.9)
 	bar.add_child(_timer_label)
+
+
+func _build_bits_label() -> void:
+	var bar := Control.new()
+	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	bar.offset_top = 38.0
+	bar.offset_bottom = 38.0
+	add_child(bar)
+
+	_bits_label = Label.new()
+	_bits_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_bits_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bits_label.add_theme_font_size_override("font_size", 22)
+	_bits_label.modulate = _COLOR_XP
+	bar.add_child(_bits_label)
+	_set_bits(RunState.currency)
+
+
+func _set_bits(total: int) -> void:
+	_bits_label.text = "%d %s" % [total, RunState.CURRENCY_NAME]
 
 
 func _build_warnings() -> void:
@@ -339,31 +330,6 @@ func _build_panel(accent: Color) -> _PanelRefs:
 	hp_text.custom_minimum_size = Vector2(75, 0)
 	health_row.add_child(hp_text)
 	refs.hp_text = hp_text
-
-	# XP row
-	var xp_row := HBoxContainer.new()
-	xp_row.add_theme_constant_override("separation", 8)
-	vbox.add_child(xp_row)
-	refs.xp_row = xp_row
-
-	var lv_lbl := Label.new()
-	lv_lbl.text = "LV 1"
-	lv_lbl.modulate = accent
-	lv_lbl.add_theme_font_size_override("font_size", 13)
-	lv_lbl.custom_minimum_size = Vector2(44, 0)
-	xp_row.add_child(lv_lbl)
-	refs.lv_label = lv_lbl
-
-	var xp_bar := ProgressBar.new()
-	xp_bar.min_value = 0.0
-	xp_bar.max_value = 1.0
-	xp_bar.value = 0.0
-	xp_bar.show_percentage = false
-	xp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	xp_bar.custom_minimum_size = Vector2(140, 16)
-	xp_bar.add_theme_stylebox_override("fill", _accent_fill(_COLOR_XP))
-	xp_row.add_child(xp_bar)
-	refs.xp_bar = xp_bar
 
 	# Kill row
 	var kill_row := HBoxContainer.new()

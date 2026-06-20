@@ -37,11 +37,15 @@ text = "Survived: 0:00"
 horizontal_alignment = 1
 
 [node name="P1Label" type="Label" parent="Dim/CenterContainer/VBox/StatsPanel/StatsVBox"]
-text = "P1 — Level 1 · 0 kills"
+text = "P1 — 0 kills"
 horizontal_alignment = 1
 
 [node name="P2Label" type="Label" parent="Dim/CenterContainer/VBox/StatsPanel/StatsVBox"]
-text = "P2 — Level 1 · 0 kills"
+text = "P2 — 0 kills"
+horizontal_alignment = 1
+
+[node name="BitsLabel" type="Label" parent="Dim/CenterContainer/VBox/StatsPanel/StatsVBox"]
+text = "Bits collected: 0"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="Dim/CenterContainer/VBox"]

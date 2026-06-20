@@ -40,7 +40,7 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 | Enemy Spawning | `EnemySpawnerComponent` |
 | Level Generation | `ProcGenLevelComponent` |
 | Controller Input | `ControllerInputComponent` |
-| XP & Progression | `XPComponent`, `XPDropComponent` |
+| XP & Progression | `XPDropComponent` |
 | Experience Orbs | `ExperienceOrb` |
 | Neon Visuals | `NeonShaderComponent` |
 | Music Reactivity | `MusicVisualsComponent` |

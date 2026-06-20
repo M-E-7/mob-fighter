@@ -11,6 +11,7 @@ const _COLOR_BG := Color(0.05, 0.05, 0.08, 0.95)
 @onready var _time_label: Label = $Dim/CenterContainer/VBox/StatsPanel/StatsVBox/TimeLabel
 @onready var _p1_label: Label = $Dim/CenterContainer/VBox/StatsPanel/StatsVBox/P1Label
 @onready var _p2_label: Label = $Dim/CenterContainer/VBox/StatsPanel/StatsVBox/P2Label
+@onready var _bits_label: Label = $Dim/CenterContainer/VBox/StatsPanel/StatsVBox/BitsLabel
 @onready var _retry_button: Button = $Dim/CenterContainer/VBox/RetryButton
 @onready var _menu_button: Button = $Dim/CenterContainer/VBox/MenuButton
 
@@ -23,13 +24,12 @@ func _ready() -> void:
 func setup(player_count: int) -> void:
 	var t := GameConfig.result_survival_time
 	_time_label.text = "Survived: %d:%02d" % [int(t) / 60, int(t) % 60]
-	_p1_label.text = "P1 — Level %d · %d kills" % [
-		GameConfig.result_level_p1 + 1, GameConfig.result_kills_p1]
+	_p1_label.text = "P1 — %d kills" % GameConfig.result_kills_p1
 	if player_count == 2:
-		_p2_label.text = "P2 — Level %d · %d kills" % [
-			GameConfig.result_level_p2 + 1, GameConfig.result_kills_p2]
+		_p2_label.text = "P2 — %d kills" % GameConfig.result_kills_p2
 	else:
 		_p2_label.hide()
+	_bits_label.text = "%s collected: %d" % [RunState.CURRENCY_NAME, GameConfig.result_currency]
 	_retry_button.pressed.connect(func() -> void: get_tree().reload_current_scene())
 	_menu_button.pressed.connect(func() -> void:
 		get_tree().change_scene_to_file(_MAIN_MENU_SCENE))
@@ -53,7 +53,8 @@ func _apply_theme() -> void:
 
 	for lbl in [$Dim/CenterContainer/VBox/StatsPanel/StatsVBox/TimeLabel,
 			$Dim/CenterContainer/VBox/StatsPanel/StatsVBox/P1Label,
-			$Dim/CenterContainer/VBox/StatsPanel/StatsVBox/P2Label]:
+			$Dim/CenterContainer/VBox/StatsPanel/StatsVBox/P2Label,
+			$Dim/CenterContainer/VBox/StatsPanel/StatsVBox/BitsLabel]:
 		(lbl as Label).add_theme_font_size_override("font_size", 22)
 		(lbl as Label).modulate = Color(0.9, 0.9, 1.0)
 

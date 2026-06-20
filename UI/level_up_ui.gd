@@ -29,7 +29,6 @@ func _ready() -> void:
 		_p2_section.hide()
 		_p2_separator.hide()
 		_title_label.text = "Level Up! Choose your power-up:"
-	EventBus.player_leveled_up.connect(_on_player_leveled_up)
 
 
 func _input(event: InputEvent) -> void:

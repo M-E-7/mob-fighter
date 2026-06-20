@@ -52,7 +52,6 @@ pulse_amount = 0.0
 
 [node name="XPComponent" parent="." index="9" unique_id=2998877665 node_paths=PackedStringArray("entity") instance=ExtResource("8_xpc")]
 entity = NodePath("..")
-track_xp = false
 
 [node name="MusicVisualsComponent" parent="." index="10" unique_id=2887654321 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("11_mvc")]
 entity = NodePath("..")

@@ -14,4 +14,4 @@ Key rules:
 - `PauseMenuUI._input` guards `if not visible: return` — a hidden `PROCESS_MODE_ALWAYS` node still receives input, so without the guard it silently consumes ESC even when off-screen.
 - Always call `get_tree().paused = false` **before** `change_scene_to_file()` — a paused tree blocks scene loading.
 - Always call `MusicManager.stop()` before any scene transition that leaves the level (both game-over and pause-to-menu paths).
-- `basic_level._game_over_shown` blocks ESC after all players die so the pause menu can't open over the game-over screen. The LevelUpUI case is handled automatically: when LevelUpUI pauses the tree, `basic_level._unhandled_input` is suspended (default `PROCESS_MODE_PAUSABLE`) so ESC can't double-pause.
+- `basic_level._game_over_shown` blocks ESC after all players die so the pause menu can't open over the game-over screen. (The in-run `LevelUpUI` was removed in P1; the scene/script are retained for the future Sandbox shop but are no longer instantiated during a sector.)

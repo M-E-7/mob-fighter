@@ -103,6 +103,7 @@ func _try_start() -> void:
 	var p2_ready := _state_p2 == _SlotState.READY
 	if p1_ready and (not p2_active or p2_ready):
 		GameConfig.player_count = 2 if p2_active else 1
+		RunState.reset()
 		get_tree().change_scene_to_file(_LEVEL_SCENE)
 
 

@@ -69,10 +69,6 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 30.0, "min": 5.0, "max": 90.0, "step": 5.0},
 
 	# ── XP & Progression ─────────────────────────────────────────────────────────
-	{"group": "XP & Progression", "class": "XPComponent", "name": "base_xp_required",
-		"type": TYPE_FLOAT, "default": 10.0, "min": 1.0, "max": 200.0, "step": 1.0},
-	{"group": "XP & Progression", "class": "XPComponent", "name": "track_xp",
-		"type": TYPE_BOOL, "default": true},
 	{"group": "XP & Progression", "class": "XPDropComponent", "name": "xp_amount",
 		"type": TYPE_FLOAT, "default": 1.0, "min": 0.1, "max": 50.0, "step": 0.1},
 
