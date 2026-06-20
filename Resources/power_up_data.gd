@@ -8,3 +8,5 @@ class_name PowerUpData
 @export var stat_key: String = ""
 ## Additive bonus fraction per stack: 0.15 = +15% of base stat
 @export var bonus_percent: float = 0.1
+## Base Bits cost before escalation; escalation applied at runtime by RunState.upgrade_cost()
+@export var cost: int = 10

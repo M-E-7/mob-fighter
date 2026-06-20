@@ -29,10 +29,10 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Objective driver (`LevelObjectiveComponent`) keyed off `current_level` (kill-quota shipped; survive-timer/boss deferred); tracks group-`enemy` `entity_died`
   - [x] `ExitPort` Area2D entity; spawn on objective complete; overlap → `MusicManager.stop()` → Sandbox (stub). Spawner-stop/enemy-clear are optional `@export` flags (default: keep spawning, per the agreed sector feel)
   - [x] HUD objective-progress readout (`hud_show_objective` toggle)
-- [ ] **P3 — Sandbox (shop)** `[high]`
-  - [ ] `Levels/Sandbox/` scene reusing the `LevelUpUI` card pattern + `neon_theme.tres`
-  - [ ] Extend `PowerUpData` with `cost: int`; generic-upgrade catalog via the `PowerUpRegistry._make()` pattern
-  - [ ] Buy → deduct `currency` → `owned_upgrades`; `RunState.apply_to()` on next sector spawn; Continue → next sector
+- [x] **P3 — Sandbox (shop)** `[high]`
+  - [x] `Levels/Sandbox/` scene — 3-card random stock, Reroll, Repair (HP carryover via `RunState.health_fraction`), Continue/Abandon; `neon_theme.tres` + P2 keyboard cursor
+  - [x] `PowerUpData.cost: int`; re-themed names (Defrag/Overclock/Heap Smash/Firewall/Packet Burst); escalating cost formula `cost * (1 + 0.5 * stacks_owned)` in `RunState.upgrade_cost()`
+  - [x] Buy → `RunState.buy_upgrade()` → deduct `currency` → `owned_upgrades`; `RunState.apply_to()` + HP restore wired in `basic_level._ready()`; Continue → `current_level += 1` → reload sector
 - [ ] **P4 — Run flow / win + lose** `[high]`
   - [ ] MainMenu Start → `RunState.reset()`; multi-sector loop; `current_level += 1` in Sandbox
   - [ ] Win screen after the final boss; any death = run over → Game Over

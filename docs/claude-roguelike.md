@@ -2,7 +2,7 @@
 
 > Extension of the root `CLAUDE.md`. Read this before working on the run loop, currency, the shop, the modifier ("Daemon") system, bosses, or meta-progression. The master gotcha list lives in `CLAUDE.md`; the phased build order lives in `docs/todo.md`.
 
-**Implementation status: P1–P2 DONE; P3–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section. **Built (P2):** the `LevelObjectiveComponent` objective driver (kill-quota), the `ExitPort` entity, the HUD objective readout, and a stub Sandbox — see the **Objectives & exit portal** section. Everything else (`MetaProgression`, the full Sandbox shop, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
+**Implementation status: P1–P3 DONE; P4–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section. **Built (P2):** the `LevelObjectiveComponent` objective driver (kill-quota), the `ExitPort` entity, and the HUD objective readout — see the **Objectives & exit portal** section. **Built (P3):** the full Sandbox shop (3-card random stock, escalating costs, Reroll, Repair + HP-carryover via `RunState.health_fraction`, P2 keyboard cursor), `RunState` economy API (`upgrade_cost`/`buy_upgrade`/`repair`/`save_health`), and sector-spawn wiring (`apply_to` + HP restore in `basic_level._ready()`) — see the **Sandbox** section. Everything else (`MetaProgression`, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
 
 ---
 
@@ -49,7 +49,7 @@ Keep three storage layers strictly separate — this is the most important archi
 | Layer | Lifetime | Holds | Autoload |
 |---|---|---|---|
 | **Settings / results** | session | `player_count`, HUD/camera/music toggles, end-of-run `result_*` | `GameConfig` (existing) |
-| **Run state** | one run (wiped on `reset()`) | `current_level`, `currency`, `owned_upgrades`, `owned_modifiers` | `RunState` (new) |
+| **Run state** | one run (wiped on `reset()`) | `current_level`, `currency`, `owned_upgrades`, `owned_modifiers`, `health_fraction` | `RunState` (new) |
 | **Meta** | persistent (`user://` save) | unlocked ships/daemons/skins, cleared Threat Level, achieved milestones | `MetaProgression` (new) |
 
 `GameConfig` keeps the existing rule **"never write gameplay state to `GameConfig` mid-run"** — mid-run state belongs in `RunState`; persistent unlocks belong in `MetaProgression`. Both new autoloads are **no-`class_name`** singletons (same autoload-name conflict reason as `MusicManager`/`AdvancedConfig`).
@@ -62,16 +62,23 @@ The spine. Holds the current run; reset when a new run starts from `MainMenu`.
 
 ```gdscript
 const MAX_LEVELS := 10
-var current_level: int = 0          # 1..MAX_LEVELS during a run
-var currency: int = 0               # Bits — single shared wallet
-var owned_upgrades: Dictionary = {} # stat_key -> stack count
-var owned_modifiers: Array = []     # Daemon ids (see Modifier system)
+var current_level: int = 0              # 1..MAX_LEVELS during a run
+var currency: int = 0                   # Bits — single shared wallet
+var owned_upgrades: Dictionary = {}     # stat_key -> stack count
+var owned_modifiers: Array = []         # Daemon ids (see Modifier system)
+var health_fraction: Array[float] = [1.0, 1.0]  # P1=index 0, P2=index 1; saved on ExitPort entry
 
-func reset() -> void                # zero everything; called by MainMenu on Start
-func apply_to(entity: LivingEntity) -> void  # re-apply upgrades + daemons on each sector spawn
+func reset() -> void                    # zero everything; called by MainMenu on Start
+func apply_to(entity: LivingEntity) -> void     # re-apply owned upgrades via XPComponent on sector spawn
+func upgrade_cost(data: PowerUpData) -> int     # data.cost * (1 + 0.5 * stacks_owned); escalates per stack
+func can_afford(cost: int) -> bool
+func buy_upgrade(data: PowerUpData) -> bool     # deducts currency, increments owned_upgrades, emits currency_changed
+func repair_cost() -> int                       # flat 10 Bits
+func repair(player_count: int) -> bool          # heals each health_fraction by 0.34 (capped at 1.0), deducts currency
+func save_health(fractions: Array[float]) -> void  # called by ExitPort transition; persists HP between sectors
 ```
 
-**Players are not persisted across scenes.** Each sector instantiates fresh `Player` entities (as today). On spawn, the level should call `RunState.apply_to(player)`, which re-derives stats from base and installs daemons — so the split-screen/camera wiring in `basic_level.gd` is untouched. `apply_to` reuses `XPComponent`'s existing machinery (`_base_stats` + `_apply_stat()` / `apply_power_up()`) for stat multipliers, and/or `AdvancedConfig.set_override(cls, prop, value)` for pre-`_ready()` application. **As built (P1):** `apply_to` is implemented — it looks each owned `stat_key` up in `PowerUpRegistry` and applies it once per stack — but is **not yet called** on spawn; that wiring lands in P3 with the Sandbox (until then `owned_upgrades` is always empty).
+**Players are not persisted across scenes.** Each sector instantiates fresh `Player` entities. On spawn, `basic_level._ready()` calls `_apply_run_state_to_player(player, slot)` — which calls `RunState.apply_to(player)` then sets `healthComponent.current_health = player.max_health * RunState.health_fraction[slot]` and emits `EventBus.health_changed` — **before** `_hud.setup()`, so the HUD seeds from the correct carried-over values. `apply_to` reuses `XPComponent`'s machinery (`_base_stats` + `apply_power_up()`). **As built (P3):** fully wired.
 
 ---
 
@@ -124,14 +131,21 @@ Drive both from a single difficulty curve indexed by `current_level` (and later,
 
 ## Sandbox (the shop scene, `Levels/Sandbox/`)
 
-A quarantined sector between fights — a full scene (not an overlay; the gameplay subviewports tear down cleanly between sectors). Built with the `LevelUpUI` / menu **dynamic-card pattern** + `UI/Themes/neon_theme.tres`.
+A quarantined sector between fights — a full scene (not an overlay; the gameplay subviewports tear down cleanly between sectors). Built with the dynamic-card pattern from `LevelUpUI` + `UI/Themes/neon_theme.tres`.
 
-- Lists purchasable **Upgrades** (generic stats) and **Daemons** (modifiers) with a Bits **cost**.
+- Lists purchasable **Upgrades** (generic stats) and (P7) **Daemons** (modifiers) with a Bits **cost**.
 - Buying deducts `RunState.currency` and writes `owned_upgrades` / `owned_modifiers`.
-- **Continue** → `RunState.current_level += 1` → next sector, or the **Win screen** if the final boss was just cleared.
-- Co-op reuses `LevelUpUI`'s P1-click / P2-arrow-key dual input. Default: a **shared build** (purchases apply to both ships); per-ship builds are a possible later enhancement.
+- **Continue** → `RunState.current_level += 1` → next sector, or (P4) the **Win screen** if the final boss was just cleared.
+- Co-op: P1 uses mouse; P2 navigates with `p2_ui_left`/`p2_ui_right`/`p2_confirm` (a keyboard cursor over an ordered list of interactables). Shared wallet, shared build.
 
-**Item model:** extend `PowerUpData` (`Resources/power_up_data.gd`) with a `cost: int` field and reuse `PowerUpRegistry`'s `_make()` pattern for the generic-upgrade catalog. Generic upgrades map to the `LivingEntity` stats (`livingEntity.gd:12-26`): `max_speed`, `acceleration`, `friction`, `turbo_speed_multiplier`, `max_health`, `fire_rate`, `bullet_damage`, `bullet_speed`.
+**Item model:** `PowerUpData` (`Resources/power_up_data.gd`) carries `cost: int`; `PowerUpRegistry._make()` assigns each entry a base cost. Shop pricing uses `RunState.upgrade_cost(data)` — never `data.cost` directly — because escalation (`cost * (1 + 0.5 * stacks_owned)`) is applied at runtime. Generic upgrades map to `LivingEntity` stat fields: `max_speed`, `fire_rate`, `bullet_damage`, `max_health`, `bullet_speed`.
+
+**As built (P3):** `Levels/Sandbox/Sandbox.tscn` + `sandbox.gd` — the full shop. Features:
+- **Stock:** 3 random upgrades from `PowerUpRegistry` per visit (re-themed names: Defrag/Overclock/Heap Smash/Firewall/Packet Burst).
+- **Reroll:** re-draws the 3 cards for an escalating Bits cost (5 + 5×reroll_count); managed in the Sandbox script, not RunState.
+- **Repair:** restores +34% Integrity (HP) per purchase for a flat 10 Bits; multiple buys allowed up to full. Affects `RunState.health_fraction` — HP carries into the next sector via `_apply_run_state_to_player()` in `basic_level._ready()`.
+- **Continue / Abandon:** Continue increments `current_level` and reloads `basic_level.tscn` (no win check — deferred to P4); Abandon calls `RunState.reset()` and returns to MainMenu.
+- HP is **saved** in `_on_exit_port_entered()` via `RunState.save_health([f1, f2])` before the deferred scene change; **restored** on the next sector spawn before the HUD seeds its display.
 
 ---
 

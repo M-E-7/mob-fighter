@@ -47,6 +47,11 @@ func _ready() -> void:
 	else:
 		_setup_split_screen()
 
+	# Re-apply run upgrades and restore carried HP before HUD seeds its display.
+	_apply_run_state_to_player(_player1, 0)
+	if is_instance_valid(_player2):
+		_apply_run_state_to_player(_player2, 1)
+
 	_hud = preload("res://UI/HUD.tscn").instantiate() as HUD
 	add_child(_hud)
 	_hud.setup(_player1, _player2, GameConfig.player_count)
@@ -187,6 +192,25 @@ func _on_exit_port_entered() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	MusicManager.stop()
+	RunState.save_health([_compute_health_fraction(_player1, _p1_dead), _compute_health_fraction(_player2, _p2_dead)])
 	# Deferred: this fires inside Area2D.body_entered (a physics callback), where freeing
 	# the level's collision objects is illegal.
 	get_tree().change_scene_to_file.call_deferred("res://Levels/Sandbox/Sandbox.tscn")
+
+
+func _apply_run_state_to_player(player: LivingEntity, slot: int) -> void:
+	RunState.apply_to(player)
+	var hc := player.healthComponent
+	if not hc:
+		return
+	hc.current_health = player.max_health * RunState.health_fraction[slot]
+	EventBus.health_changed.emit(player, hc.current_health, hc.max_health)
+
+
+func _compute_health_fraction(player: LivingEntity, is_dead: bool) -> float:
+	if is_dead or not is_instance_valid(player):
+		return 1.0
+	var hc := player.healthComponent
+	if not hc or hc.max_health <= 0.0:
+		return 1.0
+	return clampf(hc.current_health / hc.max_health, 0.0, 1.0)

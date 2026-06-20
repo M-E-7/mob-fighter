@@ -18,28 +18,89 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.04, 0.04, 0.07, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
 
-[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+[node name="Layout" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Layout"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 42
+text = "SANDBOX"
+
+[node name="BitsLabel" type="Label" parent="MarginContainer/Layout/Header"]
+layout_mode = 2
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 28
+text = "0 Bits"
+
+[node name="SectorLabel" type="Label" parent="MarginContainer/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SECTOR 1 CLEARED"
+horizontal_alignment = 1
+
+[node name="CardsRow" type="HBoxContainer" parent="MarginContainer/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="CenterContainer/VBox"]
+[node name="BottomRows" type="VBoxContainer" parent="MarginContainer/Layout"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "SANDBOX"
-horizontal_alignment = 1
+theme_override_constants/separation = 16
 
-[node name="Subtitle" type="Label" parent="CenterContainer/VBox"]
+[node name="RerollRow" type="HBoxContainer" parent="MarginContainer/Layout/BottomRows"]
 layout_mode = 2
-text = "Quarantined node — shop coming in P3"
-horizontal_alignment = 1
+alignment = 1
 
-[node name="MainMenuButton" type="Button" parent="CenterContainer/VBox"]
-custom_minimum_size = Vector2(260, 56)
+[node name="RerollButton" type="Button" parent="MarginContainer/Layout/BottomRows/RerollRow"]
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
-text = "MAIN MENU"
+text = "REROLL (0 Bits)"
+
+[node name="Separator1" type="HSeparator" parent="MarginContainer/Layout/BottomRows"]
+layout_mode = 2
+
+[node name="RepairRow" type="HBoxContainer" parent="MarginContainer/Layout/BottomRows"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="IntegrityLabel" type="Label" parent="MarginContainer/Layout/BottomRows/RepairRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Integrity: 100%"
+
+[node name="RepairButton" type="Button" parent="MarginContainer/Layout/BottomRows/RepairRow"]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+text = "Repair +34% (10 Bits)"
+
+[node name="Separator2" type="HSeparator" parent="MarginContainer/Layout/BottomRows"]
+layout_mode = 2
+
+[node name="FooterRow" type="HBoxContainer" parent="MarginContainer/Layout/BottomRows"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ContinueButton" type="Button" parent="MarginContainer/Layout/BottomRows/FooterRow"]
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CONTINUE →"
+
+[node name="AbandonButton" type="Button" parent="MarginContainer/Layout/BottomRows/FooterRow"]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+text = "ABANDON RUN"
