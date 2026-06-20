@@ -41,6 +41,7 @@ Read the matching file before working in that area — this root file carries on
 | Camera (fixed/relative, look-ahead, screen shake)            | [docs/claude-camera.md](docs/claude-camera.md)         |
 | Advanced Settings / AdvancedConfig / tunable properties      | [docs/claude-config.md](docs/claude-config.md)         |
 | Menus, HUD theme, pause system                               | [docs/claude-ui.md](docs/claude-ui.md)                 |
+| Pending tasks, roadmap, backlog                              | [docs/todo.md](docs/todo.md)                           |
 
 ---
 
