@@ -31,7 +31,7 @@ func _draw() -> void:
 	var pulse := (1.0 - pulse_amount) + pulse_amount * sin(_t * pulse_speed)
 	var r := base_radius * pulse
 	var c := port_color
-	# Large faint halo so the port reads as a beacon from across the arena (no off-screen indicator yet).
+	# Large faint halo so the port reads as a beacon from across the arena.
 	draw_circle(Vector2.ZERO, r * halo_scale, Color(c.r, c.g, c.b, 0.05))
 	draw_circle(Vector2.ZERO, r * 0.55, Color(c.r, c.g, c.b, 0.14))
 	draw_arc(Vector2.ZERO, r * 0.75, 0.0, TAU, 64, c, 3.0, true)

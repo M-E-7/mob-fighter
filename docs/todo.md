@@ -84,10 +84,10 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
 - [x] **Sector HUD: objective progress + Bits balance + sector number** `[high]` *(P2: objective readout + sector number + Bits all on the HUD)*
 - [ ] **Boss intro + HP bar** `[high]` *(feeds P6)*
 - [ ] **Off-screen enemy indicators / minimap** `[med]`
-- [ ] **Off-screen ExitPort marker + distance indicator** `[high]` *(P2 UX follow-up)*
-  - [ ] Edge-of-screen arrow/marker pointing toward the portal while it is off-screen
-  - [ ] Distance-to-port readout on/near the marker
-  - [ ] Hide once the port is on-screen; consider sharing the mechanic with the off-screen enemy indicators above
+- [x] **Off-screen ExitPort marker + distance indicator** `[high]` *(P2 UX follow-up)*
+  - [x] Edge-of-screen arrow/marker pointing toward the portal while it is off-screen
+  - [x] Distance-to-port readout on/near the marker
+  - [x] Hide once the port is on-screen; consider sharing the mechanic with the off-screen enemy indicators above
 - [ ] **Acquired Upgrades / Daemons (build) display during run** `[med]`
 - [ ] **Controller / keybind remapping screen** `[low]`
 - [ ] **Co-op join / ready flow** `[low]`
