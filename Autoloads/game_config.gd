@@ -11,6 +11,7 @@ var hud_show_xp_flash: bool = true
 var hud_show_survival_timer: bool = true
 var hud_show_xp_pickup_text: bool = true
 var hud_show_objective: bool = true
+var hud_show_exit_port_indicator: bool = true
 var music_visuals_enabled: bool = true
 var show_music_visualizer: bool = true
 var camera_relative_mode: bool = true

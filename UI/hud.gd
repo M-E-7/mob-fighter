@@ -43,6 +43,8 @@ var _timer_label: Label
 var _bits_label: Label
 var _objective_label: Label
 
+var _exit_port_indicator: ExitPortIndicator
+
 var _warn_p1: ColorRect
 var _warn_p2: ColorRect
 var _low_hp_p1: float = 0.0
@@ -66,8 +68,11 @@ func _ready() -> void:
 	_build_objective_label()
 	_build_warnings()
 
+	_exit_port_indicator = preload("res://UI/ExitPortIndicator.tscn").instantiate() as ExitPortIndicator
+	add_child(_exit_port_indicator)
 
-func setup(p1: LivingEntity, p2: LivingEntity, player_count: int) -> void:
+
+func setup(p1: LivingEntity, p2: LivingEntity, player_count: int, subviewport: SubViewport, container: Control) -> void:
 	_player1 = p1
 	_player2 = p2
 	_apply_settings()
@@ -77,6 +82,7 @@ func setup(p1: LivingEntity, p2: LivingEntity, player_count: int) -> void:
 	if is_instance_valid(p2):
 		_init_display(p2, _p2)
 	_set_bits(RunState.currency)
+	_exit_port_indicator.setup(p1, subviewport, container)
 
 
 func get_survival_time() -> float:
@@ -111,6 +117,7 @@ func _apply_settings() -> void:
 	_p2.powerup_row.visible = GameConfig.hud_show_powerups
 	_timer_label.get_parent().visible = GameConfig.hud_show_survival_timer
 	_objective_label.get_parent().visible = GameConfig.hud_show_objective
+	_exit_port_indicator.visible = GameConfig.hud_show_exit_port_indicator
 
 
 func _position_panels(player_count: int) -> void:

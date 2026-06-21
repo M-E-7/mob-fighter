@@ -54,7 +54,7 @@ func _ready() -> void:
 
 	_hud = preload("res://UI/HUD.tscn").instantiate() as HUD
 	add_child(_hud)
-	_hud.setup(_player1, _player2, GameConfig.player_count)
+	_hud.setup(_player1, _player2, GameConfig.player_count, _subviewport_p1, _container_p1)
 
 	var music_viz := preload("res://UI/MusicVisualizerHUD.tscn").instantiate()
 	add_child(music_viz)

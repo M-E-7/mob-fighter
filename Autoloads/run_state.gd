@@ -10,7 +10,7 @@ var health_fraction: Array[float] = [1.0, 1.0]  # current HP as fraction of max,
 var run_kills: Array[int] = [0, 0]   # cumulative kills per player across all sectors
 var run_time: float = 0.0            # cumulative seconds across all sectors
 
-const MAX_LEVELS := 1
+const MAX_LEVELS := 10
 const CURRENCY_NAME := "Bits"
 const _ESCALATION := 0.5   # each extra stack multiplies base cost by (1 + 0.5 * stacks_owned)
 const _REPAIR_AMOUNT := 0.34

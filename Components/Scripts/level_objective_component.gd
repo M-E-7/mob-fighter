@@ -65,6 +65,7 @@ func _spawn_exit_port() -> void:
 	var port := exit_port_scene.instantiate()
 	get_parent().add_child.call_deferred(port)
 	port.set_deferred("global_position", _pick_port_position())
+	EventBus.exit_port_spawned.emit(port)
 
 
 # Place the port a fixed distance from the player, snapped to a walkable cell that is actually
