@@ -33,9 +33,11 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] `Levels/Sandbox/` scene — 3-card random stock, Reroll, Repair (HP carryover via `RunState.health_fraction`), Continue/Abandon; `neon_theme.tres` + P2 keyboard cursor
   - [x] `PowerUpData.cost: int`; re-themed names (Defrag/Overclock/Heap Smash/Firewall/Packet Burst); escalating cost formula `cost * (1 + 0.5 * stacks_owned)` in `RunState.upgrade_cost()`
   - [x] Buy → `RunState.buy_upgrade()` → deduct `currency` → `owned_upgrades`; `RunState.apply_to()` + HP restore wired in `basic_level._ready()`; Continue → `current_level += 1` → reload sector
-- [ ] **P4 — Run flow / win + lose** `[high]`
-  - [ ] MainMenu Start → `RunState.reset()`; multi-sector loop; `current_level += 1` in Sandbox
-  - [ ] Win screen after the final boss; any death = run over → Game Over
+- [x] **P4 — Run flow / win + lose** `[high]`
+  - [x] MainMenu Start → `RunState.reset()`; multi-sector loop; `current_level += 1` in Sandbox
+  - [x] Win screen (`WinUI`) after the final sector's ExitPort; any death = run over → Game Over + `RunState.reset()` on PLAY AGAIN
+  - [x] `RunState.run_kills`/`run_time` cumulative stats; both end screens show whole-run totals
+  - [ ] Win screen should pause the game (same as Game Over) `[low]`
 - [ ] **P5 — Difficulty scaling** `[high]` *(was "Wave / difficulty scaling")*
   - [ ] Scale `EnemySpawnerComponent` (`spawn_interval`, `max_enemies`) by `current_level`/Threat Level (flat today)
   - [ ] Vary `ProcGenLevelComponent` (size, `obstacle_density`, seed) per sector
@@ -61,6 +63,8 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [ ] Unlocks are **variety, not power** — keep core-loop balance intact
 - [ ] **P10 — Content & variety** `[med]`
   - [ ] Draws from the themed sections below (malware types, sector biomes, random Bit events, expanded catalogs)
+- [ ] **P11 — In-game debug menu** `[med]` *(user to elaborate)*
+  - [ ] Candidate features: skip/complete current objective instantly, jump `current_level` to any sector, grant Bits, force win/game-over, spawn enemies/bosses on demand, toggle invincibility
 
 ---
 

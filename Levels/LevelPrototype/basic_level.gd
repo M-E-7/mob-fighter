@@ -126,6 +126,8 @@ func _on_level_generated(spawn_pos: Vector2) -> void:
 
 
 func _on_entity_died(entity: LivingEntity) -> void:
+	if _game_over_shown or _transitioning:
+		return
 	if entity == _player1:
 		_p1_dead = true
 		_overlay_p1.visible = true
@@ -176,13 +178,27 @@ func _show_game_over() -> void:
 	_game_over_shown = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	MusicManager.stop()
-	GameConfig.result_kills_p1 = _hud.get_kills(1)
-	GameConfig.result_kills_p2 = _hud.get_kills(2)
-	GameConfig.result_survival_time = _hud.get_survival_time()
+	_accumulate_run_stats()
+	GameConfig.result_kills_p1 = RunState.run_kills[0]
+	GameConfig.result_kills_p2 = RunState.run_kills[1]
+	GameConfig.result_survival_time = RunState.run_time
 	GameConfig.result_currency = RunState.currency
 	var go := preload("res://UI/GameOverUI.tscn").instantiate() as GameOverUI
 	add_child(go)
 	go.setup(GameConfig.player_count)
+
+
+func _show_win() -> void:
+	_game_over_shown = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	GameConfig.result_kills_p1 = RunState.run_kills[0]
+	GameConfig.result_kills_p2 = RunState.run_kills[1]
+	GameConfig.result_survival_time = RunState.run_time
+	GameConfig.result_currency = RunState.currency
+	# load() instead of preload() — WinUI is a new class the parser hasn't indexed yet.
+	var win: Node = (load("res://UI/WinUI.tscn") as PackedScene).instantiate()
+	add_child(win)
+	win.call(&"setup", GameConfig.player_count)
 
 
 func _on_exit_port_entered() -> void:
@@ -193,9 +209,13 @@ func _on_exit_port_entered() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	MusicManager.stop()
 	RunState.save_health([_compute_health_fraction(_player1, _p1_dead), _compute_health_fraction(_player2, _p2_dead)])
+	_accumulate_run_stats()
 	# Deferred: this fires inside Area2D.body_entered (a physics callback), where freeing
 	# the level's collision objects is illegal.
-	get_tree().change_scene_to_file.call_deferred("res://Levels/Sandbox/Sandbox.tscn")
+	if RunState.current_level >= RunState.MAX_LEVELS:
+		_show_win.call_deferred()
+	else:
+		get_tree().change_scene_to_file.call_deferred("res://Levels/Sandbox/Sandbox.tscn")
 
 
 func _apply_run_state_to_player(player: LivingEntity, slot: int) -> void:
@@ -214,3 +234,7 @@ func _compute_health_fraction(player: LivingEntity, is_dead: bool) -> float:
 	if not hc or hc.max_health <= 0.0:
 		return 1.0
 	return clampf(hc.current_health / hc.max_health, 0.0, 1.0)
+
+
+func _accumulate_run_stats() -> void:
+	RunState.add_sector_stats(_hud.get_kills(1), _hud.get_kills(2), _hud.get_survival_time())

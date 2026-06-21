@@ -7,8 +7,10 @@ var currency: int = 0                # Bits — single shared wallet, banked on 
 var owned_upgrades: Dictionary = {}  # stat_key -> stack count
 var owned_modifiers: Array = []      # Daemon ids (P7)
 var health_fraction: Array[float] = [1.0, 1.0]  # current HP as fraction of max, index 0=P1, 1=P2
+var run_kills: Array[int] = [0, 0]   # cumulative kills per player across all sectors
+var run_time: float = 0.0            # cumulative seconds across all sectors
 
-const MAX_LEVELS := 10
+const MAX_LEVELS := 1
 const CURRENCY_NAME := "Bits"
 const _ESCALATION := 0.5   # each extra stack multiplies base cost by (1 + 0.5 * stacks_owned)
 const _REPAIR_AMOUNT := 0.34
@@ -27,7 +29,16 @@ func reset() -> void:
 	owned_modifiers.clear()
 	health_fraction[0] = 1.0
 	health_fraction[1] = 1.0
+	run_kills[0] = 0
+	run_kills[1] = 0
+	run_time = 0.0
 	EventBus.currency_changed.emit(currency)
+
+
+func add_sector_stats(kills1: int, kills2: int, time: float) -> void:
+	run_kills[0] += kills1
+	run_kills[1] += kills2
+	run_time += time
 
 
 func apply_to(entity: LivingEntity) -> void:
