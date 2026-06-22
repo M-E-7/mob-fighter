@@ -6,6 +6,7 @@ class_name HealthComponent
 
 var current_health: float
 var max_health: float
+var invincible: bool = false
 
 
 func _ready() -> void:
@@ -14,6 +15,8 @@ func _ready() -> void:
 
 
 func take_damage(amount: float) -> void:
+	if invincible:
+		return
 	current_health = max(current_health - amount, 0.0)
 	EventBus.health_changed.emit(entity, current_health, max_health)
 	if current_health <= 0.0:

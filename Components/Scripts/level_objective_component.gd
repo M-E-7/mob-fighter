@@ -26,6 +26,10 @@ var _kills: int = 0
 var _completed: bool = false
 
 
+func _ready() -> void:
+	add_to_group("level_objective")
+
+
 func start(proc_gen: ProcGenLevelComponent, spawner: EnemySpawnerComponent) -> void:
 	_spawner = spawner
 	_astar = proc_gen.astar_grid
@@ -37,6 +41,29 @@ func start(proc_gen: ProcGenLevelComponent, spawner: EnemySpawnerComponent) -> v
 	_target = base_kill_quota
 	EventBus.entity_died.connect(_on_entity_died)
 	EventBus.objective_progress_changed.emit(_kills, _target)
+
+
+func get_target() -> int:
+	return _target
+
+
+func get_progress() -> int:
+	return _kills
+
+
+func set_target(value: int) -> void:
+	_target = max(value, 1)
+	EventBus.objective_progress_changed.emit(_kills, _target)
+
+
+func set_progress(value: int) -> void:
+	_kills = max(value, 0)
+	EventBus.objective_progress_changed.emit(_kills, _target)
+
+
+func complete_now() -> void:
+	if not _completed:
+		_complete()
 
 
 func _on_entity_died(entity: LivingEntity) -> void:

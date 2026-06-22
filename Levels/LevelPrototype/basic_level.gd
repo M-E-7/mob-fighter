@@ -21,6 +21,7 @@ var _p1_dead: bool = false
 var _p2_dead: bool = false
 var _hud: HUD
 var _pause_menu: PauseMenuUI
+var _debug_menu: DebugMenuUI
 var _game_over_shown: bool = false
 var _transitioning: bool = false
 
@@ -141,6 +142,9 @@ func _on_entity_died(entity: LivingEntity) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _is_debug_toggle(event) and not _game_over_shown:
+		_open_debug_menu()
+		return
 	if event.is_action_pressed("toggle_camera_mode") and not _game_over_shown:
 		_toggle_camera_mode()
 		return
@@ -164,6 +168,47 @@ func _resume_game() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if is_instance_valid(_pause_menu):
 		_pause_menu.visible = false
+
+
+func _open_debug_menu() -> void:
+	if not is_instance_valid(_debug_menu):
+		_debug_menu = preload("res://UI/DebugMenuUI.tscn").instantiate() as DebugMenuUI
+		add_child(_debug_menu)
+		_debug_menu.close_requested.connect(_close_debug_menu)
+		_debug_menu.force_win_requested.connect(_force_win)
+		_debug_menu.force_game_over_requested.connect(_force_game_over)
+	_debug_menu.visible = true
+	_debug_menu.refresh()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	get_tree().paused = true
+
+
+func _close_debug_menu() -> void:
+	get_tree().paused = false
+	if GameConfig.camera_relative_mode:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if is_instance_valid(_debug_menu):
+		_debug_menu.visible = false
+
+
+func _force_win() -> void:
+	_close_debug_menu()
+	MusicManager.stop()
+	_show_win()
+
+
+func _force_game_over() -> void:
+	_close_debug_menu()
+	_show_game_over()
+
+
+func _is_debug_toggle(event: InputEvent) -> bool:
+	if event.is_action_pressed("toggle_debug_menu"):
+		return true
+	if event is InputEventKey:
+		var key := event as InputEventKey
+		return key.pressed and not key.echo and key.keycode == KEY_ALT
+	return false
 
 
 func _toggle_camera_mode() -> void:

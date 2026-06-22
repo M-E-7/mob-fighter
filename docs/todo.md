@@ -63,8 +63,16 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [ ] Unlocks are **variety, not power** — keep core-loop balance intact
 - [ ] **P10 — Content & variety** `[med]`
   - [ ] Draws from the themed sections below (malware types, sector biomes, random Bit events, expanded catalogs)
-- [ ] **P11 — In-game debug menu** `[med]` *(user to elaborate)*
-  - [ ] Candidate features: skip/complete current objective instantly, jump `current_level` to any sector, grant Bits, force win/game-over, spawn enemies/bosses on demand, toggle invincibility
+- [x] **P11 — In-game debug menu** `[med]`
+  - [x] Alt toggles overlay (pauses game); `DebugMenuUI` mirrors `PauseMenuUI` pattern (CanvasLayer layer 20, `PROCESS_MODE_ALWAYS`, `_input` visibility guard)
+  - [x] Edit Bits, player health (per-player SpinBox), objective requirement + progress
+  - [x] Quick-grant Bits (+100 / +1000 buttons)
+  - [x] God mode toggle (invincible flag on `HealthComponent`, resets each sector)
+  - [x] Full heal (per player)
+  - [x] Complete Objective Now (spawns ExitPort)
+  - [x] Kill All Enemies, Force Win, Force Game Over
+  - [x] Read-only info panel: FPS, enemy count, sector, P1 position
+  - [ ] Future: jump `current_level` to any sector, spawn enemies/bosses on demand
 
 ---
 
