@@ -45,6 +45,7 @@ entity = NodePath("..")
 
 [node name="ShootComponent" parent="." unique_id=200000003 node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
 entity = NodePath("..")
+muzzle_offset = 50.0
 
 [node name="CircleDisplay" type="MeshInstance2D" parent="." unique_id=200000004]
 mesh = SubResource("BossMesh")

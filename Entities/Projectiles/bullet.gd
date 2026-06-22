@@ -44,16 +44,17 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
-	if area is HurtboxComponent:
-		if not is_instance_valid(source):
-			queue_free()
-			return
-		var target := area.owner
-		if target == source:
-			return
-		if _same_team(target):
-			return
-		area.take_damage(damage, source as LivingEntity)
+	if not (area is HurtboxComponent):
+		return
+	if not is_instance_valid(source):
+		queue_free()
+		return
+	var target := area.owner
+	if target == source:
+		return
+	if _same_team(target):
+		return
+	area.take_damage(damage, source as LivingEntity)
 	_emit_impact()
 	queue_free()
 

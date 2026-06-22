@@ -49,6 +49,7 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Boss entity + multi-phase behavior; spawned by the objective driver
   - [x] Boss intro + on-screen HP-bar UI hook
   - [x] Miniboss ≈ sector 5 (Trojan/Rootkit); final boss = sector 10 (**rogue AI / system core**)
+  - [x] Fix boss burst bullets destroying each other — `Bullet._on_area_entered` now early-returns for non-HurtboxComponent areas; `ShootComponent` applies `muzzle_offset` to spawn position; Boss ShootComponent `muzzle_offset = 50.0`
 - [ ] **P7 — Daemons (modifier system)** `[high]` *(was "Power-up variety beyond flat % stats")*
   - [ ] `DaemonHost` component + hook points (`on_shoot`/`on_hit`/`on_kill`/`on_damage_taken`/`on_process`); reuse existing `EventBus` signals where possible
   - [ ] `ModifierData` resource + `ModifierRegistry` autoload (mirrors `PowerUpRegistry`)
