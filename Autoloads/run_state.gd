@@ -9,17 +9,30 @@ var owned_modifiers: Array = []      # Daemon ids (P7)
 var health_fraction: Array[float] = [1.0, 1.0]  # current HP as fraction of max, index 0=P1, 1=P2
 var run_kills: Array[int] = [0, 0]   # cumulative kills per player across all sectors
 var run_time: float = 0.0            # cumulative seconds across all sectors
+var threat_level: int = 0            # P9 Threat-Level ladder; 0 = normal until MetaProgression wires the selector
 
 const MAX_LEVELS := 10
 const CURRENCY_NAME := "Bits"
 const _ESCALATION := 0.5   # each extra stack multiplies base cost by (1 + 0.5 * stacks_owned)
 const _REPAIR_AMOUNT := 0.34
 const _REPAIR_BASE_COST := 10
+const _THREAT_STEP := 0.15  # each Threat Level adds 15% difficulty on top of the sector curve
 
 
 func _ready() -> void:
 	# Sole subscriber to the entity-less pickup signal, so the shared wallet is never double-counted.
 	EventBus.xp_collected.connect(_on_xp_collected)
+
+
+## Linear 0→1 progress through the sector count; used to lerp difficulty curves.
+func sector_t() -> float:
+	var lvl := clampi(current_level, 1, MAX_LEVELS)
+	return float(lvl - 1) / float(MAX_LEVELS - 1)
+
+
+## Multiplier applied on top of the sector curve; 1.0 at threat 0.
+func threat_factor() -> float:
+	return 1.0 + _THREAT_STEP * float(threat_level)
 
 
 func reset() -> void:
@@ -32,6 +45,7 @@ func reset() -> void:
 	run_kills[0] = 0
 	run_kills[1] = 0
 	run_time = 0.0
+	threat_level = 0
 	EventBus.currency_changed.emit(currency)
 
 

@@ -7,6 +7,7 @@ class_name LevelObjectiveComponent
 
 @export_group("Objective")
 @export var base_kill_quota: int = 20
+@export var kill_quota_max: int = 60
 
 @export_group("Exit Port")
 @export var port_spawn_distance: float = 1500.0  # px from the player; the exit is a deliberate trek
@@ -38,7 +39,7 @@ func start(proc_gen: ProcGenLevelComponent, spawner: EnemySpawnerComponent) -> v
 	# P4 sets current_level from MainMenu; guard so a directly-launched sector still reads as 1.
 	if RunState.current_level < 1:
 		RunState.current_level = 1
-	_target = base_kill_quota
+	_target = int(round(lerpf(float(base_kill_quota), float(kill_quota_max), RunState.sector_t()) * RunState.threat_factor()))
 	EventBus.entity_died.connect(_on_entity_died)
 	EventBus.objective_progress_changed.emit(_kills, _target)
 

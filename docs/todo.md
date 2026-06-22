@@ -38,10 +38,13 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Win screen (`WinUI`) after the final sector's ExitPort; any death = run over → Game Over + `RunState.reset()` on PLAY AGAIN
   - [x] `RunState.run_kills`/`run_time` cumulative stats; both end screens show whole-run totals
   - [ ] Win screen should pause the game (same as Game Over) `[low]`
-- [ ] **P5 — Difficulty scaling** `[high]` *(was "Wave / difficulty scaling")*
-  - [ ] Scale `EnemySpawnerComponent` (`spawn_interval`, `max_enemies`) by `current_level`/Threat Level (flat today)
-  - [ ] Vary `ProcGenLevelComponent` (size, `obstacle_density`, seed) per sector
-  - [ ] Define the difficulty curve (breakpoints or continuous)
+- [x] **P5 — Difficulty scaling** `[high]` *(was "Wave / difficulty scaling")*
+  - [x] Scale `EnemySpawnerComponent` (`spawn_interval`, `max_enemies`) by `current_level`/Threat Level
+  - [x] Scale enemy stats (HP, damage, speed) per sector via multipliers applied in `_spawn_enemy()`
+  - [x] Vary `ProcGenLevelComponent` (size, `obstacle_density`) per sector; seed already randomized each run
+  - [x] Scale kill quota (`LevelObjectiveComponent`) per sector
+  - [x] Difficulty curve: `RunState.sector_t()` (linear 0→1) + `threat_factor()` (P9 stub, default ×1.0)
+  - [x] Debug sector-jump: "Reload as Sector N" in DebugMenuUI (enables P5 verification without playing through)
 - [ ] **P6 — Bosses** `[high]` *(was "Boss encounters", bumped)*
   - [ ] Boss entity + multi-phase behavior; spawned by the objective driver
   - [ ] Boss intro + on-screen HP-bar UI hook
@@ -72,7 +75,8 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Complete Objective Now (spawns ExitPort)
   - [x] Kill All Enemies, Force Win, Force Game Over
   - [x] Read-only info panel: FPS, enemy count, sector, P1 position
-  - [ ] Future: jump `current_level` to any sector, spawn enemies/bosses on demand
+  - [x] Jump `current_level` to any sector ("Reload as Sector N" — landed in P5)
+  - [ ] Spawn enemies/bosses on demand
 
 ---
 

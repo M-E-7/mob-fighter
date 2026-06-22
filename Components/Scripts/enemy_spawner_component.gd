@@ -6,11 +6,23 @@ class_name EnemySpawnerComponent
 @export_group("Spawn Settings")
 @export var spawn_interval: float = 2.0
 @export var max_enemies: int = 20
+@export var spawn_interval_min: float = 0.6
+@export var max_enemies_max: int = 60
+
+@export_group("Enemy Scaling")
+@export var enemy_health_mult_max: float = 2.0
+@export var enemy_damage_mult_max: float = 1.6
+@export var enemy_speed_mult_max: float = 1.3
 
 var _proc_gen: ProcGenLevelComponent
 var _arena_bounds: Vector2
 var _spawn_timer: float = 0.0
 var _active: bool = false
+var _eff_spawn_interval: float = 2.0
+var _eff_max_enemies: int = 20
+var _enemy_health_mult: float = 1.0
+var _enemy_damage_mult: float = 1.0
+var _enemy_speed_mult: float = 1.0
 
 
 func start(proc_gen: ProcGenLevelComponent) -> void:
@@ -19,6 +31,14 @@ func start(proc_gen: ProcGenLevelComponent) -> void:
 		proc_gen.arena_width * proc_gen.cell_size,
 		proc_gen.arena_height * proc_gen.cell_size
 	)
+	var t := RunState.sector_t()
+	var tf := RunState.threat_factor()
+	# spawn_interval ramps down (harder = faster); divide by threat_factor.
+	_eff_spawn_interval = lerpf(spawn_interval, spawn_interval_min, t) / tf
+	_eff_max_enemies = int(round(lerpf(float(max_enemies), float(max_enemies_max), t) * tf))
+	_enemy_health_mult = lerpf(1.0, enemy_health_mult_max, t) * tf
+	_enemy_damage_mult = lerpf(1.0, enemy_damage_mult_max, t) * tf
+	_enemy_speed_mult = lerpf(1.0, enemy_speed_mult_max, t) * tf
 	_active = true
 
 
@@ -30,12 +50,12 @@ func _process(delta: float) -> void:
 	if not _active:
 		return
 
-	if get_tree().get_nodes_in_group("enemy").size() >= max_enemies:
+	if get_tree().get_nodes_in_group("enemy").size() >= _eff_max_enemies:
 		return
 
 	_spawn_timer -= delta
 	if _spawn_timer <= 0.0:
-		_spawn_timer = spawn_interval
+		_spawn_timer = _eff_spawn_interval
 		_spawn_enemy()
 
 
@@ -46,6 +66,16 @@ func _spawn_enemy() -> void:
 	var enemy: Node2D = enemy_scene.instantiate()
 	get_parent().add_child(enemy)
 	enemy.global_position = _get_spawn_position()
+	# Scale enemy stats after add_child so AdvancedConfig's node_added override has run.
+	# HealthComponent._ready() caches entity.max_health, so we must re-sync it after scaling.
+	var ent := enemy as LivingEntity
+	if ent:
+		ent.max_health *= _enemy_health_mult
+		ent.bullet_damage *= _enemy_damage_mult
+		ent.max_speed *= _enemy_speed_mult
+		if ent.healthComponent:
+			ent.healthComponent.max_health = ent.max_health
+			ent.healthComponent.current_health = ent.max_health
 
 
 func _get_spawn_position() -> Vector2:

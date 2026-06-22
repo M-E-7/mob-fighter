@@ -177,6 +177,7 @@ func _open_debug_menu() -> void:
 		_debug_menu.close_requested.connect(_close_debug_menu)
 		_debug_menu.force_win_requested.connect(_force_win)
 		_debug_menu.force_game_over_requested.connect(_force_game_over)
+		_debug_menu.reload_sector_requested.connect(_reload_sector)
 	_debug_menu.visible = true
 	_debug_menu.refresh()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -200,6 +201,16 @@ func _force_win() -> void:
 func _force_game_over() -> void:
 	_close_debug_menu()
 	_show_game_over()
+
+
+func _reload_sector(sector: int) -> void:
+	if _transitioning or _game_over_shown:
+		return
+	_transitioning = true
+	RunState.current_level = clampi(sector, 1, RunState.MAX_LEVELS)
+	_close_debug_menu()  # unpauses before change_scene_to_file
+	MusicManager.stop()
+	get_tree().change_scene_to_file.call_deferred("res://Levels/LevelPrototype/basic_level.tscn")
 
 
 func _is_debug_toggle(event: InputEvent) -> bool:

@@ -2,7 +2,7 @@
 
 > Extension of the root `CLAUDE.md`. Read this before working on the run loop, currency, the shop, the modifier ("Daemon") system, bosses, or meta-progression. The master gotcha list lives in `CLAUDE.md`; the phased build order lives in `docs/todo.md`.
 
-**Implementation status: P1–P4 and P11 DONE; P5–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section. **Built (P2):** the `LevelObjectiveComponent` objective driver (kill-quota), the `ExitPort` entity, and the HUD objective readout — see the **Objectives & exit portal** section. **Built (P3):** the full Sandbox shop (3-card random stock, escalating costs, Reroll, Repair + HP-carryover via `RunState.health_fraction`, P2 keyboard cursor), `RunState` economy API (`upgrade_cost`/`buy_upgrade`/`repair`/`save_health`), and sector-spawn wiring (`apply_to` + HP restore in `basic_level._ready()`) — see the **Sandbox** section. **Built (P4):** the complete run flow — entering the ExitPort on `RunState.current_level >= MAX_LEVELS` shows `WinUI` (skips the last shop); any death ends the run and Game Over's PLAY AGAIN calls `RunState.reset()` for a fresh run from sector 1; `RunState.run_kills`/`run_time` accumulate kills and time across all sectors and feed both end screens. Everything else (`MetaProgression`, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
+**Implementation status: P1–P5 and P11 DONE; P6–P10 are design.** This file is the agreed contract the roadmap (`docs/todo.md` → *Roguelike Core Loop*, phases P1–P10) builds against. **Built (P1):** the `RunState` autoload, Bits currency banking (`EventBus.currency_changed`), and removal of the in-run level-up — see the **Currency** section. **Built (P2):** the `LevelObjectiveComponent` objective driver (kill-quota), the `ExitPort` entity, and the HUD objective readout — see the **Objectives & exit portal** section. **Built (P3):** the full Sandbox shop (3-card random stock, escalating costs, Reroll, Repair + HP-carryover via `RunState.health_fraction`, P2 keyboard cursor), `RunState` economy API (`upgrade_cost`/`buy_upgrade`/`repair`/`save_health`), and sector-spawn wiring (`apply_to` + HP restore in `basic_level._ready()`) — see the **Sandbox** section. **Built (P4):** the complete run flow — entering the ExitPort on `RunState.current_level >= MAX_LEVELS` shows `WinUI` (skips the last shop); any death ends the run and Game Over's PLAY AGAIN calls `RunState.reset()` for a fresh run from sector 1; `RunState.run_kills`/`run_time` accumulate kills and time across all sectors and feed both end screens. Everything else (`MetaProgression`, Daemons, bosses) is still the *intended* API; verify a symbol exists before relying on it in code. Working content names (Bits, Daemons…) are placeholders that are easy to swap — the display string is centralized as `RunState.CURRENCY_NAME`.
 
 ---
 
@@ -120,12 +120,27 @@ Track progress off existing signals: `EventBus.entity_died` for kill quotas (the
 
 ## Difficulty scaling
 
-`RunState.current_level` parameterizes the existing flat systems (today both are fixed `@export`s):
+**As built (P5).** `RunState.current_level` drives all four difficulty levers via a shared curve helper:
 
-- `EnemySpawnerComponent` — scale `spawn_interval` down and `max_enemies` up per sector; later, scale enemy stats.
-- `ProcGenLevelComponent` — vary `arena_width/height`, `obstacle_density`, and seed per sector to give each one a distinct **sector** feel (filesystem → network → memory → registry → kernel).
+- `RunState.sector_t()` — returns a 0→1 float: 0.0 at sector 1, 1.0 at sector 10. Use `lerpf(base, target, sector_t())` everywhere.
+- `RunState.threat_factor()` — returns `1.0 + 0.15 * threat_level`; multiplied on top of the sector curve for "more is harder" stats, divided for `spawn_interval`. `threat_level` defaults to 0 (unused until P9 adds the MainMenu selector).
 
-Drive both from a single difficulty curve indexed by `current_level` (and later, by the selected **Threat Level**).
+Each component keeps its existing `@export` as the **sector-1 base** and gains a new `*_max` `@export` for the sector-10 value. The effective value is computed in `start()`/`generate()` from `_base_*` fields captured in `_ready()` (after `AdvancedConfig` applies overrides) — the base `@export` is never overwritten, so overrides never compound across reloads.
+
+| Lever | Sector 1 | Sector 10 |
+|---|---|---|
+| `spawn_interval` (`spawn_interval_min`) | 2.0 s | 0.6 s |
+| `max_enemies` (`max_enemies_max`) | 20 | 60 |
+| Enemy HP/dmg/speed mult (`enemy_*_mult_max`) | ×1.0 | ×2.0 / ×1.6 / ×1.3 |
+| Arena (w×h) (`arena_width/height_max`) | 40×30 | 60×44 |
+| `obstacle_density` (`obstacle_density_max`) | 0.30 | 0.42 |
+| Kill quota (`kill_quota_max`) | 20 | 60 |
+
+All knobs are tunable in Advanced Settings (registered in `AdvancedConfig.PROPERTY_DEFS`).
+
+**Enemy stat gotcha:** `HealthComponent._ready()` caches `entity.max_health` into `max_health`/`current_health`. Multiplying `entity.max_health` after `add_child()` does nothing to the component unless you also re-sync `ent.healthComponent.max_health` and `current_health` — `EnemySpawnerComponent._spawn_enemy()` does this explicitly.
+
+**Debug sector jump:** Alt → Debug Menu → "Jump to Sector" SpinBox + "Reload as Sector N" button sets `RunState.current_level` and reloads `basic_level.tscn`, keeping currency/upgrades/HP so you can test any sector's difficulty without playing through.
 
 ---
 

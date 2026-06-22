@@ -4,9 +4,11 @@ class_name DebugMenuUI
 signal close_requested
 signal force_win_requested
 signal force_game_over_requested
+signal reload_sector_requested(sector: int)
 
 var _info_label: Label
 var _bits_spin: SpinBox
+var _sector_spin: SpinBox
 var _health_spins: Array[SpinBox] = []
 var _god_checks: Array[CheckButton] = []
 var _obj_target_spin: SpinBox
@@ -47,6 +49,8 @@ func refresh() -> void:
 	_refreshing = true
 	if is_instance_valid(_bits_spin):
 		_bits_spin.value = RunState.currency
+	if is_instance_valid(_sector_spin):
+		_sector_spin.value = max(RunState.current_level, 1)
 	var players := get_tree().get_nodes_in_group("player")
 	for idx in _health_spins.size():
 		if idx >= players.size():
@@ -98,6 +102,16 @@ func _build_ui() -> void:
 	var btn1000 := _make_button("+1000", _COLOR_ACCENT, Color(0.0, 0.1, 0.12))
 	btn1000.pressed.connect(_on_grant_bits.bind(1000))
 	bits_row.add_child(btn1000)
+
+	_sector_spin = _add_spin_row("Jump to Sector", max(float(RunState.current_level), 1.0), float(RunState.MAX_LEVELS))
+	_sector_spin.min_value = 1.0
+	var sector_btn_row := HBoxContainer.new()
+	sector_btn_row.add_theme_constant_override("separation", 8)
+	_content.add_child(sector_btn_row)
+	var sector_btn := _make_button("Reload as Sector N", _COLOR_WARN, Color(0.12, 0.04, 0.0))
+	sector_btn.pressed.connect(func() -> void:
+		reload_sector_requested.emit(int(_sector_spin.value)))
+	sector_btn_row.add_child(sector_btn)
 
 	# Players
 	_add_section("PLAYERS")

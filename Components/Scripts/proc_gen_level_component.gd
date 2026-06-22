@@ -7,11 +7,14 @@ signal level_generated(spawn_position: Vector2)
 @export var arena_width: int = 40
 @export var arena_height: int = 30
 @export var cell_size: int = 32
+@export var arena_width_max: int = 60
+@export var arena_height_max: int = 44
 
 @export_group("Obstacle Settings")
 @export_range(0.0, 1.0) var obstacle_density: float = 0.3
 @export var clear_radius: float = 4.0
 @export var noise_frequency: float = 0.1
+@export_range(0.0, 1.0) var obstacle_density_max: float = 0.42
 
 @export_group("Seed")
 @export var randomize_seed: bool = true
@@ -26,6 +29,11 @@ var _container: Node2D
 var _noise: FastNoiseLite
 var _renderer: WallRenderer
 var _outline_renderer: WallOutlineRenderer
+# Base export values captured in _ready() so the curve always derives from the sector-1 baseline,
+# even when AdvancedConfig overrides are in effect.
+var _base_arena_width: int
+var _base_arena_height: int
+var _base_obstacle_density: float
 
 
 # Draws filled wall rectangles as a single batched mesh — geometry is fixed after
@@ -106,10 +114,20 @@ class WallOutlineRenderer extends Node2D:
 
 func _ready() -> void:
 	add_to_group("proc_gen")
+	# Capture export values after AdvancedConfig applies its overrides; the deferred generate()
+	# runs later and will derive effective values from these bases via the sector curve.
+	_base_arena_width = arena_width
+	_base_arena_height = arena_height
+	_base_obstacle_density = obstacle_density
 	generate.call_deferred()
 
 
 func generate() -> void:
+	# Apply sector curve before building — idempotent because always derived from _base_* fields.
+	var t := RunState.sector_t()
+	arena_width = int(round(lerpf(float(_base_arena_width), float(arena_width_max), t)))
+	arena_height = int(round(lerpf(float(_base_arena_height), float(arena_height_max), t)))
+	obstacle_density = lerpf(_base_obstacle_density, obstacle_density_max, t)
 	_clear()
 	_setup_noise()
 	_create_container()
