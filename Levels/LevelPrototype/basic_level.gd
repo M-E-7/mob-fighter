@@ -178,6 +178,7 @@ func _open_debug_menu() -> void:
 		_debug_menu.force_win_requested.connect(_force_win)
 		_debug_menu.force_game_over_requested.connect(_force_game_over)
 		_debug_menu.reload_sector_requested.connect(_reload_sector)
+		_debug_menu.spawn_boss_requested.connect(_spawn_boss_debug)
 	_debug_menu.visible = true
 	_debug_menu.refresh()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -211,6 +212,11 @@ func _reload_sector(sector: int) -> void:
 	_close_debug_menu()  # unpauses before change_scene_to_file
 	MusicManager.stop()
 	get_tree().change_scene_to_file.call_deferred("res://Levels/LevelPrototype/basic_level.tscn")
+
+
+func _spawn_boss_debug() -> void:
+	_close_debug_menu()
+	_objective.spawn_boss_now()
 
 
 func _is_debug_toggle(event: InputEvent) -> bool:

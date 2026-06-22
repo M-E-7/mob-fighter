@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Entities/LivingEntity/living_entity.tscn" id="1_le"]
+[ext_resource type="Script" path="res://Entities/Boss/boss.gd" id="2_boss"]
+[ext_resource type="PackedScene" path="res://Components/BossAIComponent.tscn" id="3_bai"]
+[ext_resource type="PackedScene" path="res://Components/MovementComponent.tscn" id="4_mc"]
+[ext_resource type="PackedScene" path="res://Components/ShootComponent.tscn" id="5_sc"]
+[ext_resource type="PackedScene" path="res://Entities/ExperienceOrb/experience_orb.tscn" id="6_orb"]
+[ext_resource type="PackedScene" path="res://Components/XPDropComponent.tscn" id="7_xpd"]
+[ext_resource type="PackedScene" path="res://Components/NeonShaderComponent.tscn" id="8_nsc"]
+[ext_resource type="PackedScene" path="res://Components/MusicVisualsComponent.tscn" id="9_mvc"]
+[ext_resource type="PackedScene" path="res://Components/HitFlashComponent.tscn" id="10_hfc"]
+[ext_resource type="PackedScene" path="res://Components/SpawnFXComponent.tscn" id="11_sfx"]
+
+[sub_resource type="QuadMesh" id="BossMesh"]
+size = Vector2(90, 90)
+
+[sub_resource type="CircleShape2D" id="BossShape"]
+radius = 42.0
+
+[node name="Boss" unique_id=1517977448 node_paths=PackedStringArray("inputComponent", "movementComponent", "shootComponent") instance=ExtResource("1_le")]
+script = ExtResource("2_boss")
+inputComponent = NodePath("BossAIComponent")
+movementComponent = NodePath("MovementComponent")
+shootComponent = NodePath("ShootComponent")
+max_health = 500.0
+starting_health = 500.0
+max_speed = 120.0
+fire_rate = 5.0
+bullet_damage = 12.0
+bullet_speed = 350.0
+bullet_color = Color(1, 0.1, 0.1, 1)
+
+[node name="CollisionShape2D" parent="." unique_id=1985241145]
+shape = SubResource("BossShape")
+
+[node name="SpriteDisplay" parent="." unique_id=386316919]
+visible = false
+
+[node name="BossAIComponent" parent="." unique_id=200000001 node_paths=PackedStringArray("entity") instance=ExtResource("3_bai")]
+entity = NodePath("..")
+
+[node name="MovementComponent" parent="." unique_id=200000002 node_paths=PackedStringArray("entity") instance=ExtResource("4_mc")]
+entity = NodePath("..")
+
+[node name="ShootComponent" parent="." unique_id=200000003 node_paths=PackedStringArray("entity") instance=ExtResource("5_sc")]
+entity = NodePath("..")
+
+[node name="CircleDisplay" type="MeshInstance2D" parent="." unique_id=200000004]
+mesh = SubResource("BossMesh")
+
+[node name="XPDropComponent" parent="." unique_id=200000005 node_paths=PackedStringArray("entity") instance=ExtResource("7_xpd")]
+entity = NodePath("..")
+orb_scene = ExtResource("6_orb")
+xp_amount = 80.0
+
+[node name="NeonShaderComponent" parent="." unique_id=200000006 node_paths=PackedStringArray("entity") instance=ExtResource("8_nsc")]
+entity = NodePath("..")
+neon_color = Color(1, 0.1, 0.1, 1)
+pulse_speed = 4.0
+pulse_amount = 0.35
+
+[node name="MusicVisualsComponent" parent="." unique_id=200000007 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("9_mvc")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")
+
+[node name="HitFlashComponent" parent="." unique_id=200000008 node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("10_hfc")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")
+
+[node name="SpawnFXComponent" parent="." unique_id=200000009 node_paths=PackedStringArray("entity", "neon_component", "hit_flash_component") instance=ExtResource("11_sfx")]
+entity = NodePath("..")
+neon_component = NodePath("../NeonShaderComponent")
+hit_flash_component = NodePath("../HitFlashComponent")

@@ -5,6 +5,7 @@ signal close_requested
 signal force_win_requested
 signal force_game_over_requested
 signal reload_sector_requested(sector: int)
+signal spawn_boss_requested
 
 var _info_label: Label
 var _bits_spin: SpinBox
@@ -159,6 +160,8 @@ func _build_ui() -> void:
 
 	# Actions
 	_add_section("ACTIONS")
+	_add_button("Spawn Boss", _COLOR_ACCENT, Color(0.0, 0.1, 0.12), func() -> void:
+		spawn_boss_requested.emit())
 	_add_button("Kill All Enemies", _COLOR_WARN, Color(0.12, 0.04, 0.0), func() -> void:
 		for e in get_tree().get_nodes_in_group("enemy"):
 			var ent := e as LivingEntity

@@ -44,6 +44,7 @@ var _bits_label: Label
 var _objective_label: Label
 
 var _exit_port_indicator: ExitPortIndicator
+var _boss_health_bar: BossHealthBar
 
 var _warn_p1: ColorRect
 var _warn_p2: ColorRect
@@ -70,6 +71,9 @@ func _ready() -> void:
 
 	_exit_port_indicator = preload("res://UI/ExitPortIndicator.tscn").instantiate() as ExitPortIndicator
 	add_child(_exit_port_indicator)
+
+	_boss_health_bar = preload("res://UI/BossHealthBar.tscn").instantiate() as BossHealthBar
+	add_child(_boss_health_bar)
 
 
 func setup(p1: LivingEntity, p2: LivingEntity, player_count: int, subviewport: SubViewport, container: Control) -> void:
@@ -118,6 +122,7 @@ func _apply_settings() -> void:
 	_timer_label.get_parent().visible = GameConfig.hud_show_survival_timer
 	_objective_label.get_parent().visible = GameConfig.hud_show_objective
 	_exit_port_indicator.visible = GameConfig.hud_show_exit_port_indicator
+	# BossHealthBar manages its own visibility — it starts hidden and shows only on boss_spawned.
 
 
 func _position_panels(player_count: int) -> void:
@@ -143,6 +148,7 @@ func _connect_signals() -> void:
 	EventBus.power_up_applied.connect(_on_power_up_applied)
 	EventBus.objective_progress_changed.connect(_on_objective_progress_changed)
 	EventBus.sector_objective_completed.connect(_on_sector_objective_completed)
+	EventBus.boss_spawned.connect(_on_boss_spawned)
 
 
 func _on_health_changed(entity: LivingEntity, current: float, maximum: float) -> void:
@@ -291,6 +297,11 @@ func _build_objective_label() -> void:
 
 func _on_objective_progress_changed(current: int, target: int) -> void:
 	_objective_label.text = "SECTOR %d   Purge %d/%d" % [RunState.current_level, current, target]
+
+
+func _on_boss_spawned(_boss: LivingEntity, display_name: String, _max_health: float) -> void:
+	_objective_label.text = "SECTOR %d   PURGE THE %s" % [RunState.current_level, display_name]
+	_objective_label.modulate = Color(1.0, 0.3, 0.3)
 
 
 func _on_sector_objective_completed() -> void:

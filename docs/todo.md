@@ -45,10 +45,10 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Scale kill quota (`LevelObjectiveComponent`) per sector
   - [x] Difficulty curve: `RunState.sector_t()` (linear 0→1) + `threat_factor()` (P9 stub, default ×1.0)
   - [x] Debug sector-jump: "Reload as Sector N" in DebugMenuUI (enables P5 verification without playing through)
-- [ ] **P6 — Bosses** `[high]` *(was "Boss encounters", bumped)*
-  - [ ] Boss entity + multi-phase behavior; spawned by the objective driver
-  - [ ] Boss intro + on-screen HP-bar UI hook
-  - [ ] Miniboss ≈ sector 5 (Trojan/Rootkit); final boss = sector 10 (**rogue AI / system core**)
+- [x] **P6 — Bosses** `[high]` *(was "Boss encounters", bumped)*
+  - [x] Boss entity + multi-phase behavior; spawned by the objective driver
+  - [x] Boss intro + on-screen HP-bar UI hook
+  - [x] Miniboss ≈ sector 5 (Trojan/Rootkit); final boss = sector 10 (**rogue AI / system core**)
 - [ ] **P7 — Daemons (modifier system)** `[high]` *(was "Power-up variety beyond flat % stats")*
   - [ ] `DaemonHost` component + hook points (`on_shoot`/`on_hit`/`on_kill`/`on_damage_taken`/`on_process`); reuse existing `EventBus` signals where possible
   - [ ] `ModifierData` resource + `ModifierRegistry` autoload (mirrors `PowerUpRegistry`)
@@ -76,7 +76,7 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Kill All Enemies, Force Win, Force Game Over
   - [x] Read-only info panel: FPS, enemy count, sector, P1 position
   - [x] Jump `current_level` to any sector ("Reload as Sector N" — landed in P5)
-  - [ ] Spawn enemies/bosses on demand
+  - [x] Spawn enemies/bosses on demand
 
 ---
 
@@ -94,7 +94,7 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
 ## UI / HUD
 
 - [x] **Sector HUD: objective progress + Bits balance + sector number** `[high]` *(P2: objective readout + sector number + Bits all on the HUD)*
-- [ ] **Boss intro + HP bar** `[high]` *(feeds P6)*
+- [x] **Boss intro + HP bar** `[high]` *(P6)*
 - [ ] **Off-screen enemy indicators / minimap** `[med]`
 - [x] **Off-screen ExitPort marker + distance indicator** `[high]` *(P2 UX follow-up)*
   - [x] Edge-of-screen arrow/marker pointing toward the portal while it is off-screen

@@ -1,13 +1,19 @@
 extends Node
 class_name LevelObjectiveComponent
-## Drives the sector win condition (kill-quota for now) and spawns the ExitPort when met.
-## Keyed off RunState.current_level so later sectors can vary the objective type.
+## Drives the sector win condition and spawns the ExitPort when met.
+## Kill-quota mode for normal sectors; boss mode for sectors 5 and 10.
+## In boss mode the normal spawner is stopped, the boss is spawned, and
+## the ExitPort appears at the boss's death position.
 
 @export var exit_port_scene: PackedScene
+@export var boss_scene: PackedScene
 
 @export_group("Objective")
 @export var base_kill_quota: int = 20
 @export var kill_quota_max: int = 60
+
+@export_group("Boss")
+@export var miniboss_sector: int = 5
 
 @export_group("Exit Port")
 @export var port_spawn_distance: float = 1500.0  # px from the player; the exit is a deliberate trek
@@ -26,6 +32,10 @@ var _target: int = 0
 var _kills: int = 0
 var _completed: bool = false
 
+var _boss_mode: bool = false
+var _active_boss: LivingEntity
+var _boss_death_pos: Vector2
+
 
 func _ready() -> void:
 	add_to_group("level_objective")
@@ -39,9 +49,11 @@ func start(proc_gen: ProcGenLevelComponent, spawner: EnemySpawnerComponent) -> v
 	# P4 sets current_level from MainMenu; guard so a directly-launched sector still reads as 1.
 	if RunState.current_level < 1:
 		RunState.current_level = 1
-	_target = int(round(lerpf(float(base_kill_quota), float(kill_quota_max), RunState.sector_t()) * RunState.threat_factor()))
 	EventBus.entity_died.connect(_on_entity_died)
-	EventBus.objective_progress_changed.emit(_kills, _target)
+	if _is_boss_sector():
+		_start_boss_mode()
+	else:
+		_start_kill_quota_mode()
 
 
 func get_target() -> int:
@@ -67,13 +79,95 @@ func complete_now() -> void:
 		_complete()
 
 
-func _on_entity_died(entity: LivingEntity) -> void:
-	if _completed or not entity.is_in_group("enemy"):
+func spawn_boss_now() -> void:
+	if _completed or is_instance_valid(_active_boss):
 		return
-	_kills += 1
+	if not boss_scene:
+		push_warning("LevelObjectiveComponent: boss_scene not set")
+		return
+	# Set boss mode before killing enemies so their deaths don't satisfy the kill quota.
+	_boss_mode = true
+	if is_instance_valid(_spawner):
+		_spawner.stop()
+	for e in get_tree().get_nodes_in_group("enemy"):
+		var ent := e as LivingEntity
+		if is_instance_valid(ent) and ent.healthComponent:
+			ent.healthComponent.take_damage(1e9)
+	_spawn_boss()
+
+
+func _is_boss_sector() -> bool:
+	return RunState.current_level == miniboss_sector or RunState.current_level >= RunState.MAX_LEVELS
+
+
+func _start_boss_mode() -> void:
+	if is_instance_valid(_spawner):
+		_spawner.stop()
+	_boss_mode = true
+	_target = 1
+	_kills = 0
+	EventBus.objective_progress_changed.emit(0, 1)
+	_spawn_boss()
+
+
+func _start_kill_quota_mode() -> void:
+	_boss_mode = false
+	_target = int(round(lerpf(float(base_kill_quota), float(kill_quota_max), RunState.sector_t()) * RunState.threat_factor()))
 	EventBus.objective_progress_changed.emit(_kills, _target)
-	if _kills >= _target:
-		_complete()
+
+
+func _spawn_boss() -> void:
+	if not boss_scene:
+		push_warning("LevelObjectiveComponent: boss_scene not set")
+		return
+
+	var boss: LivingEntity = boss_scene.instantiate()
+	# add_child (not deferred): called from level_generated signal, outside any physics callback.
+	get_parent().add_child(boss)
+	boss.global_position = _pick_boss_position()
+
+	# Scale HP after add_child so AdvancedConfig overrides have been applied,
+	# then re-sync HealthComponent which caches entity.max_health in its own _ready().
+	var boss_entity := boss as Boss
+	if boss_entity:
+		var t := RunState.sector_t()
+		var tf := RunState.threat_factor()
+		var eff_hp := lerpf(boss_entity.boss_health, boss_entity.boss_health_max, t) * tf
+		boss.max_health = eff_hp
+		if boss.healthComponent:
+			boss.healthComponent.max_health = eff_hp
+			boss.healthComponent.current_health = eff_hp
+
+		var display_name: String
+		var color: Color
+		if RunState.current_level >= RunState.MAX_LEVELS:
+			display_name = "ROGUE AI — SYSTEM CORE"
+			color = Color(1.0, 0.1, 0.25, 1.0)
+		else:
+			display_name = "ROOTKIT"
+			color = Color(0.5, 0.15, 1.0, 1.0)
+		boss_entity.configure(display_name, color)
+		_active_boss = boss
+		EventBus.boss_spawned.emit(boss, display_name, eff_hp)
+	else:
+		_active_boss = boss
+		EventBus.boss_spawned.emit(boss, "BOSS", boss.max_health)
+
+
+func _on_entity_died(entity: LivingEntity) -> void:
+	if _completed:
+		return
+	if _boss_mode:
+		if is_instance_valid(_active_boss) and entity == _active_boss:
+			_boss_death_pos = entity.global_position
+			_complete()
+	else:
+		if not entity.is_in_group("enemy"):
+			return
+		_kills += 1
+		EventBus.objective_progress_changed.emit(_kills, _target)
+		if _kills >= _target:
+			_complete()
 
 
 func _complete() -> void:
@@ -92,8 +186,35 @@ func _spawn_exit_port() -> void:
 		return
 	var port := exit_port_scene.instantiate()
 	get_parent().add_child.call_deferred(port)
-	port.set_deferred("global_position", _pick_port_position())
+	var pos: Vector2
+	if _boss_mode and _boss_death_pos != Vector2.ZERO:
+		# Port appears at the boss's death site, snapped to a walkable cell.
+		var cell := _nearest_open_cell(_world_to_cell(_boss_death_pos))
+		pos = _cell_to_world(cell) if cell.x >= 0 else _boss_death_pos
+	else:
+		pos = _pick_port_position()
+	port.set_deferred("global_position", pos)
 	EventBus.exit_port_spawned.emit(port)
+
+
+func _pick_boss_position() -> Vector2:
+	var player := _get_player()
+	var origin := player.global_position if is_instance_valid(player) else _arena_bounds * 0.5
+	if _astar == null:
+		return _clamp_to_bounds(origin + Vector2(300.0, 0.0))
+	var from_cell := _nearest_open_cell(_world_to_cell(origin))
+	if from_cell.x < 0:
+		return _clamp_to_bounds(origin + Vector2(300.0, 0.0))
+	var start_ang := randf() * TAU
+	for i in 8:
+		var ang := start_ang + TAU * float(i) / 8.0
+		var target := _clamp_to_bounds(origin + Vector2.RIGHT.rotated(ang) * 600.0)
+		var cell := _nearest_open_cell(_world_to_cell(target))
+		if cell.x < 0:
+			continue
+		if not _astar.get_id_path(from_cell, cell).is_empty():
+			return _cell_to_world(cell)
+	return _cell_to_world(from_cell)
 
 
 # Place the port a fixed distance from the player, snapped to a walkable cell that is actually
