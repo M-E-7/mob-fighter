@@ -301,6 +301,24 @@ const PROPERTY_DEFS: Array[Dictionary] = [
 		"type": TYPE_FLOAT, "default": 0.4, "min": 0.0, "max": 2.0, "step": 0.05},
 	{"group": "Exit Port", "class": "ExitPort", "name": "port_color",
 		"type": TYPE_COLOR, "default": Color(0.2, 1.0, 0.9, 1.0)},
+
+	# ── Daemons (defaults MUST mirror the @export defaults on each behavior script) ───
+	{"group": "Daemon — Fork Process", "class": "DaemonMultishot", "name": "extra_shots",
+		"type": TYPE_INT, "default": 1, "min": 0, "max": 5, "step": 1},
+	{"group": "Daemon — Fork Process", "class": "DaemonMultishot", "name": "spread_deg",
+		"type": TYPE_FLOAT, "default": 12.0, "min": 0.0, "max": 45.0, "step": 1.0},
+
+	{"group": "Daemon — Recursion Bomb", "class": "DaemonSplit", "name": "split_count",
+		"type": TYPE_INT, "default": 2, "min": 0, "max": 8, "step": 1},
+	{"group": "Daemon — Recursion Bomb", "class": "DaemonSplit", "name": "spread_deg",
+		"type": TYPE_FLOAT, "default": 30.0, "min": 0.0, "max": 90.0, "step": 1.0},
+	{"group": "Daemon — Recursion Bomb", "class": "DaemonSplit", "name": "child_damage_mult",
+		"type": TYPE_FLOAT, "default": 0.6, "min": 0.0, "max": 2.0, "step": 0.05},
+
+	{"group": "Daemon — Hardened Kernel", "class": "DaemonArmor", "name": "speed_mult",
+		"type": TYPE_FLOAT, "default": -0.25, "min": -1.0, "max": 1.0, "step": 0.05},
+	{"group": "Daemon — Hardened Kernel", "class": "DaemonArmor", "name": "health_mult",
+		"type": TYPE_FLOAT, "default": 0.5, "min": -1.0, "max": 3.0, "step": 0.05},
 ]
 
 var _overrides: Dictionary = {}

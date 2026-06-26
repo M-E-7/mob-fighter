@@ -24,6 +24,13 @@ func apply_power_up(power_up: PowerUpData) -> void:
 	EventBus.power_up_applied.emit(entity, power_up)
 
 
+## Generic stat bonus entry point for Daemons (and any non-PowerUpData source).
+## Routes through the same path so Upgrades and Daemons never fight over entity.set().
+func apply_stat_bonus(stat_key: String, fraction: float) -> void:
+	_bonuses[stat_key] = _bonuses.get(stat_key, 0.0) + fraction
+	_apply_stat(stat_key)
+
+
 func get_projected_stat(stat_key: String, additional_bonus: float) -> float:
 	var base: float = _base_stats.get(stat_key, 0.0)
 	var current_bonus: float = _bonuses.get(stat_key, 0.0)

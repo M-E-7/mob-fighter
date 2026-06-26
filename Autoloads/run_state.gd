@@ -5,7 +5,7 @@ extends Node
 var current_level: int = 0           # 1..MAX_LEVELS during a run; 0 outside a run
 var currency: int = 0                # Bits — single shared wallet, banked on pickup
 var owned_upgrades: Dictionary = {}  # stat_key -> stack count
-var owned_modifiers: Array = []      # Daemon ids (P7)
+var owned_modifiers: Dictionary = {} # Daemon id -> stack count (P7)
 var health_fraction: Array[float] = [1.0, 1.0]  # current HP as fraction of max, index 0=P1, 1=P2
 var run_kills: Array[int] = [0, 0]   # cumulative kills per player across all sectors
 var run_time: float = 0.0            # cumulative seconds across all sectors
@@ -67,6 +67,11 @@ func apply_to(entity: LivingEntity) -> void:
 		for _i in int(owned_upgrades[stat_key]):
 			xp.apply_power_up(data)
 
+	# Install Daemons AFTER upgrades so their stat bonuses layer on the same XP path.
+	var host := entity.get_node_or_null("DaemonHostComponent") as DaemonHostComponent
+	if host:
+		host.install_from_run_state()
+
 
 func upgrade_cost(data: PowerUpData) -> int:
 	var stacks: int = owned_upgrades.get(data.stat_key, 0)
@@ -83,6 +88,30 @@ func buy_upgrade(data: PowerUpData) -> bool:
 		return false
 	currency -= cost
 	owned_upgrades[data.stat_key] = owned_upgrades.get(data.stat_key, 0) + 1
+	EventBus.currency_changed.emit(currency)
+	return true
+
+
+func modifier_stacks(id: String) -> int:
+	return owned_modifiers.get(id, 0)
+
+
+func modifier_cost(data: ModifierData) -> int:
+	var stacks: int = owned_modifiers.get(data.id, 0)
+	return int(round(data.cost * (1.0 + _ESCALATION * stacks)))
+
+
+func can_buy_modifier(data: ModifierData) -> bool:
+	if data.max_stacks != 0 and modifier_stacks(data.id) >= data.max_stacks:
+		return false
+	return can_afford(modifier_cost(data))
+
+
+func buy_modifier(data: ModifierData) -> bool:
+	if not can_buy_modifier(data):
+		return false
+	currency -= modifier_cost(data)
+	owned_modifiers[data.id] = owned_modifiers.get(data.id, 0) + 1
 	EventBus.currency_changed.emit(currency)
 	return true
 

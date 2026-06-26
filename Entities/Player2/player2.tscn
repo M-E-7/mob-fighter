@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://Components/MusicVisualsComponent.tscn" id="11_mvc"]
 [ext_resource type="Texture2D" path="res://Entities/Player/player_ship.svg" id="12_svg"]
 [ext_resource type="PackedScene" path="res://Components/HitFlashComponent.tscn" id="13_hfc"]
+[ext_resource type="PackedScene" path="res://Components/DaemonHostComponent.tscn" id="14_dhc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_physics"]
 size = Vector2(28, 28)
@@ -60,3 +61,6 @@ neon_component = NodePath("../NeonShaderComponent")
 [node name="HitFlashComponent" parent="." index="11" node_paths=PackedStringArray("entity", "neon_component") instance=ExtResource("13_hfc")]
 entity = NodePath("..")
 neon_component = NodePath("../NeonShaderComponent")
+
+[node name="DaemonHostComponent" parent="." index="12" node_paths=PackedStringArray("entity") instance=ExtResource("14_dhc")]
+entity = NodePath("..")

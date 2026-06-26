@@ -13,8 +13,11 @@ const _CARDS_SHOWN := 3
 @onready var _continue_button: Button = $MarginContainer/Layout/BottomRows/FooterRow/ContinueButton
 @onready var _abandon_button: Button = $MarginContainer/Layout/BottomRows/FooterRow/AbandonButton
 
-var _stock: Array[PowerUpData] = []
+# Holds PowerUpData (Upgrades) and/or ModifierData (Daemons) — branch on `entry is ModifierData`.
+var _stock: Array = []
 var _reroll_count: int = 0
+
+const _DAEMON_TINT := Color(1.0, 0.55, 0.95)
 
 # P2 keyboard navigation — parallel arrays: visual node to highlight, button to press
 var _p2_highlight_nodes: Array[Control] = []
@@ -55,23 +58,29 @@ func _draw_stock() -> void:
 	for child in _cards_row.get_children():
 		_cards_row.remove_child(child)
 		child.queue_free()
-	for up: PowerUpData in _stock:
-		_cards_row.add_child(_build_card(up))
+	for entry: Variant in _stock:
+		_cards_row.add_child(_build_card(entry))
 	_refresh_reroll_button()
 	_refresh_cards()
 	_rebuild_p2_interactables()
 
 
-func _pick_stock() -> Array[PowerUpData]:
-	var pool: Array[PowerUpData] = PowerUpRegistry.power_ups.duplicate()
+func _pick_stock() -> Array:
+	var pool: Array = []
+	for up: PowerUpData in PowerUpRegistry.power_ups:
+		pool.append(up)
+	for m: ModifierData in ModifierRegistry.modifiers:
+		# Exclude Daemons already maxed out (unless unlimited stacks).
+		if m.max_stacks == 0 or RunState.modifier_stacks(m.id) < m.max_stacks:
+			pool.append(m)
 	pool.shuffle()
-	var result: Array[PowerUpData] = []
+	var result: Array = []
 	for i: int in min(_CARDS_SHOWN, pool.size()):
 		result.append(pool[i])
 	return result
 
 
-func _build_card(up: PowerUpData) -> PanelContainer:
+func _build_card(entry: Variant) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(260, 160)
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -80,14 +89,18 @@ func _build_card(up: PowerUpData) -> PanelContainer:
 	vbox.add_theme_constant_override("separation", 10)
 	panel.add_child(vbox)
 
+	var is_daemon := entry is ModifierData
+
 	var name_lbl := Label.new()
-	name_lbl.text = up.display_name
+	name_lbl.text = entry.display_name
 	name_lbl.add_theme_font_size_override("font_size", 20)
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if is_daemon:
+		name_lbl.modulate = _DAEMON_TINT
 	vbox.add_child(name_lbl)
 
 	var desc_lbl := Label.new()
-	desc_lbl.text = up.description
+	desc_lbl.text = ("[DAEMON] " + entry.description) if is_daemon else entry.description
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(desc_lbl)
@@ -100,7 +113,7 @@ func _build_card(up: PowerUpData) -> PanelContainer:
 
 	var btn := Button.new()
 	btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	btn.pressed.connect(_on_buy_pressed.bind(up))
+	btn.pressed.connect(_on_buy_pressed.bind(entry))
 	vbox.add_child(btn)
 
 	return panel
@@ -111,8 +124,7 @@ func _refresh_cards() -> void:
 	for i: int in cards.size():
 		if i >= _stock.size():
 			break
-		var up := _stock[i]
-		var cost := RunState.upgrade_cost(up)
+		var entry: Variant = _stock[i]
 		var panel := cards[i] as PanelContainer
 		if not panel:
 			continue
@@ -120,12 +132,22 @@ func _refresh_cards() -> void:
 		if not vbox:
 			continue
 		var owned_lbl := vbox.get_child(2) as Label
-		if owned_lbl:
-			owned_lbl.text = "Owned: %d" % RunState.owned_upgrades.get(up.stat_key, 0)
 		var btn := vbox.get_child(3) as Button
-		if btn:
-			btn.text = "BUY — %d Bits" % cost
-			btn.disabled = not RunState.can_afford(cost)
+		if entry is ModifierData:
+			var cost: int = RunState.modifier_cost(entry)
+			var maxed: bool = entry.max_stacks != 0 and RunState.modifier_stacks(entry.id) >= entry.max_stacks
+			if owned_lbl:
+				owned_lbl.text = "Owned: %d" % RunState.modifier_stacks(entry.id)
+			if btn:
+				btn.text = "MAXED" if maxed else "INSTALL — %d Bits" % cost
+				btn.disabled = not RunState.can_buy_modifier(entry)
+		else:
+			var cost := RunState.upgrade_cost(entry)
+			if owned_lbl:
+				owned_lbl.text = "Owned: %d" % RunState.owned_upgrades.get(entry.stat_key, 0)
+			if btn:
+				btn.text = "BUY — %d Bits" % cost
+				btn.disabled = not RunState.can_afford(cost)
 
 
 func _refresh_reroll_button() -> void:
@@ -155,8 +177,9 @@ func _min_health_fraction() -> float:
 
 # --- Button handlers ---
 
-func _on_buy_pressed(up: PowerUpData) -> void:
-	if RunState.buy_upgrade(up):
+func _on_buy_pressed(entry: Variant) -> void:
+	var bought: bool = RunState.buy_modifier(entry) if entry is ModifierData else RunState.buy_upgrade(entry)
+	if bought:
 		_refresh_cards()
 		_refresh_reroll_button()
 		_refresh_repair()

@@ -50,12 +50,14 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [x] Boss intro + on-screen HP-bar UI hook
   - [x] Miniboss ≈ sector 5 (Trojan/Rootkit); final boss = sector 10 (**rogue AI / system core**)
   - [x] Fix boss burst bullets destroying each other — `Bullet._on_area_entered` now early-returns for non-HurtboxComponent areas; `ShootComponent` applies `muzzle_offset` to spawn position; Boss ShootComponent `muzzle_offset = 50.0`
-- [ ] **P7 — Daemons (modifier system)** `[high]` *(was "Power-up variety beyond flat % stats")*
-  - [ ] `DaemonHost` component + hook points (`on_shoot`/`on_hit`/`on_kill`/`on_damage_taken`/`on_process`); reuse existing `EventBus` signals where possible
-  - [ ] `ModifierData` resource + `ModifierRegistry` autoload (mirrors `PowerUpRegistry`)
-  - [ ] First Daemon set: Overclock, Heuristic Scanner, Quarantine, Fork Bomb, Firewall, Garbage Collector
-  - [ ] Effect candidates to build as Daemons/Upgrades: multishot, piercing, spread, lifesteal, ricochet/bounce, split
-  - [ ] Sell Daemons in the Sandbox alongside generic Upgrades
+- [ ] **P7 — Daemons (modifier system)** `[high]` *(was "Power-up variety beyond flat % stats")* — **framework built; first-set Daemons remain**
+  - [x] `DaemonHostComponent` + hook points (`on_shoot`/`on_hit`/`on_kill`/`on_damage_taken`/`on_impact`/`on_process`); reuses existing `EventBus` signals, host-dispatched
+  - [x] `ModifierData` resource (`behavior_script`/`max_stacks`/`params`) + `ModifierRegistry` autoload (mirrors `PowerUpRegistry`); `Daemon` base class (script-only behaviors)
+  - [x] `RunState` Daemon ownership (`owned_modifiers` dict, `buy_modifier`/`modifier_cost`/per-Daemon `max_stacks`) + install via `apply_to()`
+  - [x] Sell Daemons in the Sandbox alongside generic Upgrades; DebugMenuUI grant section
+  - [x] Proof Daemons: Multishot (`on_shoot`), Split-on-hit (`on_hit`), Slow-but-armored (`on_install` stat tradeoff)
+  - [ ] First Daemon set: Overclock, Heuristic Scanner, Quarantine, Fork Bomb, Firewall, Garbage Collector (drop-in on existing hooks)
+  - [ ] More effect candidates: piercing, spread, lifesteal, ricochet/bounce, homing, variable-speed, turbo-burn
 - [ ] **P8 — Save layer (`user://`)** `[high]` *(also satisfies the old "Settings persistence")*
   - [ ] `ConfigFile` (or save Resource) util/autoload; save on change, load at startup
   - [ ] Persist `GameConfig` HUD/camera/music toggles across sessions
@@ -117,7 +119,11 @@ Priority tags: `[high]` / `[med]` / `[low]`. Completed items use `- [x]`.
   - [ ] Persist `GameConfig` HUD/camera toggles across sessions (no `user://`/`ConfigFile` save exists today)
 - [ ] **Data-drive enemies via Resources** `[med]`
   - [ ] Mirror the `PowerUpData` pattern for malware stats/behavior
-- [ ] **Centralized balance / tuning resource** `[low]`
+- [ ] **Single source of truth for tunable values** `[med]` *(prompted by the P7 Daemon `@export` ↔ `PROPERTY_DEFS` double-bookkeeping; see the SSOT principle in `CLAUDE.md`)*
+  - [ ] Make `AdvancedConfig` auto-discover tunables from live nodes via `get_property_list()` instead of the hand-maintained `PROPERTY_DEFS` table; move `min`/`max`/`step` onto the exports via `@export_range`, so each value + its bounds are defined once on the component
+  - [ ] Audit + collapse the other duplicated-value spots: Daemon numbers (`@export` vs `PROPERTY_DEFS`), any `ModifierData.params` overlaps, registry literals in `ModifierRegistry`/`PowerUpRegistry`, and the "Centralized balance / tuning resource" idea below
+  - [ ] Target invariant: every gameplay/config number is defined in exactly one place and read everywhere else
+- [ ] **Centralized balance / tuning resource** `[low]` *(subsumed by the single-source-of-truth task above)*
 
 ## Level Design Improvements
 

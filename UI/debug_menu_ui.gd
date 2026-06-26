@@ -14,6 +14,8 @@ var _health_spins: Array[SpinBox] = []
 var _god_checks: Array[CheckButton] = []
 var _obj_target_spin: SpinBox
 var _obj_progress_spin: SpinBox
+var _daemon_option: OptionButton
+var _daemon_tune_box: VBoxContainer
 var _refreshing: bool = false
 
 const _COLOR_ACCENT := Color(0.0, 1.0, 0.9)
@@ -73,6 +75,7 @@ func refresh() -> void:
 		if is_instance_valid(_obj_progress_spin):
 			_obj_progress_spin.value = obj.get_progress()
 	_refreshing = false
+	_rebuild_daemon_tuning()
 
 
 func _build_ui() -> void:
@@ -158,6 +161,26 @@ func _build_ui() -> void:
 		if is_instance_valid(o):
 			o.complete_now())
 
+	# Daemons
+	_add_section("DAEMONS")
+	var daemon_row := HBoxContainer.new()
+	daemon_row.add_theme_constant_override("separation", 8)
+	_content.add_child(daemon_row)
+	_daemon_option = OptionButton.new()
+	_daemon_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for m: ModifierData in ModifierRegistry.modifiers:
+		_daemon_option.add_item(m.display_name)
+	daemon_row.add_child(_daemon_option)
+	var grant_btn := _make_button("Grant", _COLOR_ACCENT, Color(0.0, 0.1, 0.12))
+	grant_btn.pressed.connect(_on_grant_daemon)
+	daemon_row.add_child(grant_btn)
+
+	# Daemon tuning (live @export knobs of installed daemons)
+	_add_section("DAEMON TUNING")
+	_daemon_tune_box = VBoxContainer.new()
+	_daemon_tune_box.add_theme_constant_override("separation", 4)
+	_content.add_child(_daemon_tune_box)
+
 	# Actions
 	_add_section("ACTIONS")
 	_add_button("Spawn Boss", _COLOR_ACCENT, Color(0.0, 0.1, 0.12), func() -> void:
@@ -229,6 +252,113 @@ func _on_god_toggled(on: bool, idx: int) -> void:
 	if not is_instance_valid(p) or not p.healthComponent:
 		return
 	p.healthComponent.invincible = on
+
+
+func _on_grant_daemon() -> void:
+	if not is_instance_valid(_daemon_option):
+		return
+	var idx := _daemon_option.selected
+	if idx < 0 or idx >= ModifierRegistry.modifiers.size():
+		return
+	var data := ModifierRegistry.modifiers[idx]
+	if data.max_stacks != 0 and RunState.modifier_stacks(data.id) >= data.max_stacks:
+		return
+	RunState.owned_modifiers[data.id] = RunState.modifier_stacks(data.id) + 1
+	for p in get_tree().get_nodes_in_group("player"):
+		var host := (p as Node).get_node_or_null("DaemonHostComponent") as DaemonHostComponent
+		if is_instance_valid(host):
+			host.install_one(data, RunState.owned_modifiers[data.id])
+	_rebuild_daemon_tuning()
+
+
+func _rebuild_daemon_tuning() -> void:
+	if not is_instance_valid(_daemon_tune_box):
+		return
+	for child in _daemon_tune_box.get_children():
+		_daemon_tune_box.remove_child(child)
+		child.queue_free()
+
+	var host := _find_player_host()
+	var daemons: Array[Daemon] = []
+	if is_instance_valid(host):
+		daemons = host.get_daemons()
+	if daemons.is_empty():
+		var none := Label.new()
+		none.text = "  (no daemons installed — grant one above)"
+		none.add_theme_font_size_override("font_size", 13)
+		none.modulate = _COLOR_DIM
+		_daemon_tune_box.add_child(none)
+		return
+
+	for d: Daemon in daemons:
+		var cls: String = d.get_script().get_global_name()
+		var title := Label.new()
+		title.text = "  " + d.data.display_name
+		title.add_theme_font_size_override("font_size", 13)
+		title.modulate = _COLOR_ACCENT
+		_daemon_tune_box.add_child(title)
+		for prop: Dictionary in d.get_property_list():
+			var usage: int = prop["usage"]
+			var ptype: int = prop["type"]
+			if not (usage & PROPERTY_USAGE_EDITOR):
+				continue
+			if ptype != TYPE_FLOAT and ptype != TYPE_INT:
+				continue
+			_add_daemon_knob(d, cls, prop["name"], ptype)
+
+
+func _add_daemon_knob(d: Daemon, cls: String, prop: String, ptype: int) -> void:
+	var def := _find_property_def(cls, prop)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	_daemon_tune_box.add_child(row)
+
+	var lbl := Label.new()
+	lbl.text = "    " + prop.replace("_", " ").capitalize() + ":"
+	lbl.add_theme_font_size_override("font_size", 14)
+	lbl.modulate = _COLOR_DIM
+	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(lbl)
+
+	var spin := SpinBox.new()
+	spin.min_value = def.get("min", -1000.0)
+	spin.max_value = def.get("max", 1000.0)
+	spin.step = def.get("step", 1.0 if ptype == TYPE_INT else 0.05)
+	spin.allow_greater = false
+	spin.allow_lesser = false
+	spin.custom_minimum_size = Vector2(120, 0)
+	spin.value = float(d.get(prop))
+	row.add_child(spin)
+	# Connect AFTER setting the initial value so seeding it doesn't fire the handler.
+	spin.value_changed.connect(func(v: float) -> void:
+		_on_daemon_knob_changed(d, cls, prop, ptype, v))
+
+
+func _on_daemon_knob_changed(d: Daemon, cls: String, prop: String, ptype: int, v: float) -> void:
+	if not is_instance_valid(d):
+		return
+	var val: Variant = int(v) if ptype == TYPE_INT else v
+	d.set(prop, val)
+	# Persist to AdvancedConfig so it survives the next install and shows in the Settings screen.
+	AdvancedConfig.set_override(cls, prop, val)
+	# Re-apply install-time effects (Armor reverses then re-applies); no-op for on_shoot/on_hit daemons.
+	d.on_uninstall()
+	d.on_install()
+
+
+func _find_player_host() -> DaemonHostComponent:
+	for p in get_tree().get_nodes_in_group("player"):
+		var host := (p as Node).get_node_or_null("DaemonHostComponent") as DaemonHostComponent
+		if is_instance_valid(host):
+			return host
+	return null
+
+
+func _find_property_def(cls: String, prop: String) -> Dictionary:
+	for def: Dictionary in AdvancedConfig.PROPERTY_DEFS:
+		if def["class"] == cls and def["name"] == prop:
+			return def
+	return {}
 
 
 func _on_obj_target_changed(v: float) -> void:

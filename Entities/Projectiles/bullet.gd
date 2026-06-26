@@ -54,9 +54,23 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 	if _same_team(target):
 		return
-	area.take_damage(damage, source as LivingEntity)
-	_emit_impact()
-	queue_free()
+
+	var dmg := damage
+	var pierce := false
+	var host := source.get_node_or_null("DaemonHostComponent") as DaemonHostComponent
+	if host:
+		var ctx := HitContext.new()
+		ctx.bullet = self
+		ctx.target = target as LivingEntity
+		ctx.damage = damage
+		host.dispatch_hit(ctx)
+		dmg = ctx.damage
+		pierce = ctx.pierce
+
+	area.take_damage(dmg, source as LivingEntity)
+	if not pierce:
+		_emit_impact()
+		queue_free()
 
 
 func _same_team(target: Node) -> bool:

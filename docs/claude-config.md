@@ -30,6 +30,8 @@ Both scenes use `get_tree().change_scene_to_file()` for navigation (no overlay/s
 2. No other changes needed — the UI and override hook read from `PROPERTY_DEFS` automatically.
 3. If the property belongs to a class that needs special propagation (e.g. applying to both Player and Player2), add the case to `_on_node_added`.
 
+**Daemons (P7).** Daemon behaviors (`Components/Scripts/Daemons/daemon_*.gd`) are `Node`s with a `class_name` and `@export` tunables, so they integrate here like any component: add a `PROPERTY_DEFS` row per knob, group `"Daemon — <name>"`, with `"default"` **mirroring the `@export` default** (they are not in `_SEED_SCENES`, so the `PROPERTY_DEFS` default is the fallback). The host `add_child()`s each Daemon before reading its values, so `node_added` overrides land in time. The Debug Menu's `DAEMON TUNING` section also edits installed Daemons live and writes through `AdvancedConfig.set_override`.
+
 ## Property groups
 
 | Group | Class(es) affected |

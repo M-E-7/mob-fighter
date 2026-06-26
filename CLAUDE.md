@@ -29,6 +29,12 @@ The project uses **component-based composition**:
 
 ---
 
+## Design Principles
+
+- **Single source of truth (aspirational).** Every gameplay/config value should be defined in **one** place and read everywhere else — avoid duplicating a number across systems. The project isn't fully there yet; the known offender is `AdvancedConfig.PROPERTY_DEFS`, which restates each component's `@export` default (and holds `min`/`max`/`step` that exist nowhere else). When adding tunables, prefer a single definition and lean toward auto-discovery over hand-maintained tables. *(tracked in `docs/todo.md` → Architecture / Quality of Life)*
+
+---
+
 ## Subsystem Docs
 
 Read the matching file before working in that area — this root file carries only the imperatives; the "why" and the how-to live in these:
@@ -215,3 +221,6 @@ The load-critical rules — these stay in root because the failure mode of each 
 - In `LevelObjectiveComponent.spawn_boss_now()`, set `_boss_mode = true` and stop the spawner **before** killing existing enemies — enemy deaths call `_on_entity_died`, which could satisfy the kill-quota path and call `_complete()` prematurely if `_boss_mode` isn't set first. *(see docs/claude-roguelike.md)*
 - Do not put `_emit_impact()` + `queue_free()` outside the `if area is HurtboxComponent:` block in `Bullet._on_area_entered` — bullets are `Area2D` on layer 1 and `collision_mask = 3` monitors that layer, so burst-fire (radial/spread) spawns several bullets at the same point and they all detect each other. The handler must early-return for non-HurtboxComponent areas; impact and free happen only after valid damage is dealt.
 - `ShootComponent.muzzle_offset` applies to the bullet's actual spawn position (`entity.global_position + direction * muzzle_offset`), not just the FX event. Set a larger value on entities with large collision shapes — Boss uses `muzzle_offset = 50.0` to clear its radius-42 collider.
+- Daemon (P7) stat modifiers must go through `XPComponent.apply_stat_bonus(stat_key, fraction)`, never raw `entity.set(...)` — upgrades are re-applied via the same `_bonuses` dict each sector, so a direct write is silently overwritten on the next `RunState.apply_to()`. *(see docs/claude-roguelike.md)*
+- A Daemon that spawns child bullets in `on_hit` (e.g. split) must defer the `add_child` (`_spawn_child.call_deferred(...)`) — `on_hit` runs inside `Bullet._on_area_entered`, a physics callback, and adding `Area2D`/collision objects mid-flush is forbidden. It must also meta-tag children (`set_meta("daemon_split_child", true)`) and early-return on tagged bullets, or splits recurse forever. *(see docs/claude-roguelike.md)*
+- Daemons are `Node`s (not `RefCounted`) and the host `add_child()`s each one **before** `setup()`/`on_install()` so `AdvancedConfig` overrides land first. A Daemon `@export` knob is only live-tunable in Advanced Settings if the behavior has a `class_name` **and** a matching `PROPERTY_DEFS` entry whose `"default"` mirrors the `@export` default (drift between the two is silent). *(see docs/claude-config.md)*
